@@ -1,0 +1,108 @@
+﻿@inject Api api;
+@inject LocalStorage localStorage;
+@inject NavigationStacker navManager;
+
+<div class="w-full h-full flex flex-col items-center justify-center">
+    <div class="md:w-[500px] h-[90%] px-5 md:bg-zinc-600 flex flex-col items-center overflow-y-auto md:rounded-3xl p-2">
+        <img class="md:w-[200px]" src="images/walli_logo.png" />
+        <h1 class="text-2xl text-white">Cadastrar Vendedor</h1>
+        <InputForm Id="name" Data="name" Placeholder="Digite o nome do franqueado">Nome</InputForm>
+        <InputForm Id="email" Data="email" Placeholder="Digite o nome do franqueado">Email</InputForm>
+        <InputForm Id="password" Data="password" Placeholder="Digite o nome do franqueado">Senha</InputForm>
+        <InputForm Id="repeat-password" Data="repeatPassword" Placeholder="Digite o nome do franqueado">Repetir Senha</InputForm>
+        <InputForm Id="cpf-cpnj" Data="indentification" Placeholder="Digite o nome do franqueado">CPF/CNPJ</InputForm>
+        <InputForm Id="cep" Data="cep" Placeholder="Digite o nome do franqueado">CEP</InputForm>
+        <InputForm Id="state" Data="state" Placeholder="Digite o nome do franqueado">Estado</InputForm>
+        <InputForm Id="country" Data="country" Placeholder="Digite o nome do franqueado">País</InputForm>
+        <InputForm Id="addres" Data="addres" Placeholder="Digite o nome do franqueado">Endereço</InputForm>
+        <InputForm Id="number" Data="number" Placeholder="Digite o nome do franqueado">Nº</InputForm>
+
+        <div class="w-[60%] my-3">
+            @if (!cadastrando)
+            {
+                <ButtonStyled OnClick="CadastrarCliente">
+                    Cadastrar Cliente
+                </ButtonStyled>
+            }
+            else
+            {
+                <ButtonStyled Color="bg-green-700" BgColorHover="bg-green-700">
+                    <div class="h-[30px]">
+                        <Loading />
+                    </div>
+                </ButtonStyled>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    bool cadastrando = false;
+
+    InputData name = new();
+    InputData email = new();
+    InputData password = new();
+    InputData repeatPassword = new();
+    InputData indentification = new();
+    InputData cep = new();
+    InputData state = new();
+    InputData country = new();
+    InputData addres = new();
+    InputData number = new();
+
+    string messageError = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var loggedRole = await localStorage.Get("loggedRole");
+        if (loggedRole != "walli_seller")
+        {
+            await navManager.NavigateBack();
+            return;
+        }
+    }
+
+    private async Task CadastrarCliente()
+    {
+        if (cadastrando)
+            return;
+
+        cadastrando = true;
+        StateHasChanged();
+
+        await OnValidate();
+        cadastrando = false;
+    }
+
+    private async Task OnValidate()
+    {
+        var user = new
+        {
+            email = email.Value,
+            password = password.Value,
+            name = name.Value,
+            indentification = indentification.Value,
+            address = new
+            {
+                cep = cep.Value,
+                country = country.Value,
+                addressNumber = number.Value,
+                address = addres.Value
+            }
+        };
+
+        var res = await api.Post(api.walliSeller.addClient, JsonSerializer.Serialize(user), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            await localStorage.SetCacheInSession("clientIndex", "");
+            await navManager.NavigateBack();
+            return;
+        }
+
+        Console.WriteLine(await res?.Content.ReadAsStringAsync());
+
+        messageError = "Houve algum erro durante o envio dos dados por favor os verifique :)";
+        StateHasChanged();
+    }
+}

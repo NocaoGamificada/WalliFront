@@ -1,0 +1,99 @@
+﻿@inject NavigationStacker navManager;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+<div class="flex w-full pt-2 flex-col gap-3 items-center md:items-center">
+    <div class="w-full rounded-3xl px-3 py-4 flex flex-row items-center justify-center bg-[rgba(22,22,22,255)] md:max-w-[600px]">
+        <div class="w-[40%] flex flex-col items-center justify-center md:w-auto md:flex-1">
+            <h1 class="text-white text-center font-bold">Buscas Realizadas</h1>
+            <h2 class="text-green-400">800</h2>
+        </div>
+        <div class="h-[80px] w-[1.5px] bg-zinc-700 mx-1" />
+        <DropDownDashboard @ref="dropDown" OnChangeSelected="OnChangeSelected" Data="dropdownData" />
+    </div>
+
+    @if (homeData != null)
+    {
+        <div class="flex h-fit flex-col md:flex-row md:w-[90%] mt-3 py-2">
+            <div class="flex flex-col gap-2 w-full md:w-[45%]">
+                <LabelRounded Value="@homeData.TotalFranqueds.ToString()">Total de Franqueados</LabelRounded>
+                <LabelRounded Value="@homeData.TotalSellers.ToString()">Total de Vendedores</LabelRounded>
+                <LabelRounded Value="@homeData.TotalClients.ToString()">Total de Clientes</LabelRounded>
+                <LabelRounded Value="@homeData.TotalMarks.ToString()">Total de Marcas</LabelRounded>
+            </div>
+            <div class="w-full flex justify-center items-center md:flex-1 flex-col gap-5">
+                <BoxPercent />
+                <BoxPercent />
+            </div>
+        </div>
+    }
+    else if (LoadingHomeData)
+    {
+        <div class="w-full mt-5 flex justify-center">
+            <Loading />
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Action<DropdownData>? OnChangeDropDown { get; set; }
+
+    public DropdownData Selected { get => dropDown.Current; }
+
+    private DropdownData[] dropdownData = new DropdownData[]
+    {
+        new ()
+        {
+            Label = "Marcas",
+            Value = "marks"
+        },
+        new()
+        {
+            Label = "Fraqueados",
+            Value = "franqueds"
+        },
+        new()
+        {
+            Label = "Vendedores",
+            Value = "sellers"
+        },
+        new()
+        {
+            Label = "Clientes",
+            Value = "clients"
+        }
+    };
+
+    DropDownDashboard? dropDown;
+
+    ManagerHomeData? homeData;
+    bool LoadingHomeData = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var json = await localStorage.GetInSession("managerDataIndex");
+        if (!string.IsNullOrEmpty(json))
+        {
+            homeData = JsonSerializer.Deserialize<ManagerHomeData>(json);
+            return;
+        }
+
+        homeData = await api.GetJson<ManagerHomeData>(api.walliManager.getHomeDate, await api.GetLoginHeader());
+        await localStorage.SetCacheInSession("managerDataIndex", JsonSerializer.Serialize(homeData));
+        LoadingHomeData = false;
+    }
+
+    async Task ViewMark(ClientMark mark)
+    {
+        await localStorage.SetCacheInSession("cachedMark", JsonSerializer.Serialize(mark));
+        navManager.NavigateTo("/viewMark", true);
+    }
+
+    void OnChangeSelected()
+    {
+        OnChangeDropDown?.Invoke(dropDown.Current);
+    }
+
+    void CreateNewMark() => navManager.NavigateTo("/novamarca", true);
+}

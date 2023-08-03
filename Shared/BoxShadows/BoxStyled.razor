@@ -1,0 +1,8 @@
+﻿<div class="w-full md:w-[60%] flex flex-row justify-center items-center bg-zinc-700 rounded-3xl h-[200px] md:py-2">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

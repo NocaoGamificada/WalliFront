@@ -1,0 +1,40 @@
+﻿@page "/marca/denunciar/{SearchId}";
+@inject NavigationStacker navManager;
+<div class="w-full flex flex-col gap-1 items-center">
+    <MarkseHeader>
+        <ButtonCustom>Nova Marca</ButtonCustom>
+    </MarkseHeader>
+    <BackButton />
+    <div class="w-[80%] flex flex-col gap-4 mt-3">
+        <ButtonStyled OnClick=@(async () => NavDenuncing(0))>Fazer denuncia na plataforma</ButtonStyled>
+        <ButtonStyled OnClick=@(async () => NavDenuncing(1))>Fazer notificação Extrajudicial</ButtonStyled>
+        <ButtonStyled OnClick=@(async () => NavDenuncing(2))>Fazer uma ação judicial</ButtonStyled>
+        <ButtonStyled>Fale com nossos especialistas</ButtonStyled>
+
+        <div class="w-full my-3 flex flex-col gap-4" >
+            <div class="w-full flex flex-col">
+                <h1 class="text-xl text-white font-bold">O que é Denúncia na plataforma?</h1>
+                <p class="text-white">Escolha essa opção se</p>
+            </div>
+            <div class="w-full flex flex-col">
+                <h1 class="text-xl text-white font-bold">O que é uma notificação extra judicial?</h1>
+                <p class="text-white">Escolha essa opção se</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string SearchId { get; set; }
+
+    private async Task NavDenuncing(int Id)
+    {
+        await navManager.NavigateTo("/tomarMedida/"+Id+"/"+SearchId);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+}

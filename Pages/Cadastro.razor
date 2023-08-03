@@ -1,0 +1,99 @@
+﻿@page "/cadastro";
+@layout NoAuthLayout;
+@using System.Text.Json;
+@inject NavigationManager navManager;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+<div class="flex flex-col h-screen w-screen items-center justify-center p-2 text-zinc-50 gap-1 overflow-x-hidden">
+    <div class="h-[16%] mb-0 w-full items-center justify-center flex">
+        <img src="images/walli_logo.png" class="w-full h-full object-contain" />
+    </div>
+    <div class="flex w-full py-1 items-center justify-center">
+        <h1>Faça seu cadastro</h1>
+    </div>
+    <div class="flex flex-col gap-2 w-full">
+        <InputForm Data="nameInput" Id="name" Placeholder="Digite seu nome" Type="text">Nome</InputForm>
+        <InputForm Data="emailInput" Id="email" Placeholder="Digite seu email" Type="email">Email</InputForm>
+        <InputForm Data="passwordInput" Id="password" Placeholder="Digite sua senha" Type="password">Senha</InputForm>
+        <InputForm Data="nameInput" Id="repeat-password" Placeholder="Repita sua senha" Type="password">Repetir senha</InputForm>
+    </div>
+    <div class="w-full p-3">
+        @{
+            if (!isRequesting)
+            {
+                <button @onclick=Register class="bg-green-500 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                    Registre se
+                </button>
+            }
+            else
+            {
+                <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                    <img style="width: 28px;" src="images/loading-circle.svg" />
+                </button>
+            }
+        }
+
+    </div>
+    <div class="w-full flex items-end flex-col">
+        <h1 @onclick=@(() => navManager.NavigateTo("/login"))>Ja possui conta?</h1>
+    </div>
+    <div>
+        @messageError
+    </div>
+</div>
+
+@code{
+    InputData emailInput = new();
+    InputData passwordInput = new();
+    InputData repeatPasswordInput = new();
+    InputData nameInput = new();
+
+    bool isRequesting = false;
+    string messageError = "";
+
+
+    private async Task Register()
+    {
+        if (passwordInput.Value.Contains(" "))
+        {
+            messageError = "Senha não pode conter espaços!";
+            StateHasChanged();
+            return;
+        }
+
+        if (passwordInput.Value.Contains("="))
+        {
+            messageError = "Senha não pode conter \"=\"";
+            StateHasChanged();
+            return;
+        }
+
+        isRequesting = true;
+        StateHasChanged();
+        var user = new User
+        {
+            Email = emailInput.Value,
+            Name = nameInput.Value,
+            Password = passwordInput.Value
+        };
+
+        var res = await api.Post(api.account.register, JsonSerializer.Serialize(user), await api.GetLoginHeader());
+
+        if (res != null)
+        {
+            if (res.IsSuccessStatusCode)
+            {
+                user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
+                await localStorage.Set("email", user.Email);
+                await localStorage.Set("password", user.Password);
+                await localStorage.Set("roles", JsonSerializer.Serialize(user.Roles));
+                await localStorage.StartAuthSession();
+                navManager.NavigateTo("/index");
+            }
+        }
+
+        isRequesting = false;
+        StateHasChanged();
+    }
+}

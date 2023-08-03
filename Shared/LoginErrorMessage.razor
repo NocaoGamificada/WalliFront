@@ -1,0 +1,17 @@
+﻿@inject LocalStorage localStorage;
+@inject NavigationManager navManager;
+
+<div class="w-full h-screen flex flex-col justify-center items-center">
+    <h1 class="text-zinc-200 text-2xl">Algo deu errado durante sua authenticação :(</h1>
+    <ButtonStyled Color="white">Tentar novamente</ButtonStyled>
+    <ButtonStyled Color="red">Refazer o login</ButtonStyled>
+</div>
+
+@code {
+    public async Task LogOut()
+    {
+        await localStorage.Set("email", "");
+        await localStorage.Set("password", "");
+        navManager.NavigateTo("/login");
+    }
+}

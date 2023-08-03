@@ -1,0 +1,92 @@
+﻿@page "/novaMarca/novaMarca";
+
+@inject IJSRuntime js;
+@inject NavigationStacker navManager;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+<div class="flex flex-col w-full h-full flex-1 gap-0.5 pb-6 bg-zinc-900 overflow-y-auto">
+    <MarkseHeader>
+        <ButtonCustom>@HeaderButtonText</ButtonCustom>
+    </MarkseHeader>
+    <BackButton />
+
+    <div class="w-full flex flex-col justify-center items-center">
+        <div class="w-full h-fit md:w-[60%]">
+            <div class="w-full h-fit flex flex-col gap-1 justify-center items-center">
+                <img class="w-[80%] max-h-[70px] object-contain" src="images/walli_logo.png" />
+                <h1 class="text-zinc-100 text-[4vw]">Adicione uma nova marca ao sistema</h1>
+            </div>
+
+            <div class="flex flex-col gap-3 w-full">
+                <InputForm Id="bradName" Data="brandNameInput">Nome da marca</InputForm>
+                <InputTerms @ref=terms ListTerms="Terms" />
+            </div>
+
+            <div class="mt-auto-1.5 flex flex-col justify-center items-center w-full gap-0">
+                <h1 class="text-2xl font-bold text-white">Valor Total: <span class="text-green-500">XXX</span></h1>
+                <div class="w-[70%]">
+                    <InputForm Data="descontInput" Id="descont" Placeholder="Digite um cupom de desconto" Type="text" />
+                </div>
+            </div>
+
+            <div class="w-full flex flex-1 items-center justify-center">
+                <div class="w-[70%]">
+                    <ButtonStyled OnClick="ContinueToPayment">Continuar para pagamento</ButtonStyled>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    InputData brandNameInput = new();
+    InputData termInput = new();
+    InputData descontInput = new();
+
+    private InputTerms terms;
+    private List<string> Terms = new();
+
+    private string HeaderButtonText = "Nova Marca";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var loggedRole = await localStorage.Get("loggedRole");
+        if (loggedRole == "walli_client")
+        {
+            HeaderButtonText = "Nova Marca";
+        }
+        else if (loggedRole == "master")
+        {
+            HeaderButtonText = "ADM";
+        }
+    }
+
+    public async void ContinueToPayment()
+    {
+        Terms = terms.ListTerms;
+        var findTerms = Terms.Select(t => new { term = t }).ToList();
+        var data = new
+        {
+            brandName = brandNameInput.Value,
+            findTerms = findTerms,
+            ignoreUrls = new dynamic[0],
+            dayOfWeek = 1,
+        };
+
+        var json = JsonSerializer.Serialize(data);
+        var res = await api.Post(api.walliClient.addSearch, json, await api.GetLoginHeader());
+        var response = await res.Content.ReadAsStringAsync();
+        if (res != null)
+        {
+            if (res.IsSuccessStatusCode)
+            {
+                navManager.NavigateTo("/index", registerPage: true);
+            }
+            else
+            {
+                await js.InvokeVoidAsync("window.alert", await res.Content.ReadAsStringAsync());
+            }
+        }
+    }
+}

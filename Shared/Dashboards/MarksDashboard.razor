@@ -1,0 +1,66 @@
+﻿@inject NavigationStacker navManager;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+<div class="flex w-full pt-2 flex-col gap-3 items-center">
+    <div class="w-full flex justify-center">
+       <ButtonStyled OnClick="Go" CustomWidth="70%" Color="text-zinc-900">Inicie uma nova marca</ButtonStyled>
+    </div>
+    <div class="w-full md:w-[50%] rounded-3xl px-3 py-5 flex flex-row justify-center bg-[rgba(22,22,22,255)]">
+        <div class="w-[40%] flex flex-col items-center justify-center gap-2">
+            <h1 class="text-white text-center font-bold">Buscas Realizadas</h1>
+            <h2 class="text-green-400">800</h2>
+        </div>
+    </div>
+    
+    @if (clientMarks != null)
+    {
+        <div style="margin-top: 2px;" class="flex w-full sm:flex sm:flex-row sm:justify-center">
+            @foreach (var mark in clientMarks)
+            {
+                var _mark = mark;
+                <div style="cursor: pointer;" class="w-full md:w-[50%] py-2 pl-1 text-green-600 text-2xl flex flex-row px-2 justify-between">
+                    <span @onclick=@(async () => await ViewMark(_mark)) class="hover:text-green-400 hover:font-bold">
+                        @mark.BrandName
+                    </span>
+
+                    <ButtonMarkOptions Mark="_mark"/>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code{
+    private ClientMark[] clientMarks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var cached = await localStorage.GetInSession("cachedIndexMarks");
+        if (!string.IsNullOrEmpty(cached))
+        {
+            clientMarks = JsonSerializer.Deserialize<ClientMark[]>(cached);
+            return;
+        }
+
+        var res = await api.Get(api.walliClient.getMarks, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            clientMarks = JsonSerializer.Deserialize<ClientMark[]>(json);
+            await localStorage.SetInSession("cachedIndexMarks", json);
+        }
+    }
+
+    async Task ViewMark(ClientMark mark)
+    {
+        await localStorage.SetCacheInSession("cachedMark", JsonSerializer.Serialize(mark));
+        await navManager.NavigateTo("/viewMark", true);
+    }
+
+    async Task Go()
+    {
+        await navManager.NavigateTo("/novamarca", true);
+    }
+}

@@ -1,0 +1,107 @@
+﻿@inherits LayoutComponentBase
+@inject LocalStorage localStorage;
+@inject Api api;
+@inject NavigationManager navManager;
+
+@if(!isLoaded){
+    <div class="w-full h-screen flex items-center justify-center text-zinc-100">
+        Authenticando...
+    </div>
+}
+else if (haveCredentials)
+{
+    <div class="w-full h-screen flex flex-col items-center justify-center text-zinc-100 gap-2">
+        <img style="width: 64px;" src="images/botao-x.png"/>
+        
+        <h1 class="text-white">
+            @if (!string.IsNullOrEmpty(messageError))
+            {
+                @messageError
+            }else{
+                @("Houve algum erro durante a solicitação :(")
+            }
+        </h1>
+        <div class="w-1/3 flex flex-col gap-3 px-2 py-5 gap-3">
+            <ButtonStyled OnClick="TryAgain">Tentar novamente</ButtonStyled>
+            <ButtonStyled OnClick="Exit" Color="bg-red-400" BgColorHover="bg-red-600">Sair da conta</ButtonStyled>
+        </div>
+    </div>
+}else{
+    <div class="w-full h-full">
+        @Body
+    </div>
+}
+
+@code{
+    bool isLoaded = false;
+    bool haveCredentials = false;
+    string messageError = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var email = await localStorage.Get("email");
+        var password = await localStorage.Get("password");
+        haveCredentials = !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password);
+        if (!haveCredentials)
+        {
+            isLoaded = true;
+            StateHasChanged();
+            return;
+        }
+
+        await CheckAuth();
+    }
+
+    async Task CheckAuth()
+    {
+        var res = await api.Get(api.account.checkLogin, await api.GetLoginHeader());
+
+        if (res != null)
+        {
+            if (res.IsSuccessStatusCode)
+            {
+                var user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
+                await localStorage.SetInSession("name", user.Name);
+                await localStorage.StartAuthSession();
+                navManager.NavigateTo("/index");
+                return;
+            }else if(res.StatusCode == System.Net.HttpStatusCode.InternalServerError){
+                messageError = "Opa parece que aconeceu algum erro inesperado da nossa parte!";
+            }
+            else
+            {
+                try
+                {
+                    var messageError = JsonSerializer.Deserialize<ErrorMessage>(await res.Content.ReadAsStringAsync());
+                    if (messageError != null)
+                    {
+                        if (string.IsNullOrEmpty(messageError.MessageError))
+                        {
+                            this.messageError = messageError.MessageError;
+                        }
+                    }
+                }
+                catch (Exception) { }
+            }
+        }
+
+        isLoaded = true;
+        StateHasChanged();
+    }
+
+    async Task TryAgain()
+    {
+        messageError = "";
+        isLoaded = false;
+        StateHasChanged();
+
+        await CheckAuth();
+    }
+
+    async Task Exit()
+    {
+        await localStorage.ClearSession();
+        await localStorage.Clear();
+        navManager.NavigateTo("/login");
+    }
+}

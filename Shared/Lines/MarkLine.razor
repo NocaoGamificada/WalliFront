@@ -1,0 +1,12 @@
+﻿<tr>
+    <td align="center" class="text-white p-3">@ClientName</td>
+    <td align="center" class="text-white p-3">@BrandName</td>
+</tr>
+
+@code {
+    [Parameter]
+    public RenderFragment ClientName { get; set; }
+
+    [Parameter]
+    public RenderFragment BrandName { get; set; }
+}

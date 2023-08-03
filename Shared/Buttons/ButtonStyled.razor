@@ -1,0 +1,28 @@
+﻿<button style="width: @CustomWidth;" class=@_Class @onclick=OnClick>
+    @ChildContent
+</button>
+
+@code {
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Color { get; set; }
+
+    [Parameter]
+    public string BgColorHover { get; set; } = "bg-green-600";
+
+    [Parameter]
+    public string BgColor { get; set; } = "bg-green-400"; 
+
+    [Parameter]
+    public string CustomWidth { get; set; } = "";
+
+    [Parameter]
+    public string FontSize { get; set; }
+
+    string _Class { get => $"flex items-center justify-center {Color} {BgColor} hover:{BgColorHover} font-semibold py-2 px-3 w-full rounded focus:outline-none focus:shadow-outline {FontSize}"; }
+}

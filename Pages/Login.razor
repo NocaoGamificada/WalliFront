@@ -1,0 +1,93 @@
+﻿@page "/login";
+@layout NoAuthLayout;
+@using System.Text.Json;
+@inject NavigationManager navManager;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+<div class="flex flex-col h-screen max-w-screen items-center justify-center p-2 bg-zinc-900 text-zinc-100 gap-1">
+    <div class="h-[16%] mb-0 w-full items-center justify-center flex">
+        <img src="images/walli_logo.png" class="w-full h-full object-contain"/>
+    </div>
+    <div class="flex w-full py-1 items-center justify-center">
+        <h1>Faça seu login</h1>
+    </div>
+    <div class="flex flex-col gap-2 w-full">
+        <InputForm Data=emailField Id="email" Placeholder="Digite seu email" Type="email">Email</InputForm>
+        <InputForm Data=passwordField Id="senha" Placeholder="Digite sua senha" Type="password">Senha</InputForm>
+    </div>
+    <div class="w-full p-3">
+        @if (!isRequesting)
+        {
+            <button @onclick=LogIn class="bg-green-300 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                Log In
+            </button>
+        }
+        else
+        {
+            <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                <img style="width: 28px;" src="images/loading-circle.svg" />
+            </button>
+        }
+    </div>
+    <div class="w-full flex items-end flex-col">
+        <h1><a style="transition: color 200ms ease-in-out;" class="decoration-0 text-zinc-200 hover:text-white hover:font-bold" href="/esqueceuSenha">Esqueceu sua senha?</a></h1>
+        <h1><a style="transition: color 200ms ease-in-out;" class="decoration-0 text-cyan-600 hover:text-cyan-400 hover:font-bold" href="/cadastro">Faça seu cadastro agora</a></h1>
+    </div>
+    <div>
+        @messageError
+    </div>
+</div>
+
+@code {
+    bool isRequesting = false;
+    string messageError = "";
+
+    public InputData emailField { get; set; } = new();
+    public InputData passwordField { get; set; } = new();
+
+    private async Task LogIn()
+    {
+        isRequesting = true;
+        StateHasChanged();
+
+        var route = api.account.login + $"?email={emailField.Value}&password={passwordField.Value}";
+        var res = await api.Get(route);
+        if (res != null)
+        {
+            if (res.IsSuccessStatusCode)
+            {
+                var user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
+                var role = user.Roles.FirstOrDefault() ?? "client";
+
+                await localStorage.Set("email", user.Email);
+                await localStorage.Set("password", user.Password);
+                await localStorage.Set("roles", JsonSerializer.Serialize(user.Roles));
+                await localStorage.Set("loggedRole", role);
+
+                await localStorage.StartAuthSession();
+                navManager.NavigateTo("/index");
+            }
+        }
+        else
+        {
+            try
+            {
+                var messageError = JsonSerializer.Deserialize<ErrorMessage>(await res.Content.ReadAsStringAsync());
+                if (messageError != null)
+                    if (messageError.MessageError?.Trim() != "")
+                    {
+                        this.messageError = messageError.MessageError;
+                    }
+                    else
+                    {
+                        this.messageError = "Algo deu errado durante a solicitação por favor tente novamente!";
+                    }
+            }
+            catch(Exception){}
+        }
+
+        isRequesting = false;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,39 @@
+﻿<div class="w-full flex flex-col gap-2">
+    <InputForm Id="term" Data="termInput" KeyboardEvent="Keydown"  Placeholder="Degite um novo termo de pesquisa">Termo de pesquisa</InputForm>
+    @if (ListTerms.Count > 0)
+    {
+        <h1 class="text-2xl text-white font-bold">@ListTerms.Count/3</h1>
+        <div class="w-full flex flex-wrap flex-row gap-4 py-1 px-1">
+            @for (int i = 0; i < ListTerms.Count; i++)
+            {
+                <TermBox ExcludeAction="Exclude" Id="i" Term=@ListTerms[i] />
+            }
+        </div>
+    }
+</div>
+
+@code{
+    private InputData termInput = new();
+
+    [Parameter]
+    public List<string> ListTerms { get; set; }
+
+    private void Exclude(int id)
+    {
+        if (id < ListTerms.Count && id >= 0)
+        {
+            ListTerms.RemoveAt(id);
+            StateHasChanged();
+        }
+    }
+
+    private void Keydown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && termInput.Value.Trim().Length > 1 && ListTerms.Count < 3)
+        {
+            ListTerms.Add(termInput.Value);
+            termInput.Value = "";
+            StateHasChanged();
+        }
+    }
+}

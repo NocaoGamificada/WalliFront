@@ -1,0 +1,92 @@
+﻿@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (loading)
+{
+    <div class="w-full flex flex-1 justify-center items-center">
+        <h1 class="text-3xl text-white">Loading....</h1>
+    </div>
+}
+else
+{
+    <div class="w-full h-fit flex flex-col gap-3">
+        <h1 class="font-bold text-2xl text-white">Resultados das buscas: </h1>
+        <div class="w-full flex flex-col items-center gap-3 md:flex-row md:flex-wrap md:items-start md:justify-center">
+            <PieChart Data=dataViolations Id="violation_canvas">VIOLAÇÕES DETECTADAS</PieChart>
+            <PieChart Data=dataGood Id="engage_ok">ENGAJAMENTO POSITIVO</PieChart>
+            <PieChart Data=dataBad Id="engage_bad">ENGAJAMENTO NEGATIVO</PieChart>
+        </div>
+    </div>
+}
+
+@code {
+    bool loading = true;
+
+    [Parameter]
+    public int ClientId { get; set; }
+
+    GraphicData graphicData;
+    PieData dataViolations = new();
+    PieData dataGood = new();
+    PieData dataBad = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await api.Get(api.walliSellerUp.getHomeGraphics+$"?userId={ClientId}", await api.GetLoginHeader());
+
+        if (res != null)
+        {
+            if (res.IsSuccessStatusCode)
+            {
+                graphicData = JsonSerializer.Deserialize<GraphicData>(await res.Content.ReadAsStringAsync());
+                SetupGraphic();
+                loading = false;
+                await localStorage.SetCacheInSession("chachedGraphicsIndex", JsonSerializer.Serialize(graphicData));
+            }
+        }
+    }
+
+    void SetupGraphic()
+    {
+        var violations = new Dictionary<string, int>();
+        var goods = new Dictionary<string, int>();
+        var bads = new Dictionary<string, int>();
+
+        if (graphicData.Google.Violations > 0)
+            violations.Add("Google", graphicData.Google.Violations);
+        if (graphicData.Google.Good > 0)
+            goods.Add("Google", graphicData.Google.Good);
+        if (graphicData.Google.Bad > 0)
+            bads.Add("Google", graphicData.Google.Bad);
+
+        if (graphicData.Twitter.Violations > 0)
+            violations.Add("Twitter", graphicData.Twitter.Violations);
+        if (graphicData.Twitter.Good > 0)
+            goods.Add("Twitter", graphicData.Twitter.Good);
+        if (graphicData.Twitter.Bad > 0)
+            bads.Add("Twitter", graphicData.Twitter.Bad);
+
+        if (graphicData.Facebook.Violations > 0)
+            violations.Add("Facebook", graphicData.Facebook.Violations);
+        if (graphicData.Facebook.Good > 0)
+            goods.Add("Facebook", graphicData.Facebook.Good);
+        if (graphicData.Facebook.Bad > 0)
+            bads.Add("Facebook", graphicData.Facebook.Bad);
+
+        if (graphicData.Koo.Violations > 0)
+            violations.Add("Koo", graphicData.Koo.Violations);
+        if (graphicData.Koo.Good > 0)
+            goods.Add("Koo", graphicData.Koo.Good);
+        if (graphicData.Koo.Bad > 0)
+            bads.Add("Koo", graphicData.Koo.Bad);
+
+        dataBad.data = bads.Values.ToArray();
+        dataBad.labels = bads.Keys.ToArray();
+
+        dataGood.data = goods.Values.ToArray();
+        dataGood.labels = goods.Keys.ToArray();
+
+        dataViolations.data = violations.Values.ToArray();
+        dataViolations.labels = violations.Keys.ToArray();
+    }
+}

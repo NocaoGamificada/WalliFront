@@ -1,0 +1,119 @@
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Diagnostics.CodeAnalysis;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (!loading)
+{
+    <div class="flex flex-col w-full gap-1">
+        <table>
+            <tr>
+                <td align="center" class="text-white">Nome do cliente</td>
+                <td align="center" class="text-white">Nome da Marca</td>
+            </tr>
+            @if (marksResults?.Marks != null)
+            {
+                foreach (var mark in marksResults.Marks)
+                {
+                    <MarkLine>
+                        <ClientName>@(mark.Client.Name)</ClientName>
+                        <BrandName>@(mark.BrandName)</BrandName>
+                    </MarkLine>
+                }
+            }
+            
+        </table>
+        <Pagination @ref=pagination CountPages="marksResults.CountPages" UpdateResults="(() => UpdateResults(GetUrl()))" />
+    </div>
+}
+else
+{
+    <div class="w-full flex items-center justify-center">
+        <Loading />
+    </div>
+}
+
+@code {
+    private Pagination pagination;
+    private int currentPage { get => pagination == null ? 1 : pagination.currentPage; }
+    private bool loading = true;
+    private MarkResults marksResults;
+    string loggedRole = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var cached = await localStorage.GetInSession("marksIndex");
+        if (!string.IsNullOrEmpty(cached))
+        {
+            marksResults = JsonSerializer.Deserialize<MarkResults>(cached);
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        loggedRole = await localStorage.Get("loggedRole");
+        await UpdateResults(GetUrl());
+        Console.WriteLine(marksResults == null);
+    }
+
+    string GetUrl()
+    {
+        var url = "";
+
+        if (loggedRole == "walli_client")
+            url = api.walliClient.getMarkResult;
+        else if (loggedRole == "walli_franqued")
+            url = api.walliFranqued.getMarks;
+        else if (loggedRole == "walli_seller")
+            url = api.walliSeller.getMarks;
+        else if (loggedRole == "master")
+            url = api.walliManager.getMarks;
+
+        return url;
+    }
+
+    async Task UpdateResults(string url)
+    {
+        loading = true;
+        StateHasChanged();
+
+        var res = await api.Get(url + $"?page={currentPage}", await api.GetLoginHeader());
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            Console.WriteLine(json);
+            Console.WriteLine(url);
+            if (string.IsNullOrEmpty(json))
+            {
+                marksResults = new()
+                {
+                    CountPages = 1,
+                    Marks = Array.Empty<ClientMark>()
+                };
+            }
+            else
+            {
+                marksResults = JsonSerializer.Deserialize<MarkResults>(json);
+                await localStorage.SetCacheInSession("marksIndex", json);
+            }
+        }
+
+        Console.WriteLine();
+
+        loading = false;
+        StateHasChanged();
+    }
+
+    public class MarkResults
+    {
+        [JsonPropertyName("marks")]
+        public ClientMark[] Marks { get; set; } = default!;
+
+        [JsonPropertyName("countPages")]
+        public int CountPages { get; set; } = default!;
+    }
+}

@@ -1,0 +1,54 @@
+﻿@inject IJSRuntime js;
+@inject NavigationStacker navManager;
+
+<div class="w-full max-h flex flex-col ">
+    @if(Result.Type != "twitter" && Result.Type != "facebook")
+    {
+        <h1 class="text-zinc-200 text-xl">Caso o preview não carrege por favor entre no link</h1>
+        <iframe class="sm:w-[95%] md:w-[70%]" src="@Result.Link" width="400" height="500" />
+    }
+    else if (Result.Type == "twitter")
+    {
+        <blockquote class="twitter-tweet">
+            <a href="@Result.Link"></a>
+        </blockquote>
+    }else if (Result.Type == "facebook")
+    {
+        <div class="fb-post" data-href="@Result.Link" data-width="500" data-show-text="true">
+            <blockquote cite="@Result.Link" class="fb-xfbml-parse-ignore">
+               
+            </blockquote>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public SearchResult Result { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        if (Result.Type == "twitter")
+        {
+            await js.InvokeVoidAsync("loadJs", "https://platform.twitter.com/widgets.js", "twitter_script");
+            navManager.AddExitedListener(async () =>
+            {
+                await js.InvokeVoidAsync("unloadJs", "twitter_script");
+                await js.InvokeVoidAsync("unloadAllIFrames");
+            });
+        }
+        else if (Result.Type == "facebook")
+        {
+            
+            await js.InvokeVoidAsync("loadJs", "https://connect.facebook.net/pt_BR/sdk.js#xfbml=1&version=v17.0&appId=166726995955654&autoLogAppEvents=1", "facebook_script");
+            navManager.AddExitedListener(async () =>
+                {
+                    await js.InvokeVoidAsync("unloadJs", "facebook_script");
+                    await js.InvokeVoidAsync("unloadAllIFrames");
+                });
+        }
+    }
+}

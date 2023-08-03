@@ -1,0 +1,114 @@
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Diagnostics.CodeAnalysis;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (!loading)
+{
+    <div class="flex flex-col w-full gap-1 justify-center items-center">
+        <table class="md:w-[70%]">
+            <tr>
+                <td align="center" class="text-white">Nome</td>
+                <td align="center" class="text-white">Email</td>
+                <td align="center" class="text-white">Status</td>
+            </tr>
+            @foreach (var user in clientResults.Clients)
+            {
+                <ClientLine Id="user.Id">
+                    <Name>@user.Name</Name>
+                    <Email>@user.Email</Email>
+                    <Status>@GetUserStatus(user)</Status>
+                </ClientLine>
+            }
+        </table>
+        <Pagination @ref=pagination CountPages="clientResults.CountPages" UpdateResults="(() => UpdateResults(GetUrl()))" />
+    </div>
+}
+else
+{
+    <div class="w-full flex items-center justify-center">
+        <Loading />
+    </div>
+}
+
+@code {
+    private Pagination pagination;
+    private int currentPage { get => pagination == null ? 1 : pagination.currentPage; }
+    private bool loading = true;
+    private ClientResults clientResults;
+
+    string loggedRole = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var cached = await localStorage.GetInSession("clientIndex");
+        if (!string.IsNullOrEmpty(cached))
+        {
+            clientResults = JsonSerializer.Deserialize<ClientResults>(cached);
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        loggedRole = await localStorage.Get("loggedRole");
+
+        await UpdateResults(GetUrl());
+    }
+
+    async Task UpdateResults(string url)
+    {
+        loading = true;
+        StateHasChanged();
+
+        var res = await api.Get(url + $"?page={currentPage}", await api.GetLoginHeader());
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(json))
+            {
+                clientResults = new()
+                {
+                    Clients = Array.Empty<User>(),
+                    CountPages = 1
+                };
+            }
+            else
+            {
+                clientResults = JsonSerializer.Deserialize<ClientResults>(json);
+                await localStorage.SetCacheInSession("clientIndex", json);
+            }
+        }
+
+        loading = false;
+        StateHasChanged();
+    }
+
+    string GetUrl()
+    {
+        var url = "";
+        if (loggedRole == "walli_franqued")
+            url = api.walliFranqued.getClients;
+        else if (loggedRole == "walli_seller")
+            url = api.walliSeller.getClients;
+        else if (loggedRole == "master")
+            url = api.walliManager.getClients;
+
+        return url;
+    }
+
+    public MarkupString GetUserStatus(User u)
+    {
+        if (!u.Status)
+        {
+            return new MarkupString("<span class=\"text-red-600\">Inativo</span>");
+        }
+        else
+        {
+            return new MarkupString("<span class=\"text-green-600\">Ativo</span>");
+        }
+    }
+}

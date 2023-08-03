@@ -1,0 +1,36 @@
+﻿<div class="w-full h-full bg-zinc-800 overflow-y-auto">
+    <MarkseHeader>
+        <ButtonCustom>ADM</ButtonCustom>
+    </MarkseHeader>
+    <div class="flex flex-col w-full p-4">
+        <SellerDashboard @ref="dashboard" OnChangeDropDown="OnChangeDropDown" />
+        @if (current?.Value == "marks")
+        {
+            <ListMarks />
+        }
+        else if (current?.Value == "clients")
+        {
+            <ListClients />
+        }
+    </div>
+</div>
+
+@code {
+    SellerDashboard dashboard;
+    private DropdownData current;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        current = dashboard.Selected;
+        StateHasChanged();
+    }
+
+    private void OnChangeDropDown(DropdownData dropdownData)
+    {
+        current = dropdownData;
+        StateHasChanged();
+    }
+}

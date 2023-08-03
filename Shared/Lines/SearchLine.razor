@@ -1,0 +1,57 @@
+﻿@inject NavigationStacker navManager;
+@inject LocalStorage localStorage;
+
+<tr @onclick=Click class="cursor-pointer hover:bg-zinc-500" style="border-bottom: 0.5px solid black; border-top: 0.5px solid black;  @BgColor() transition: background-color 200ms ease-in-out;">
+    <td width="32px" align="center"><div class="w-2.5 h-2.5 rounded-full @Color()" /></td>
+    <td align="center">@Result.Search.BrandName</td>
+    <td align="center">@Result.Type.ToUpper()</td>
+    <td align="center">@Violation()</td>
+    <td align="center">@Result.Date</td>
+</tr>
+
+@code {
+    [Parameter]
+    public SearchResult Result { get; set; }
+
+    [Parameter]
+    public bool NoChangeColor { get; set; }
+
+    bool isDanger = false;
+
+    bool HaveViolation()
+    {
+        isDanger = Result.Analysis.Emotion == "bad" || Result.Analysis.Temperature >= .5;
+        return isDanger;
+    }
+
+    string Violation()
+    {
+        if (HaveViolation())
+            return "S";
+
+        return "N";
+    }
+
+    string BgColor()
+    {
+        if (Result.Visualized == true && NoChangeColor == false)
+            return "background-color: #6D6D75;";
+
+        return "";
+    }
+
+    string Color()
+    {
+        isDanger = Result.Analysis.Emotion == "bad" || Result.Analysis.Temperature >= .5;
+        if (isDanger)
+            return "bg-red-500";
+
+        return "bg-green-400";
+    }
+
+    async Task Click()
+    {
+        await localStorage.SetCacheInSession("searchResultChache", JsonSerializer.Serialize(Result));
+        await navManager.NavigateTo("/viewSearch", true);
+    }
+}

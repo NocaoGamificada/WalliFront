@@ -1,0 +1,12 @@
+﻿<tr>
+    <td class="text-white">@Name</td>
+    <td class="text-white">@Email</td>
+</tr>
+
+@code {
+    [Parameter]
+    public RenderFragment Name { get; set; }
+
+    [Parameter]
+    public RenderFragment Email { get; set; }
+}

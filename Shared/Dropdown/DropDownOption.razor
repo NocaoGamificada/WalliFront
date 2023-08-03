@@ -1,0 +1,15 @@
+﻿<div @onclick=@(() =>
+     OnSelected(Index)) class="w-full py-3 flex justify-center hover:bg-zinc-500 text-white text-sm cursor-pointer">
+    @Label
+</div>
+
+@code {
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public Action<int> OnSelected { get; set; }
+
+    [Parameter]
+    public string Label { get; set; }
+}

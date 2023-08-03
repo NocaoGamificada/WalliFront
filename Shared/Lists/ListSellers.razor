@@ -1,0 +1,115 @@
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Diagnostics.CodeAnalysis;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (!loading)
+{
+    <div class="flex flex-col w-full gap-1 justify-center items-center">
+        @if (sellerResults?.Sellers != null)
+        {
+            <table class="md:w-[70%]">
+                <tr>
+                    <td align="center" class="text-white">Nome</td>
+                    <td align="center" class="text-white">Email</td>
+                </tr>
+
+                @foreach (var user in sellerResults.Sellers)
+                {
+                    <ClientLine ShowStatus=false>
+                        <Name>@user.Name</Name>
+                        <Email>@user.Email</Email>
+                        <Status></Status>
+                    </ClientLine>
+                }
+            </table>
+        }
+        else
+        {
+            <Loading  />
+        }
+        <Pagination @ref=pagination CountPages="sellerResults?.CountPages ?? 1" UpdateResults="UpdateResults" />
+    </div>
+}
+else
+{
+    <div class="w-full flex items-center justify-center">
+        <Loading />
+    </div>
+}
+
+@code {
+    private Pagination pagination;
+    private int currentPage { get => pagination == null ? 1 : pagination.currentPage; }
+    private bool loading = true;
+    private SellerResults sellerResults;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var cached = await localStorage.GetInSession("sellersIndex");
+        if (!string.IsNullOrEmpty(cached))
+        {
+            sellerResults = JsonSerializer.Deserialize<SellerResults>(cached);
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        await UpdateResults();
+    }
+
+    async Task UpdateResults()
+    {
+        loading = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.walliFranqued.getSellers + $"?page={currentPage}", await api.GetLoginHeader());
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(json))
+            {
+                sellerResults = new()
+                {
+                    CountPages = 1,
+                    Sellers = Array.Empty<User>()
+                };
+            }
+            else
+            {
+                sellerResults = JsonSerializer.Deserialize<SellerResults>(json);
+                await localStorage.SetCacheInSession("sellersIndex", json);
+            }
+        }
+
+        Console.WriteLine(await res.Content.ReadAsStringAsync());
+
+        loading = false;
+        StateHasChanged();
+    }
+
+    public MarkupString GetUserStatus(User u)
+    {
+        if (!u.Status)
+        {
+            return new MarkupString("<span class=\"text-red-600\">Inativo</span>");
+        }
+        else
+        {
+            return new MarkupString("<span class=\"text-green-600\">Ativo</span>");
+        }
+    }
+
+    public class SellerResults
+    {
+        [JsonPropertyName("sellers")]
+        public User[] Sellers { get; set; } = default!;
+
+        [JsonPropertyName("countPages")]
+        public int CountPages { get; set; }
+    }
+}

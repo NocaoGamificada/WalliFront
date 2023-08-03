@@ -1,0 +1,68 @@
+﻿@inject LocalStorage localStorage;
+@inject NavigationStacker navigationStacker;
+@inject Api api;
+@page "/view/client/{Id:int}";
+
+@if (sucessfull)
+{
+    <div class="w-full h-full bg-zinc-800 overflow-y-auto">
+        <MarkseHeader>
+            <ButtonCustom>Adicionar</ButtonCustom>
+        </MarkseHeader>
+        <BackButton />
+        <div class="w-full py-4 flex justify-center items-center text-white text-2xl font-bold">@user.Name</div>
+        <div class="flex flex-col w-full p-4">
+            <SpecifyClientDashboard ClientId="Id"/>
+        </div>
+
+        <ListSpecifyResults ClientId="Id" />
+    </div>
+}
+else
+{
+    <div class="w-full h-full flex items-center justify-center">
+        <Loading />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    string loggedRole = "";
+    bool sucessfull = false;
+
+    private User user { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string loggedRole = await localStorage.Get("loggedRole");
+
+            /*if (!CanAcess())
+            {
+            await navigationStacker.NavigateBack();
+            return;
+        }*/
+
+        var res = await api.Get(api.walliSellerUp.getClient+$"?userId={Id}", await api.GetLoginHeader());
+        sucessfull = res?.IsSuccessStatusCode ?? false;
+
+        if (sucessfull)
+        {
+            user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
+        }
+    }
+
+    string GetUrl()
+    {
+        if (loggedRole == "walli_franqued")
+            return "";
+        else if (loggedRole == "walli_seller")
+            return "";
+        else if (loggedRole == "master")
+            return "";
+
+        return "";
+    }
+
+    bool CanAcess() => loggedRole == "walli_franqued" || loggedRole == "walli_seller" || loggedRole == "master";
+}

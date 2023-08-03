@@ -1,0 +1,20 @@
+﻿<div class="flex flex-row w-full px-2 py-3 text-white font-bold text-2xl max-w-full items-center bg-[#161616] rounded-2xl">
+    @ChildContent: @if (IsLink)
+    {
+        <a style="margin-left: 4px; max-width: 100%;" href="@Value" target="_blank"><span class="text-xl md:text-2xl text-blue-400 hover:decoration-1">[Abrir no navegador]</span></a>
+    }else
+    {
+        <span style="margin-left: 4px; max-width: 100%;" class="text-lg md:text-2xl"> @Value</span>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public bool IsLink { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+}

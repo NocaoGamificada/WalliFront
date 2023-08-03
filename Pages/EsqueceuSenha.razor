@@ -1,0 +1,158 @@
+﻿@page "/esqueceuSenha";
+@layout NoAuthLayout;
+@inject Api api;
+
+<div class="w-full h-screen flex flex-col justify-center">
+    <h1 style="margin-bottom: 15px;" class="text-2xl text-white px-2">Recuperar senha</h1>
+    @if (!enviouCodigo)
+    {
+        <div class="w-full flex justify-center flex-col">
+            <InputForm Data="emailInput" Placeholder="Digite o seu email" Type="email" Id="email">Email</InputForm>
+            <div class="w-1/2">
+                @if (!enviandoCodigo)
+                {
+                    <button @onclick=EnviarRequisicao class="bg-green-300 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                        Enviar codigo!
+                    </button>
+                }
+                else
+                {
+                    <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                        <img style="width: 28px;" src="images/loading-circle.svg" />
+                    </button>
+                }
+            </div>
+        </div>
+    }
+    else if(!validouCodigo)
+    {
+        <div class="w-full flex justify-center flex-col">
+            <InputForm Data="codeInput" Placeholder="Digite o seu codigo" Type="text" Id="code">Codigo</InputForm>
+            <div class="w-1/2">
+                @if (!enviandoCodigo)
+                {
+                    <button @onclick=ValidCode class="bg-green-300 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                        Verificar codigo
+                    </button>
+                }
+                else
+                {
+                    <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                        <img style="width: 28px;" src="images/loading-circle.svg" />
+                    </button>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="w-full flex justify-center flex-col">
+            <InputForm Data="passwordData" Placeholder="Digite o sua nova senha" Type="password" Id="code">Senha</InputForm>
+            <InputForm Data="repeatPasswordData" Placeholder="Digite sua nova senha novamente" Type="password" Id="code">Repetir Senha</InputForm>
+
+            <div class="w-1/2">
+                @if (!enviandoCodigo)
+                {
+                    <button @onclick=ChangePassword class="bg-green-300 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                        Mudar Senha
+                    </button>
+                }
+                else
+                {
+                    <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                        <img style="width: 28px;" src="images/loading-circle.svg" />
+                    </button>
+                }
+            </div>
+        </div>
+    }
+
+    @if (messageError != "")
+    {
+        <div class="w-full py-3">
+            @messageError
+        </div>
+    }
+</div>
+
+@code{
+    private bool enviouCodigo = false;
+    private bool enviandoCodigo = false;
+
+    private bool validouCodigo = false;
+    private bool validandoCodigo = false;
+
+    private string messageError = string.Empty;
+
+    private InputData emailInput = new();
+    private InputData codeInput = new();
+
+    private InputData passwordData = new();
+    private InputData repeatPasswordData = new();
+
+    async Task EnviarRequisicao()
+    {
+        enviandoCodigo = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.account.resetPassword + $"?email={emailInput.Value}");
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            enviandoCodigo = false;
+            enviouCodigo = true;
+            messageError = "";
+            StateHasChanged();
+            return;
+        }
+
+        enviouCodigo = false;
+        enviandoCodigo = false;
+        messageError = "Houve algum erro por favor tente novamente!";
+        StateHasChanged();
+    }
+
+    async Task ValidCode()
+    {
+        validandoCodigo = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.account.validResetPasswordCode + $"?code={codeInput.Value}");
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            validouCodigo = true;
+            messageError = "";
+        }
+        else
+        {
+            messageError = "Codigo expirou ou invalido!";
+        }
+
+        validandoCodigo = false;
+        StateHasChanged();
+    }
+
+    async Task ChangePassword()
+    {
+        if (passwordData.Value.Contains(" ") || repeatPasswordData.Value.Contains(" "))
+        {
+            messageError = "Senha não pode conter espaços!";
+            StateHasChanged();
+            return;
+        }
+
+        if (passwordData.Value != repeatPasswordData.Value)
+        {
+            messageError = "Senhas são divergentes!";
+            StateHasChanged();
+            return;
+        }
+
+        var res = await api.Get(api.account.changePassword + $"?code={codeInput.Value}&password={passwordData.Value}");
+        /*if (res?.IsSuccessStatusCode)
+        {
+            validouCodigo
+        }*/
+    }
+}

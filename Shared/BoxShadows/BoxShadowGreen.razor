@@ -1,0 +1,14 @@
+﻿<div @onclick=OnClick class="w-[@Size] h-[@Size] bg-zinc-700 border-green-500 border-1 rounded-3xl flex justify-center items-center text-white font-bold cursor-pointer">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public string Size { get; set; } = "auto";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

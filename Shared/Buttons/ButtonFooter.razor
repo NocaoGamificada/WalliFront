@@ -1,0 +1,12 @@
+﻿<div style=" transition: background-color 200ms ease-in-out;" @onclick=Click class="cursor-pointer flex flex-1 items-center justify-center max-h-[2.75rem] hover:bg-zinc-700">
+    <img style="max-height: 2.75rem;" class="w-full h-full object-contain" src=@Src />
+</div>
+
+
+@code{
+    [Parameter]
+    public string Src { get; set; }
+
+    [Parameter]
+    public EventCallback Click { get; set; }
+}

@@ -1,0 +1,19 @@
+﻿<div class="w-9 h-9">
+    @if (Show)
+    {
+        <button @onclick=Click class="rounded-full w-full h-full p-2.5 flex justify-center items-center bg-zinc-600 hover:bg-zinc-500">
+            <img class="w-full h-full object-contain" src="@Src" />
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Src { get; set; }
+
+    [Parameter]
+    public EventCallback Click { get; set; }
+
+    [Parameter]
+    public bool Show { get; set; }
+}

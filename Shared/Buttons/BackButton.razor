@@ -1,0 +1,5 @@
+﻿@inject NavigationStacker navManager;
+
+<div class="w-full py-2 flex items-center pl-3">
+    <button @onclick=@(() => navManager.NavigateBack()) class="rounded-2xl bg-red-500 text-zinc-800 border-0 outline-0 px-5 py-1">Voltar</button>
+</div>

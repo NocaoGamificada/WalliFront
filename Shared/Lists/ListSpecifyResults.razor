@@ -1,0 +1,101 @@
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Diagnostics.CodeAnalysis;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+
+<div class="flex flex-col w-full gap-1 items-center">
+    @if (!loadingResults)
+    {
+        <div class="w-full h-fit flex flex-col gap-1 items-center">
+            @if (searchResults == null)
+            {
+                <h1>Houve algo de errado por favor tente novamente alguns instantes</h1>
+            }
+            else
+            {
+                @if (searchResults.Results.Length > 0)
+                {
+                    <table class="text-white md:w-[70%]">
+                        <thead>
+                            <tr>
+                                <td width="32px"></td>
+                                <td width="150px" align="center">Marca</td>
+                                <td width="150px" align="center">Origem</td>
+                                <td width="150px" align="center">Violação</td>
+                                <td width="100px" align="center">Data</td>
+                            </tr>
+                        </thead>
+                        <tbody class="pt-4">
+                            @foreach (var result in searchResults.Results)
+                            {
+                                <SearchLine NoChangeColor="true" Result="result" />
+                            }
+                        </tbody>
+                    </table>
+                }
+            }
+        </div>
+    }
+    else
+    {
+        <div class="w-full h-full flex flex-col justify-center items-center">
+            <Loading />
+        </div>
+    }
+
+    <Pagination @ref=pagination CountPages="searchResults?.CountPages ?? 1" UpdateResults="UpdateResults" />
+</div>
+
+
+
+@code {
+    [Parameter]
+    public int ClientId { get; set; }
+
+    private bool loadingResults = true;
+    private SearchResults? searchResults;
+    private int currentPage { get => pagination?.currentPage ?? 1; }
+
+    private Pagination pagination;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateResults();
+        loadingResults = false;
+        StateHasChanged();
+    }
+
+    async Task UpdateResults()
+    {
+        var res = await api.Get(api.walliSellerUp.getResults + $"?userId={ClientId}&page={currentPage}");
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(json))
+            {
+                searchResults = new()
+                {
+                    CountPages = 0,
+                    Results = Array.Empty<SearchResult>()
+                };
+            }
+            else
+            {
+                searchResults = JsonSerializer.Deserialize<SearchResults>(json);
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    public class SearchResults
+    {
+        [JsonPropertyName("searchResults")]
+        public SearchResult[] Results { get; set; }
+
+        [JsonPropertyName("countPages")]
+        public int CountPages { get; set; }
+    }
+}

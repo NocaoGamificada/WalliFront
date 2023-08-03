@@ -1,0 +1,66 @@
+﻿@inject NavigationStacker navManager;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (mark != null)
+{
+    <div class="flex w-full pt-2 flex-col gap-3">
+        <BackButton />
+        <div class="w-full flex flex-col justify-center items-center">
+            <h1 class="text-white text-3xl">@mark.BrandName</h1>
+        </div>
+        <div class="w-full rounded-3xl px-3 py-4 flex flex-row items-center justify-between">
+            <div class="w-[40%] flex flex-col items-center justify-center">
+                <h1 class="text-white text-center font-bold">Total de buscas</h1>
+                <h2 class="text-green-400">800</h2>
+            </div>
+            <div class="h-[80px] w-[1.5px] bg-zinc-700 mx-1" />
+            <div class="flex w-[40%] items-center justify-center flex-col gap-2">
+                <h1 class="text-white">Filtro de tempo</h1>
+                <h2 class="text-green-400">Todo Periodo</h2>
+            </div>
+        </div>
+        <div class="w-full py-3 flex flex-row justify-between ">
+            @if (analysis != null)
+            {
+                <div class="flex flex-col justify-center items-center flex-1">
+                    <h1 class="text-2xl text-green-400">XXX</h1>
+                    <p class="text-sm text-white">Total</p>
+                </div>
+                <div class="flex flex-col justify-center items-center flex-1">
+                    <h1 class="text-2xl text-green-400">XXX</h1>
+                    <p class="text-sm text-white">Considerados</p>
+                </div>
+                <div class="flex flex-col justify-center items-center flex-1">
+                    <h1 class="text-2xl text-green-400">XXX</h1>
+                    <p class="text-sm text-white">Desconsiderados</p>
+                </div>
+            }
+            else
+            {
+                <h1 class="text-white text-2xl font-bold">Houve algum problemas ao carregar as analises por favor tente novamente</h1>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private ClientMark mark;
+    private MarkAnalysis analysis;
+
+    protected override async Task OnInitializedAsync()
+    {
+        mark = JsonSerializer.Deserialize<ClientMark>(await localStorage.GetInSession("cachedMark"));
+        var res = await api.Get(api.walliClient.getMarkAnalysis + $"?markId={mark.Id}", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            analysis = JsonSerializer.Deserialize<MarkAnalysis>(await res.Content.ReadAsStringAsync());
+        }
+    }
+
+    async Task Go()
+    {
+        await navManager.NavigateTo("/novamarca", true);
+    }
+}

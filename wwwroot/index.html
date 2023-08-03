@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>WalliFront</title>
+    <base href="/" />
+    <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="manifest.json" rel="manifest" />
+    <link href="css/loadingBar.css" rel="stylesheet" />
+    <script src="js/tailwindcss.js"></script>
+</head>
+
+<body class="bg-zinc-700">
+    <div id="app" class="min-h-full">
+        <div class="w-screen min-h-screen flex items-center justify-center flex-col gap-3 bg-zinc-800">
+            <img class="w-[200px] h-[200px] object-contain" src="images/walli_logo.png" />
+            <h1 class="text-white">Carregando o walli para você :)</h1>
+            <img class="w-[100px] h-[100px] object-contain" src="images/loading-circle.svg" />
+        </div>
+    </div>
+
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.js"></script>
+    <script>
+        function loadJs(sourceUrl, id) {
+            if (sourceUrl.Length == 0) {
+                console.error("Invalid source URL");
+                return;
+            }
+
+            var tag = document.createElement('script');
+            tag.src = sourceUrl;
+            tag.type = "text/javascript";
+            tag.charset = "utf-8";
+            tag.async = true;
+            tag.id = id;
+            tag.crossOrigin = "anonymous";
+            tag.onload = function () {
+                console.log("Script loaded successfully");
+            }
+
+            tag.onerror = function () {
+                console.error("Failed to load script");
+            }
+
+            document.body.appendChild(tag);
+        }
+
+        function unloadJs(id) {
+            try {
+                var tag = document.querySelector("#" + id);
+                document.body.removeChild(tag);
+            } catch { }
+        }
+
+        function unloadAllIFrames() {
+            try {
+                var tag = document.querySelectorAll("iframe");
+                tag.forEach((v) => {
+                    v.parentElement.removeChild(v);
+                })
+            } catch { }
+        }
+
+        function createChart(options) {
+            var element = document.getElementById(options.canvasId);
+            var ctx = element.getContext("2d");
+
+            var myCircle = new Chart(ctx, {
+                type: options.chartType,
+                data: options.chartData,
+                options: {
+                    ...options.options,
+                    plugins: {
+                        legend: {
+                            display: false, // Isso desabilita a legenda
+                        },
+                        tooltip: {
+                            titleFont: {
+                                size: 12
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            footerFont: {
+                                size: 10 // there is no footer by default
+                            }
+                        }
+                    }
+                },
+                showTooltips: true,
+                onAnimationComplete: window[options.onAnimationComplete],
+                animation: {
+                    duration: 2000,
+                    easing: 'easeInOutQuad'
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

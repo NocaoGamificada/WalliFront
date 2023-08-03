@@ -1,0 +1,103 @@
+﻿@if (CountPages > 1)
+{
+    <div style="margin: 10px 0" class="w-full flex flex-row gap-3 justify-center">
+        <ButtonRoundedImage Show=@(currentPage > 1) Click=@PreviousPage Src="images/left-arrow.png" />
+        <div class="flex flex-row gap-1">
+            @for (var i = initialPage; i <= lastPage; i++)
+            {
+                var index = i;
+                var fontBold = index == currentPage ? "text-2xl" : "text-xl";
+                <button class="w-fit h-3 text-white px-1 @fontBold" @onclick=@(async () => {
+                if (currentPage == index)
+                return;
+                currentPage = index;
+                await UpdateResults();
+                })>
+                    @i
+                </button>
+            }
+        </div>
+        <ButtonRoundedImage Show=@(currentPage < CountPages) Click=@NextPage Src="images/right-arrow.png" />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int CountPages { get; set; }
+
+    [Parameter]
+    public UpdateResultsAsync UpdateResults { get; set; }
+
+    public int currentPage = 1;
+    private int initialPage
+    {
+        get
+        {
+            if (currentPage > CountPages - 6)
+            {
+                var page = CountPages - 6;
+                if (page < 1)
+                    page = 1;
+
+                return page;
+            }
+
+            if (currentPage > 5)
+            {
+                return currentPage - 4;
+            }
+
+            return 1;
+        }
+    }
+
+    private int lastPage
+    {
+        get
+        {
+            if (currentPage > CountPages - 6)
+            {
+                var page = CountPages;
+
+                return page;
+            }
+
+            if (currentPage > 5)
+            {
+                var page = currentPage + 2;
+                if (page >= CountPages)
+                    page = CountPages;
+
+                return page;
+            }
+
+            return 9;
+        }
+    }
+
+    async Task NextPage()
+    {
+        currentPage++;
+        if (currentPage > CountPages)
+        {
+            currentPage = CountPages;
+            return;
+        }
+
+        await UpdateResults();
+    }
+
+    async Task PreviousPage()
+    {
+        currentPage--;
+        if (currentPage <= 0)
+        {
+            currentPage = 1;
+            return;
+        }
+
+        await UpdateResults();
+    }
+
+    public delegate Task UpdateResultsAsync();
+}

@@ -1,0 +1,78 @@
+﻿@inject LocalStorage localStorage;
+@inject Api api;
+
+<BoxStyled>
+    <div class="flex flex-col w-[30%] justify-between h-full">
+        <h1 class="text-white mt-2 md:text-sm text-center">% de vendas</h1>
+        <div class="flex-1 flex justify-center items-center">
+            <h2 class="text-green-600 text-lg font-bold">@percentage%</h2>
+        </div>
+    </div>
+    <div class="flex flex-col flex-1 justify-between h-full">
+        <h1 class="text-white mt-2 md:text-sm text-center">Comparados com</h1>
+        <div class="flex-1 flex justify-center items-center">
+            <div class="w-[80%]">
+                <DropDown @ref=drop Data="dropdownData" Id="dropId" OnChangeSelected="(async () => {
+                    StateHasChanged();
+                    await UpdateFeatured(GetUrl());
+                })">
+                    <CustomLabel />
+                </DropDown>
+            </div>
+        </div>
+    </div>
+</BoxStyled>
+
+@code {
+    private double percentage;
+    private DropDown drop;
+    private DropdownData[] dropdownData = new DropdownData[]
+    {
+        new()
+        {
+            Label = "Ultimo Mês",
+            Value = "lastMonth"
+        },
+        new()
+        {
+            Label = "Ultimos 3 Mêses",
+            Value = "lastThreeMonth"
+        }
+    };
+    private string loggedRole = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        loggedRole = await localStorage.Get("loggedRole");
+
+        await UpdateFeatured(GetUrl());
+    }
+
+    private async Task UpdateFeatured(string? url)
+    {
+        if (url == null)
+            return;
+
+        var res = await api.Get(url + $"?filter={drop.Current.Value}", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            percentage = Convert.ToDouble(await res.Content.ReadAsStringAsync());
+        }
+    }
+
+    private string? GetUrl()
+    {
+        if (loggedRole == "walli_franqued")
+            return api.walliFranqued.getFatured;
+        else if (loggedRole == "master")
+            return api.walliManager.getFatured;
+        else if (loggedRole == "walli_seller")
+            return api.walliSeller.getFatured;
+
+        return null;
+    }
+}

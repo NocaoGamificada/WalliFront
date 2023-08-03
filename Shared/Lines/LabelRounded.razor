@@ -1,0 +1,14 @@
+﻿<div class="w-full h-fit flex flex-col gap-2">
+    <h1 class="mb-2 text-white text-xl font-bold">@ChildContent</h1>
+    <div class="w-full rounded-md bg-zinc-700 pl-4 py-2 text-xl text-green-600">
+        @Value
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

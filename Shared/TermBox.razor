@@ -1,0 +1,17 @@
+﻿<div class="px-2 md:px-3 py-1 flex flex-row bg-zinc-600 justify-center items-center gap-2">
+    <h1 class="text-white text-xl">@Term</h1>
+    <img @onclick=ClickExclude class="cursor-pointer w-5 h-5" src="images/icones/close.svg" />
+</div>
+
+@code {
+    [Parameter]
+    public string Term { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public Action<int> ExcludeAction { get; set; }
+
+    private void ClickExclude() => ExcludeAction?.Invoke(Id);
+}

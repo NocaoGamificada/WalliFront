@@ -1,0 +1,59 @@
+﻿@page "/tomarMedida/{CurrentIndexString}/{SearchId}"
+@inject NavigationStacker navManager;
+<div class="w-full h-full overflow-y-auto flex flex-col gap-2 items-center">
+    <MarkseHeader>
+        <ButtonCustom>Nova Marca</ButtonCustom>
+    </MarkseHeader>
+    <BackButton />
+    <img class="w-[70%]" src="images/walli_logo.png" />
+    <div class="w-[70%]">
+        <DropDown @ref=drop Data="dropdownData" Id="drop" OnChangeSelected=StateHasChanged><CustomLabel>Tome uma medida:</CustomLabel></DropDown>
+    </div>
+
+    @if (drop != null)
+    {
+        <h1 class="text-3xl text-white text-center">Valor total: <span class="text-green-500 font-bold">@Value</span></h1>
+    }
+</div>
+
+@code{
+    [Parameter]
+    public string CurrentIndexString { get; set; }
+
+    [Parameter]
+    public string SearchId { get; set; }
+
+    DropDown drop;
+
+    DropdownData[] dropdownData = new DropdownData[]
+    {
+        new(){ Value = "platform", Label = "Denuncia na plataforma" },
+        new(){ Value = "notification", Label = "Notificação Extra judicial" },
+        new(){ Value = "action", Label = "Ação Judicial" },
+    };
+
+    string Value { get {
+            if (drop.Current.Value == "platform")
+                return "200 R$";
+            else if (drop.Current.Value == "notification")
+                return "500 R$";
+            else
+                return "100 R$";
+        } }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        if (int.TryParse(CurrentIndexString, out int value))
+        {
+            drop.SelectedIndex = value;
+            StateHasChanged();
+        }
+        else
+        {
+            await navManager.NavigateBack();
+        }
+    }
+}

@@ -1,0 +1,90 @@
+﻿@inject IJSRuntime js;
+
+<div class="w-full md:max-w-[500px] h-fit flex justify-center items-center px-5 py-3 bg-[rgba(22,22,22,255)] rounded-3xl flex flex-col">
+    <h1 class="text-zinc-100 text-sm md:text-xl w-full font-bold flex items-center justify-center pb-2">@ChildContent</h1>
+    
+    <div class="w-full sm:[w-500px] flex flex-row p-2 items-center justify-center">
+        @if (Data.data.Length > 0)
+        {
+            <div class="w-[60%] flex justify-center items-center">
+                <canvas style="width: 100%;" id=@Id height="600" width="600" />
+            </div>
+            <div class="flex flex-col flex-1 gap-2 justify-center items-center">
+                @for (int i = 0; i < Colors.Length; i++)
+                {
+                    <ChartLine Color=@Colors[i]>@Data.labels[i]</ChartLine>
+                }
+            </div>
+        }
+        else
+        {
+            <h1 class="text-white">Não foi encontrado nada!</h1>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public PieData Data { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private string[] Colors = new string[]
+    {
+        "#51EAEA",
+        "#FCDDB0",
+        "#FF9D76",
+        "#FB3569",
+        "#82CD47"
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Data.data.Length > 0)
+        {
+            var config = CreatePieConfig(Id, Data);
+            await js.InvokeVoidAsync("createChart", config);
+        }
+    }
+
+    object CreatePieConfig(string id, PieData data)
+    {
+        return new
+        {
+            canvasId = id,
+            chartType = "pie",
+            chartData = new
+            {
+                labels = data.labels,
+                datasets = new object[]
+                {
+                    new
+                    {
+                        fillColor = "white",
+                        strokeColor = "red",
+                        display = false,
+                        backgroundColor = new string[]{ "#51EAEA", "#FCDDB0",
+                        "#FF9D76", "#FB3569", "#82CD47" },
+                        data = data.data
+                    }
+                }
+            },
+            options = new
+            {
+                title = new
+                {
+                    display = false
+                },
+                responsive = true,
+                layout = new
+                {
+                    padding = 0
+                }
+            }
+        };
+    }
+}

@@ -1,0 +1,70 @@
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Diagnostics.CodeAnalysis;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (!loading)
+{
+    <div class="flex flex-col w-full gap-1">
+        <table >
+            <tr>
+                <th class="text-white">Nome</th>
+                <th class="text-white">Email</th>
+            </tr>
+            @foreach (var f in franquedResults.Franqueds)
+            {
+                <FranquedLine>
+                    <Name>@f.Name</Name>
+                    <Email>@f.Email</Email>
+                </FranquedLine>
+            }
+        </table>
+        <Pagination @ref=pagination CountPages="franquedResults.CountPages" UpdateResults="UpdateResults" />
+    </div>
+}else{
+    <div class="w-full flex items-center justify-center">
+        <Loading />
+    </div>
+}
+
+@code{
+    private Pagination pagination;
+    private int currentPage { get => pagination == null ? 1 : pagination.currentPage; }
+    private bool loading = true;
+    private FranquedResults franquedResults;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        var cached = await localStorage.GetInSession("franquedsIndex");
+        if (!string.IsNullOrEmpty(cached))
+        {
+            franquedResults = JsonSerializer.Deserialize<FranquedResults>(cached);
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        await UpdateResults();
+    }
+
+    async Task UpdateResults()
+    {
+        loading = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.walliManager.getFranqueds + $"?page={currentPage}", await api.GetLoginHeader());
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            franquedResults = JsonSerializer.Deserialize<FranquedResults>(json);
+            await localStorage.SetCacheInSession("franquedsIndex", json);
+        }
+
+        loading = false;
+        StateHasChanged();
+    }
+}

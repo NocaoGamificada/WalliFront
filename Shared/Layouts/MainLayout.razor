@@ -1,0 +1,49 @@
+﻿@inherits LayoutComponentBase
+@inject Api api;
+@inject LocalStorage localStorage;
+@inject NavigationStacker navManager;
+
+@if (isLogged)
+{
+    <div class="w-full h-screen flex flex-col">
+        <div class="flex flex-1 px-0 pb-[2.75rem] overflow-y-auto">
+            @Body
+        </div>
+        <div class="flex w-full h-[2.75rem] bg-zinc-600 fixed left-0 bottom-0 flex-row justify-center items-center">
+            <ButtonFooter Click=@(() => Nav("/index")) Src="images/icones/graphic.png" />
+            <LineVertical />
+            <ButtonFooter Click=@(() => Nav("/notifications")) Src="images/icones/notify.png" />
+            <LineVertical />
+            <ButtonFooter Click=@(() => Nav("/novamarca")) Src="images/icones/add.png" />
+            <LineVertical />
+            <ButtonFooter Click=@(() => Nav("/perfil")) Src="images/icones/perfil.png" />
+            <LineVertical />
+            <ButtonFooter Click=Logout Src="images/icones/logout.png" />
+        </div>
+    </div>
+}
+
+@code{
+    bool isLogged = false;
+    protected override async Task OnInitializedAsync()
+    {
+        isLogged = await localStorage.CheckAuthSession();
+        if (isLogged == false)
+        {
+            await navManager.NavigateTo("/", false);
+        }
+    }
+
+    private async Task Nav(string route)
+    {
+        await navManager.NavigateTo(route, true);
+    }
+
+    private async Task Logout()
+    {
+        await navManager.ClearPreviousPages();
+        await localStorage.ClearSession();
+        await localStorage.Clear();
+        await navManager.NavigateTo("/login");
+    }
+}

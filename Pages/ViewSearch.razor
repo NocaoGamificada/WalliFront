@@ -1,0 +1,90 @@
+﻿@page "/viewSearch"
+@inject Api api;
+@inject NavigationStacker navManager;
+@inject IJSRuntime js;
+@inject LocalStorage localStorage;
+
+@if (loading) {
+    <div class="w-full h-full flex justify-center items-center">
+        Loading...
+    </div>
+}
+else
+{
+    <div class="flex flex-col gap-2 w-full h-full px-2">
+        <BackButton></BackButton>
+        <ContentLineView Value=@Termo>Termo</ContentLineView>
+        <ContentLineView IsLink=true Value=@Link>Link</ContentLineView>
+        <PreviewResult Result="result"></PreviewResult>
+        <ContentLineView Value=@Date>Data</ContentLineView>
+        
+        @if (result?.Status != null)
+        {
+            <div class="w-full mt-4">
+                <div class="bg-green-400 text-2xl px-1 py-2 rounded-3xl">
+                    Status: @result.Status
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="w-full mt-4 flex justify-center items-center">
+                <div class="md:w-[60%] ms:w-[70%]">
+                    @if (!denunciando)
+                    {
+                        <ButtonStyled OnClick=@(() => navManager.NavigateTo("/marca/denunciar/"+result.Id))>Denunciar Agora</ButtonStyled>
+                    }
+                    else
+                    {
+                        <ButtonStyled><Loading /></ButtonStyled>
+                    }
+                    
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int SearchId { get; set; }
+    private string? Date { get => $"{result?.Date.Day}/{(result?.Date.Month < 10 ? $"0{result?.Date.Month}" : result?.Date.Month)}/{result?.Date.Year}"; }
+    bool loading = true;
+
+    SearchResult? result = null;
+
+    string? Termo { get => result?.Term; }
+    string? Link { get => result?.Link; }
+
+    bool denunciando = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var _resultCached = await localStorage.GetInSession("searchResultChache");
+        if (string.IsNullOrEmpty(_resultCached))
+        {
+            await navManager.NavigateBack();
+            return;
+        }
+
+        result = JsonSerializer.Deserialize<SearchResult>(_resultCached);
+        if (result == null)
+        {
+            await navManager.NavigateBack();
+            return;
+        }
+
+        if (!result.Visualized)
+        {
+            var res = await api.Put(api.walliClient.setVisualizedResult + $"?resultId={result.Id}", "", await api.GetLoginHeader());
+
+            if (res?.IsSuccessStatusCode == true)
+            {
+                await localStorage.StartAuthSession();
+            }
+        }
+
+        loading = false;
+        StateHasChanged();
+    }
+}

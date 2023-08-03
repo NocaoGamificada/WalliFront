@@ -1,0 +1,29 @@
+﻿@using System.Diagnostics.CodeAnalysis;
+@inject NavigationStacker navigationManager;
+
+<tr @onclick=@(() => navigationManager.NavigateTo($"/view/client/{Id}", true))>
+    <td align="center" class="text-white">@Name</td>
+    <td align="center" class="text-white">@Email</td>
+    
+    @if (ShowStatus == true)
+    {
+        <td align="center" class="text-white">@Status</td>
+    }
+</tr>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public RenderFragment Name { get; set; }
+
+    [Parameter]
+    public RenderFragment Email { get; set; }
+
+    [Parameter]
+    public RenderFragment Status { get; set; }
+
+    [Parameter]
+    public bool ShowStatus { get; set; } = true;
+}
