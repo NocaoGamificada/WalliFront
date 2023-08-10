@@ -6,12 +6,14 @@
 
 @if (!loading)
 {
-    <div class="flex flex-col w-full gap-1">
-        <table>
-            <tr>
-                <td align="center" class="text-white">Nome do cliente</td>
-                <td align="center" class="text-white">Nome da Marca</td>
-            </tr>
+    <ListDefaultTable>
+        <PaginationContent><Pagination @ref=pagination CountPages="marksResults.CountPages" UpdateResults="(() => UpdateResults(GetUrl()))" /></PaginationContent>
+        <HeaderContent>
+            <td align="center" class="text-white">Nome do cliente</td>
+            <td align="center" class="text-white">Nome da Marca</td>
+        </HeaderContent>
+
+        <ChildContent>
             @if (marksResults?.Marks != null)
             {
                 foreach (var mark in marksResults.Marks)
@@ -22,10 +24,8 @@
                     </MarkLine>
                 }
             }
-            
-        </table>
-        <Pagination @ref=pagination CountPages="marksResults.CountPages" UpdateResults="(() => UpdateResults(GetUrl()))" />
-    </div>
+        </ChildContent>
+    </ListDefaultTable>
 }
 else
 {

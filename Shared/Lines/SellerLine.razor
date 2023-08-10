@@ -1,0 +1,18 @@
+﻿@using System.Diagnostics.CodeAnalysis;
+@inject NavigationStacker navigationManager;
+
+<LineTable OnClick=@(() => navigationManager.NavigateTo($"/view/seller/{Id}", true))>
+    <td style="max-width: 200px;" align="center" class="text-white">@Name</td>
+    <td style="max-width: 200px;" align="center" class="text-white">@Email</td>
+</LineTable>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public RenderFragment Name { get; set; }
+
+    [Parameter]
+    public RenderFragment Email { get; set; }
+}

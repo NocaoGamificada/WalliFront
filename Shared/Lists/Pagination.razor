@@ -42,9 +42,9 @@
                 return page;
             }
 
-            if (currentPage > 5)
+            if (currentPage > 4)
             {
-                return currentPage - 4;
+                return currentPage - 3;
             }
 
             return 1;
@@ -64,7 +64,7 @@
 
             if (currentPage > 5)
             {
-                var page = currentPage + 2;
+                var page = currentPage + 3;
                 if (page >= CountPages)
                     page = CountPages;
 
@@ -73,6 +73,12 @@
 
             return 9;
         }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Console.WriteLine(currentPage);
+        base.OnAfterRender(firstRender);
     }
 
     async Task NextPage()

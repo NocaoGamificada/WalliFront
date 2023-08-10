@@ -1,0 +1,34 @@
+﻿<div class="w-full flex @GetLado() px-4">
+    @if (ChatMessage.HaveError)
+    {
+        <h1 @onclick=@(() => OnReSend(ChatMessage)) class="text-lg">Reenviar</h1>
+    }
+    <div class="@GetBgColor() py-3 px-4 max-w-[70%] rounded-3xl @GetTextColor()">
+        @ChatMessage.Message
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ChatMessage ChatMessage { get; set; } = default!;
+
+    [Parameter]
+    public Teste OnReSend { get; set; }
+
+    string GetLado()
+    {
+        return ChatMessage.IsBotMessage ? "justify-start" : "justify-end";
+    }
+
+    string GetBgColor()
+    {
+        return ChatMessage.IsBotMessage ? "bg-zinc-400" : "bg-green-500";
+    }
+
+    string GetTextColor()
+    {
+        return ChatMessage.HaveError ? "text-red-600" : "text-zinc-700";
+    }
+
+    public delegate Task Teste(ChatMessage mess);
+}

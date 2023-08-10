@@ -1,13 +1,13 @@
 ﻿@inject NavigationStacker navManager;
 @inject LocalStorage localStorage;
 
-<tr @onclick=Click class="cursor-pointer hover:bg-zinc-500" style="border-bottom: 0.5px solid black; border-top: 0.5px solid black;  @BgColor() transition: background-color 200ms ease-in-out;">
+<LineTable OnClick=Click>
     <td width="32px" align="center"><div class="w-2.5 h-2.5 rounded-full @Color()" /></td>
-    <td align="center">@Result.Search.BrandName</td>
-    <td align="center">@Result.Type.ToUpper()</td>
-    <td align="center">@Violation()</td>
-    <td align="center">@Result.Date</td>
-</tr>
+    <td align="center" class="text-white">@Result.Search.BrandName</td>
+    <td align="center" class="text-white">@Result.Type.ToUpper()</td>
+    <td align="center" class="text-white">@Violation()</td>
+    <td align="center" class="text-white">@Result.Date</td>
+</LineTable>
 
 @code {
     [Parameter]

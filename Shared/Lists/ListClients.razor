@@ -6,13 +6,16 @@
 
 @if (!loading)
 {
-    <div class="flex flex-col w-full gap-1 justify-center items-center">
-        <table class="md:w-[70%]">
-            <tr>
-                <td align="center" class="text-white">Nome</td>
-                <td align="center" class="text-white">Email</td>
-                <td align="center" class="text-white">Status</td>
-            </tr>
+    <ListDefaultTable>
+        <HeaderContent>
+            <td align="center" class="text-white">Nome</td>
+            <td align="center" class="text-white">Email</td>
+            <td align="center" class="text-white">Status</td>
+        </HeaderContent>
+        <PaginationContent>
+            <Pagination @ref=pagination CountPages="clientResults.CountPages" UpdateResults="(() => UpdateResults(GetUrl()))" />
+        </PaginationContent>
+        <ChildContent>
             @foreach (var user in clientResults.Clients)
             {
                 <ClientLine Id="user.Id">
@@ -21,9 +24,8 @@
                     <Status>@GetUserStatus(user)</Status>
                 </ClientLine>
             }
-        </table>
-        <Pagination @ref=pagination CountPages="clientResults.CountPages" UpdateResults="(() => UpdateResults(GetUrl()))" />
-    </div>
+        </ChildContent>
+    </ListDefaultTable>
 }
 else
 {

@@ -13,6 +13,10 @@
       "url": "css\/bootstrap\/bootstrap.min.css.map"
     },
     {
+      "hash": "sha256-71O75rog6zo+OrrgExDwwl350nz9o9OlNKxFw6OkqgA=",
+      "url": "css\/box-animations.css"
+    },
+    {
       "hash": "sha256-VkuLmpCQLbp+PtvsPS6dfncopqeGSyee9Zrcj8sSGsA=",
       "url": "css\/loadingBar.css"
     },
@@ -85,6 +89,10 @@
       "url": "images\/icones\/add.png"
     },
     {
+      "hash": "sha256-laWaCwbRE352CO1S4ZjN3IBCtb9SDAzBLlHlNLm6FCU=",
+      "url": "images\/icones\/bot-icon.png"
+    },
+    {
       "hash": "sha256-oDrmKjKwbTCKy2yxFeapwFU+9ArFuKiBjCH30\/D57eA=",
       "url": "images\/icones\/close.svg"
     },
@@ -103,6 +111,10 @@
     {
       "hash": "sha256-q\/NoHwSF2w7J4UTBvw1bmN9VKDgN3cQFDyT+nl1jfm4=",
       "url": "images\/icones\/notify.png"
+    },
+    {
+      "hash": "sha256-W7IgTxujew4DRsa\/1pybL\/dNmuSjfiuBjj\/oMMjK3Nc=",
+      "url": "images\/icones\/paper-plane.png"
     },
     {
       "hash": "sha256-4AN+AwE39IJ6Brc13\/Edt9VKAi1sfixd5cZ3JaqJO5M=",
@@ -133,7 +145,7 @@
       "url": "images\/walli_logo.png"
     },
     {
-      "hash": "sha256-G1d7wkKk\/tnrV1Auqcwpu\/a5epkCu4Whce3cXzi5YIE=",
+      "hash": "sha256-T1ESpt3vQme4Szu1nSsLHXcQXfDOC1UClTK51Z9E\/so=",
       "url": "index.html"
     },
     {
@@ -945,11 +957,11 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-NChDTop6ceG5Z05KyKKZpuaeSQWUQ+pTQ1\/dTH7N+eI=",
+      "hash": "sha256-nHZPxO75cW5r0LSdI33syq4lkbuSp5WtSXCQmwS6SPM=",
       "url": "_framework\/WalliFront.dll"
     },
     {
-      "hash": "sha256-pWfO0MtmEB5wjl1h4Rt7VsQjCm+oIIQ1tXAoxPHNfgQ=",
+      "hash": "sha256-FIFu8kO6kbm+BEXwJMSNATQ4nUMGYEssQHILgWjXGZQ=",
       "url": "_framework\/WalliFront.pdb"
     },
     {
@@ -957,9 +969,9 @@
       "url": "_framework\/blazor.webassembly.js"
     },
     {
-      "hash": "sha256-Wr+AqEbAcx3Jx1leRagd4qYAnDmsgghT3NTNxhYDQH4=",
+      "hash": "sha256-U3rNn0FUevbuDkBjCpGVNH14WMzdtbl93rrSybFyeC0=",
       "url": "_framework\/blazor.boot.json"
     }
   ],
-  "version": "4mTmurMX"
+  "version": "FvC8kUTa"
 };

@@ -1,9 +1,41 @@
-﻿<button class="w-5 h-5 flex justify-center items-center relative">
-    <img class="w-full h-full" src="images/icones/menu-vertical.png" />
+﻿@inject Api api;
+
+<button class="w-5 h-5 flex justify-center items-center relative">
+    <img @onclick=@(() => collapse = !collapse) class="w-full h-full" src="images/icones/menu-vertical.png" />
+
+    <div style="left: -100px;" class="absolute t-0 h-fit flex flex-col bg-zinc-700">
+        <button style="transition: all 200ms ease-in-out" class="bg-red-800 hover:bg-red-500 text-black hover:text-white px-2 @Collpase()" @onclick="DeleteMark">Deletar</button>
+    </div>
 </button>
 
 @code {
-    private bool collapsed = true;
+    [Inject]
+    private IJSRuntime js { get; set; }
+
     [Parameter]
     public ClientMark Mark { get; set; }
+
+    [Parameter]
+    public Teste? OnDeleteAction { get; set; }
+
+    private bool collapse = true;
+
+    string Collpase() => collapse ? "hidden" : "";
+
+    private async Task DeleteMark()
+    {
+        var confirm = await js.InvokeAsync<bool>("confirm", "Você realmente deseja deletar esta marca? você perdera todoss os resultados obtidos até então!");
+
+        if (confirm)
+        {
+            var res = await api.Delete(api.walliClient.deleteMark + $"?markId={Mark.Id}", await api.GetLoginHeader());
+
+            if (res?.IsSuccessStatusCode == true)
+            {
+                await OnDeleteAction?.Invoke(Mark);
+            }
+        }
+    }
+
+    public delegate Task Teste(ClientMark mark);
 }

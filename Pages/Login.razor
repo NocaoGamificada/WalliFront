@@ -12,27 +12,29 @@
     <div class="flex w-full py-1 items-center justify-center">
         <h1>Faça seu login</h1>
     </div>
-    <div class="flex flex-col gap-2 w-full">
-        <InputForm Data=emailField Id="email" Placeholder="Digite seu email" Type="email">Email</InputForm>
-        <InputForm Data=passwordField Id="senha" Placeholder="Digite sua senha" Type="password">Senha</InputForm>
-    </div>
-    <div class="w-full p-3">
-        @if (!isRequesting)
-        {
-            <button @onclick=LogIn class="bg-green-300 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
-                Log In
-            </button>
-        }
-        else
-        {
-            <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
-                <img style="width: 28px;" src="images/loading-circle.svg" />
-            </button>
-        }
-    </div>
-    <div class="w-full flex items-end flex-col">
-        <h1><a style="transition: color 200ms ease-in-out;" class="decoration-0 text-zinc-200 hover:text-white hover:font-bold" href="/esqueceuSenha">Esqueceu sua senha?</a></h1>
-        <h1><a style="transition: color 200ms ease-in-out;" class="decoration-0 text-cyan-600 hover:text-cyan-400 hover:font-bold" href="/cadastro">Faça seu cadastro agora</a></h1>
+    <div class="w-[60%]">
+        <div class="flex flex-col gap-2 w-full">
+            <InputForm Data=emailField Id="email" Placeholder="Digite seu email" Type="email">Email</InputForm>
+            <InputForm Data=passwordField Id="senha" Placeholder="Digite sua senha" Type="password">Senha</InputForm>
+        </div>
+        <div class="w-full p-3">
+            @if (!isRequesting)
+            {
+                <button @onclick=LogIn class="bg-green-300 hover:bg-green-400 text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                    Log In
+                </button>
+            }
+            else
+            {
+                <button disabled class="flex items-center justify-center bg-green-700 pointer-events-none text-black font-semibold py-2 px-8 w-full rounded focus:outline-none focus:shadow-outline">
+                    <img style="width: 28px;" src="images/loading-circle.svg" />
+                </button>
+            }
+        </div>
+        <div class="w-full flex items-end flex-col">
+            <h1><a style="transition: color 200ms ease-in-out;" class="decoration-0 text-zinc-200 hover:text-white hover:font-bold" href="/esqueceuSenha">Esqueceu sua senha?</a></h1>
+            <h1><a style="transition: color 200ms ease-in-out;" class="decoration-0 text-cyan-600 hover:text-cyan-400 hover:font-bold" href="/cadastro">Faça seu cadastro agora</a></h1>
+        </div>
     </div>
     <div>
         @messageError

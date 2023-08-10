@@ -1,9 +1,12 @@
-﻿<tr>
-    <td align="center" class="text-white p-3">@ClientName</td>
-    <td align="center" class="text-white p-3">@BrandName</td>
-</tr>
+﻿<LineTable ShowLines=ShowLines>
+    <td class="text-white p-3">@ClientName</td>
+    <td class="text-white p-3">@BrandName</td>
+</LineTable>
 
 @code {
+    [Parameter]
+    public bool ShowLines { get; set; }
+
     [Parameter]
     public RenderFragment ClientName { get; set; }
 

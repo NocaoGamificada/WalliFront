@@ -11,7 +11,10 @@
 }
 else
 {
-    <div class="flex flex-col gap-2 w-full h-full px-2">
+    <div class="flex flex-col gap-2 w-full h-full bg-zinc-800 overflow-y-auto py-2">
+        <MarkseHeader>
+            <ButtonCustom>Nova Marca</ButtonCustom>
+        </MarkseHeader>
         <BackButton></BackButton>
         <ContentLineView Value=@Termo>Termo</ContentLineView>
         <ContentLineView IsLink=true Value=@Link>Link</ContentLineView>

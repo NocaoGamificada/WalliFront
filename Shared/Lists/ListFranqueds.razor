@@ -6,23 +6,28 @@
 
 @if (!loading)
 {
-    <div class="flex flex-col w-full gap-1">
-        <table >
-            <tr>
-                <th class="text-white">Nome</th>
-                <th class="text-white">Email</th>
-            </tr>
-            @foreach (var f in franquedResults.Franqueds)
-            {
-                <FranquedLine>
-                    <Name>@f.Name</Name>
-                    <Email>@f.Email</Email>
-                </FranquedLine>
-            }
-        </table>
-        <Pagination @ref=pagination CountPages="franquedResults.CountPages" UpdateResults="UpdateResults" />
-    </div>
-}else{
+    <ListDefaultTable>
+        <HeaderContent>
+            <th class="text-white">Nome</th>
+            <th class="text-white">Email</th>
+        </HeaderContent>
+        <ChildContent>
+            @if (franquedResults != null)
+                @foreach (var f in franquedResults.Franqueds)
+                {
+                    <FranquedLine>
+                        <Name>@f.Name</Name>
+                        <Email>@f.Email</Email>
+                    </FranquedLine>
+                }
+        </ChildContent>
+        <PaginationContent>
+            <Pagination @ref=pagination CountPages="franquedResults.CountPages" UpdateResults="UpdateResults" />
+        </PaginationContent>
+    </ListDefaultTable>
+}
+else
+{
     <div class="w-full flex items-center justify-center">
         <Loading />
     </div>

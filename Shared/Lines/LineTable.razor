@@ -1,0 +1,30 @@
+﻿<tr align="center" @onclick=OnClick class="@ShowLine() @Class cursor-pointer @HoverClass() p-3 text-white">
+    @ChildContent
+</tr>
+
+@code{
+    [Parameter]
+    public bool ShowLines { get; set; }
+
+    [Parameter]
+    public bool Hover { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    [Parameter]
+    public string Class { get; set; } = string.Empty;
+
+    private string HoverClass()
+    {
+        return Hover ? "hover:bg-zinc-500" : "";
+    }
+
+    private string ShowLine()
+    {
+        return ShowLines ? "border-t border-b" : "";
+    }
+}

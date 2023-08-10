@@ -1,0 +1,112 @@
+﻿@page "/chat";
+@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (loading)
+{
+    <div class="flex w-full h-full justify-center items-center">
+        <Loading />
+    </div>
+}
+else
+{
+    <div class="flex flex-col gap-2 w-full h-full bg-zinc-200 overflow-y-auto items-center">
+        <MarkseHeader>
+            <ButtonCustom>Fale pelo chat</ButtonCustom>
+        </MarkseHeader>
+        @if (chatMessages.Count == 0)
+        {
+            <div class="w-full py-2 flex justify-center">
+                <img src="images/icones/bot-icon.png" class="w-[100px]" />
+            </div>
+        }
+
+        <div class="w-full md:w-[70%] md:bg-zinc-500 md:rounded-3xl md:py-2 gap-3 flex flex-col flex-1 overflow-y-auto gap-3">
+            @if (chatMessages != null)
+            {
+                foreach (var message in chatMessages)
+                {
+                    <Message OnReSend="ReSendMessage" ChatMessage="message" />
+                }
+            }
+        </div>
+        <div class="py-3 w-full w-[60%] flex flex-row justify-center gap-4 items-center">
+            <input @bind="currentMessage" @onkeyup=KeyboardInput placeholder="Digite sua mensagem!" class="w-[70%] md:w-full pl-3 py-2 ml-4 max-h-[100px]" />
+            <img src="images/icones/paper-plane.png" class="w-[32px] h-[32px]"/>
+        </div>
+    </div>
+}
+
+@code{
+    string currentMessage = string.Empty;
+
+    List<ChatMessage> chatMessages = new();
+    bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await api.Get(api.walliChat.loadMessages, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            chatMessages = JsonSerializer.Deserialize<List<ChatMessage>>(await res.Content.ReadAsStringAsync());
+        }
+
+        loading = false;
+        StateHasChanged();
+    }
+
+    async Task SendMessage()
+    {
+        var mess = new ChatMessage
+        {
+            IsBotMessage = false,
+            Message = currentMessage,
+            IsLoading = true
+        };
+
+        chatMessages?.Add(mess);
+        currentMessage = "";
+        StateHasChanged();
+
+        var res = await api.Post(api.walliChat.sendMessage + $"?message={mess.Message}", "", await api.GetLoginHeader());
+        mess.HaveError = res?.IsSuccessStatusCode == false;
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var botMess = JsonSerializer.Deserialize<ChatMessage>(await res.Content.ReadAsStringAsync());
+            if (botMess != null)
+                chatMessages.Add(botMess);
+        }
+
+        mess.IsLoading = false;
+
+        StateHasChanged();
+    }
+
+    async Task KeyboardInput(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
+    }
+
+    async Task ReSendMessage(ChatMessage mess)
+    {
+        mess.HaveError = false;
+        StateHasChanged();
+
+        var res = await api.Post(api.walliChat.sendMessage + $"?message={mess.Message}", string.Empty, await api.GetLoginHeader());
+        
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var botMess = JsonSerializer.Deserialize<ChatMessage>(await res.Content.ReadAsStringAsync());
+            if (botMess != null)
+                chatMessages.Add(botMess);
+        }
+
+        mess.HaveError = res?.IsSuccessStatusCode == false;
+        StateHasChanged();
+    }
+}

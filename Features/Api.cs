@@ -16,6 +16,7 @@ namespace Features
         public readonly WalliFranqued walliFranqued = new();
         public readonly WalliSeller walliSeller = new();
         public readonly WalliSellerUp walliSellerUp = new();
+        public readonly WalliChat walliChat = new();
 
         private readonly LocalStorage localStorage;
 
@@ -131,6 +132,28 @@ namespace Features
             return response;
         }
 
+        public async Task<HttpResponseMessage>? Delete(string route, Dictionary<string, string> headers = null)
+        {
+            var client = new HttpClient()
+            {
+                BaseAddress = new Uri(baseAddres)
+            };
+
+            if (headers != null)
+                foreach (var h in headers)
+                    client.DefaultRequestHeaders.Add(h.Key, h.Value);
+
+            try
+            {
+                var res = await client.DeleteAsync(route);
+                return res;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public async Task<Dictionary<string, string>> GetLoginHeader()
         {
             var email = await localStorage.Get("email");
@@ -158,6 +181,7 @@ namespace Features
     public class WalliClient
     {
         public string getResults = "walli/client/get-results";
+        public string getSearchCount = "walli/client/get-search-count";
         public string getResult = "walli/client/get-specify-result";
         public string addSearch = "walli/client/add-search";
         public string getMarks = "walli/client/get-marks";
@@ -165,6 +189,7 @@ namespace Features
         public string getMark = "walli/client/get-specify-result";
         public string getMarkAnalysis = "walli/client/get-mark-analysis";
         public string deleteSearch = "walli/client/delete-search";
+        public string deleteMark = "walli/client/delete-mark";
         public string getHomeGraphics = "walli/client/get-home-graphics";
         public string setVisualizedResult = "walli/client/set-view-result";
     }
@@ -188,6 +213,12 @@ namespace Features
         public string getHomeData = "walli/franqued/get-home-data";
     }
 
+    public class WalliChat
+    {
+        public string loadMessages = "walli/client/chat-bot/load-messages";
+        public string sendMessage = "walli/client/chat-bot/send-message";
+    }
+
     public class WalliManager
     {
         public string getHomeDate = "walli/manager/get-home-date";
@@ -195,6 +226,7 @@ namespace Features
         public string getAnalysisSells = "walli/manager/get-analysis-sells";
         public string getClients = "walli/manager/get-users";
         public string getFranqueds = "walli/manager/get-franqueds";
+        public string getSellers = "walli/manager/get-sellers";
         public string registerClient = "walli/manager/register-franqued";
         public string addFranqued = "walli/manager/add-franqued";
         public string getMarks = "walli/manager/get-marks";

@@ -1,7 +1,7 @@
 ﻿@using System.Diagnostics.CodeAnalysis;
 @inject NavigationStacker navigationManager;
 
-<tr @onclick=@(() => navigationManager.NavigateTo($"/view/client/{Id}", true))>
+<LineTable OnClick=@(() => navigationManager.NavigateTo($"/view/client/{Id}", true))>
     <td align="center" class="text-white">@Name</td>
     <td align="center" class="text-white">@Email</td>
     
@@ -9,7 +9,7 @@
     {
         <td align="center" class="text-white">@Status</td>
     }
-</tr>
+</LineTable>
 
 @code {
     [Parameter]

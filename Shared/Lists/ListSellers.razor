@@ -6,31 +6,34 @@
 
 @if (!loading)
 {
-    <div class="flex flex-col w-full gap-1 justify-center items-center">
-        @if (sellerResults?.Sellers != null)
-        {
-            <table class="md:w-[70%]">
-                <tr>
-                    <td align="center" class="text-white">Nome</td>
-                    <td align="center" class="text-white">Email</td>
-                </tr>
+    @if (sellerResults == null || sellerResults?.CountPages == 0)
+    {
+        <div class="text-white text-2xl font-bold w-full text-center">
+            Sem resultados encontrados!
+        </div>
+    }
+    else
+    {
+        <ListDefaultTable>
+            <HeaderContent>
+                <td align="center" width="150px" class="text-white">Nome</td>
+                <td align="center" width="200px" class="text-white">Email</td>
+            </HeaderContent>
+            <PaginationContent>
+                <Pagination @ref=pagination CountPages="sellerResults?.CountPages ?? 1" UpdateResults="UpdateResults" />
+            </PaginationContent>
 
+            <ChildContent>
                 @foreach (var user in sellerResults.Sellers)
                 {
-                    <ClientLine ShowStatus=false>
+                    <SellerLine Id="user.Id">
                         <Name>@user.Name</Name>
                         <Email>@user.Email</Email>
-                        <Status></Status>
-                    </ClientLine>
+                    </SellerLine>
                 }
-            </table>
-        }
-        else
-        {
-            <Loading  />
-        }
-        <Pagination @ref=pagination CountPages="sellerResults?.CountPages ?? 1" UpdateResults="UpdateResults" />
-    </div>
+            </ChildContent>
+        </ListDefaultTable>
+    }
 }
 else
 {
@@ -44,12 +47,14 @@ else
     private int currentPage { get => pagination == null ? 1 : pagination.currentPage; }
     private bool loading = true;
     private SellerResults sellerResults;
+    string loggedRole = "";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
 
+        loggedRole = await localStorage.Get("loggedRole");
         var cached = await localStorage.GetInSession("sellersIndex");
         if (!string.IsNullOrEmpty(cached))
         {
@@ -64,10 +69,17 @@ else
 
     async Task UpdateResults()
     {
+        string url = GetUrl();
+
+        if (url == "")
+        {
+            return;
+        }
+
         loading = true;
         StateHasChanged();
 
-        var res = await api.Get(api.walliFranqued.getSellers + $"?page={currentPage}", await api.GetLoginHeader());
+        var res = await api.Get(url + $"?page={currentPage}", await api.GetLoginHeader());
         if (res?.IsSuccessStatusCode == true)
         {
             var json = await res.Content.ReadAsStringAsync();
@@ -86,8 +98,6 @@ else
             }
         }
 
-        Console.WriteLine(await res.Content.ReadAsStringAsync());
-
         loading = false;
         StateHasChanged();
     }
@@ -102,6 +112,20 @@ else
         {
             return new MarkupString("<span class=\"text-green-600\">Ativo</span>");
         }
+    }
+
+    string GetUrl()
+    {
+        if (loggedRole == "walli_franqued")
+        {
+            return api.walliFranqued.getSellers;
+        }
+        else if (loggedRole == "master")
+        {
+            return api.walliManager.getSellers;
+        }
+
+        return "";
     }
 
     public class SellerResults

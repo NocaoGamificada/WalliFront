@@ -4,44 +4,43 @@
 @inject Api api;
 @inject LocalStorage localStorage;
 
-
-<div class="flex flex-col w-full gap-1 items-center">
-        @if (!loadingResults)
-        {
-            <div class="w-full h-fit flex flex-col gap-1 items-center">
-                @if (searchResults == null)
+<div class="flex flex-col w-full gap-1 items-center overflow-y-auto">
+    <div class="w-full h-fit flex flex-col gap-1 items-center">
+        <ListDefaultTable>
+            <HeaderContent>
+                <td width="32px"></td>
+                <td align="center">Marca</td>
+                <td align="center">Origem</td>
+                <td align="center">Violação</td>
+                <td width="100px" align="center">Data</td>
+            </HeaderContent>
+            <ChildContent>
+                @if (!loadingResults)
                 {
-                    <h1>Houve algo de errado por favor tente novamente alguns instantes</h1>
+                    @if (searchResults == null)
+                    {
+                        <h1>Houve algo de errado por favor tente novamente alguns instantes</h1>
+                    }
+                    else
+                    {
+                        @foreach (var result in searchResults.Results)
+                        {
+                            <SearchLine Result="result" />
+                        }
+                    }
                 }
                 else
                 {
-                    <table class="text-white md:w-[70%]">
-                        <thead>
-                            <tr>
-                                <td width="32px"></td>
-                                <td align="center">Marca</td>
-                                <td align="center">Origem</td>
-                                <td align="center">Violação</td>
-                                <td width="100px" align="center">Data</td>
-                            </tr>
-                        </thead>
-                        <tbody class="pt-4">
-                            @foreach (var result in searchResults.Results)
-                            {
-                                <SearchLine Result="result" />
-                            }
-                        </tbody>
-                    </table>
+                    <div class="w-full h-full flex flex-col justify-center items-center">
+                        <Loading />
+                    </div>
                 }
-            </div>
-        }
-        else
-        {
-            <div class="w-full h-1/3 flex flex-col justify-center items-center">
-                <h1 class="text-3xl text-white">Loading....</h1>
-            </div>
-        }
-        <Pagination @ref=pagination CountPages="searchResults?.CountPages ?? 1" UpdateResults="CheckSpecify" />
+            </ChildContent>
+            <PaginationContent>
+                <Pagination @ref=pagination CountPages="searchResults?.CountPages ?? 1" UpdateResults="CheckSpecify" />
+            </PaginationContent>
+        </ListDefaultTable>
+    </div>
 </div>
 
 
@@ -78,9 +77,8 @@
             {                
                 searchResults = JsonSerializer.Deserialize<SearchResults>(_lastPageChached);
             }
-            else if (pagination != null)
+            else
             {
-                pagination.currentPage = 1;
                 await UpdateResults();
             }
         }
@@ -99,7 +97,6 @@
                 await localStorage.SetCacheInSession("currentPageMark", "");
                 await localStorage.SetCacheInSession("lastPageMark", "{}");
                 await localStorage.SetCacheInSession("lastMarkId", "");
-                pagination.currentPage = 1;
                 await UpdateSpecifyResults();
             }
         }
@@ -112,13 +109,19 @@
         loadingResults = true;
         StateHasChanged();
 
-        var response = await api.Get($"{api.walliClient.getResults}?page={currentPage}", await api.GetLoginHeader());
+        var url = $"{api.walliClient.getResults}?page={currentPage}";
+        var response = await api.Get(url, await api.GetLoginHeader());
 
         if (response?.IsSuccessStatusCode == true)
         {
             searchResults = JsonSerializer.Deserialize<SearchResults>(await response.Content.ReadAsStringAsync());
             await localStorage.SetCacheInSession("lastPage", JsonSerializer.Serialize(searchResults));
             await localStorage.SetCacheInSession("currentPage", currentPage.ToString());
+
+            if (pagination != null)
+            {
+                pagination.currentPage = currentPage;
+            }
         }
 
         loadingResults = false;

@@ -1,6 +1,6 @@
 ﻿@page "/marca/denunciar/{SearchId}";
 @inject NavigationStacker navManager;
-<div class="w-full flex flex-col gap-1 items-center">
+<div class="w-full h-full overflow-y-auto flex flex-col gap-1 items-center">
     <MarkseHeader>
         <ButtonCustom>Nova Marca</ButtonCustom>
     </MarkseHeader>
@@ -10,7 +10,6 @@
         <ButtonStyled OnClick=@(async () => NavDenuncing(1))>Fazer notificação Extrajudicial</ButtonStyled>
         <ButtonStyled OnClick=@(async () => NavDenuncing(2))>Fazer uma ação judicial</ButtonStyled>
         <ButtonStyled>Fale com nossos especialistas</ButtonStyled>
-
         <div class="w-full my-3 flex flex-col gap-4" >
             <div class="w-full flex flex-col">
                 <h1 class="text-xl text-white font-bold">O que é Denúncia na plataforma?</h1>
