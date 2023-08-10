@@ -1,0 +1,41 @@
+﻿@page "/adicionar-cartão";
+@inject IJSRuntime js;
+
+<div class="flex flex-col gap-2 w-full h-full bg-zinc-800 overflow-y-auto py-2">
+    <form action="" @onsubmit:preventDefault @onsubmit=AdicionarCartao class="flex-column w-full md:max-w-[500px] md: w-[60%] ">
+        <div class="w-full flex flex-col gap-2">
+            <label for="text-2xl text-white">Numero do cartão</label>
+            <input id="cardNumber" @bind=cardNumber type="number" class="w-full px-2 py-3" placeholder="Digite o número do seu cartão" />
+        </div>
+
+        <div class="w-full">
+            <div class="w-full flex flex-col gap-2">
+                <label for="text-2xl text-white">CVV do cartão</label>
+                <input id="cvv" maxlength="3" @bind=cvv type="number" class="w-full px-2 py-3" />
+            </div>
+        </div>
+
+        <div class="w-full flex flex-col gap-2">
+            <label>Vencimento do cartão</label>
+            <div class="w-full flex flex-row">
+                <input id="vencimentDay" @bind=vecimentDay type="number" maxlength="2" class="w-[16px]" />
+                <span>/</span>
+                <input id="vencimentYear" @bind=vecimentYear type="number" maxlength="2" class="w-fit px-2 py-3" />
+            </div>
+        </div>
+
+        <button type="submit">Adicionar cartão</button>
+    </form>
+</div>
+
+@code {
+    int cardNumber;
+    int cvv;
+    int vecimentDay;
+    int vecimentYear;
+
+    private async Task AdicionarCartao()
+    {
+        
+    }
+}

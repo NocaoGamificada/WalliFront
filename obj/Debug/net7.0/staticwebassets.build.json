@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "H74DhFwPswkg4PKA+87yyjO9o+Vszl2ZJIzWEURhxI0=",
+  "Hash": "K3s6I1/NiQsWkintfmsmHMPYkFMDlmGSjF/+3PPKyCo=",
   "Source": "WalliFront",
   "BasePath": "/",
   "Mode": "Root",
@@ -7342,6 +7342,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\icones\\close.svg"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\credit_card_icon.png",
+      "SourceId": "WalliFront",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "images/icones/credit_card_icon.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icones\\credit_card_icon.png"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\graphic.png",
