@@ -1,6 +1,6 @@
 ﻿@page "/"
 @layout NoAuthLayout;
-@inject NavigationManager navManager;
+@inject NavigationStacker navManager;
 
 <div class="flex flex-col h-screen w-screen items-center justify-center p-3 bg-zinc-900">
     <div class="h-[15%] w-full flex items-center justify-center">
@@ -21,6 +21,6 @@
 @code {
     private void ClickStart()
     {
-        navManager.NavigateTo("/login");
+        navManager.NavigateTo("/login", false);
     }
 }
