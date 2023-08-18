@@ -1,0 +1,150 @@
+﻿@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using System.Diagnostics.CodeAnalysis;
+@inject Api api;
+@inject LocalStorage localStorage;
+
+<div class="flex flex-col w-full gap-1 items-center py-3">
+    <div class="w-full md:w-[75%] flex flex-row gap-2 items-center">
+        <h1 class="text-white text-3xl">Lista de resultados:</h1>
+        <div class="flex flex-col">
+            <div class="flex flex-row items-center gap-3">
+                <div class="bg-red-600 w-5 h-5 rounded-full"/>
+                <h2 class="text-white text-xl">Urgente</h2>
+            </div>
+            <div class="flex flex-row items-center gap-3">
+                <div class="bg-green-600 w-5 h-5 rounded-full" />
+                <h2 class="text-white text-xl">Sem ameaça</h2>
+            </div>
+        </div>
+    </div>
+    <div class="w-full h-fit flex flex-col gap-1 items-center">
+        <ListDefaultTable>
+            <HeaderContent>
+                <td width="32px"></td>
+                <td align="center">Marca</td>
+                <td align="center">Violação</td>
+                <td align="center">Ação</td>
+            </HeaderContent>
+            <ChildContent>
+                @if (!loadingResults)
+                {
+                    @if (searchResults == null)
+                    {
+                        <h1>Houve algo de errado por favor tente novamente alguns instantes</h1>
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < searchResults.Results.Length; i++)
+                        {
+                            var result = searchResults.Results[i];
+                            if (result != null && result.Analysis != null)
+                            {
+                                var index = (currentPage - 1) * 10 + i + 1;
+                                <SearchLineSpecify Result="result" Index="index"></SearchLineSpecify>
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    <div class="w-full h-full flex flex-col justify-center items-center">
+                        <Loading />
+                    </div>
+                }
+            </ChildContent>
+            <PaginationContent>
+                <Pagination @ref=pagination CountPages="searchResults?.CountPages ?? 1" UpdateResults="CheckSpecify" />
+            </PaginationContent>
+        </ListDefaultTable>
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    [AllowNull]
+    public ClientMark ClientMark { get; set; }
+
+    private bool loadingResults = true;
+    private SearchResults? searchResults;
+    private int currentPage { get => pagination?.currentPage ?? 1; }
+
+    private Pagination pagination;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+
+        loadingResults = true;
+        StateHasChanged();
+
+
+        var id = await localStorage.GetInSession("currentPageSpecify");
+        pagination.currentPage = string.IsNullOrEmpty(id) ? 1 : int.Parse(id);
+        await UpdateSpecifyResults();
+        await localStorage.SetInSession("currentPageSpecify", pagination.currentPage.ToString());
+
+        loadingResults = false;
+        StateHasChanged();
+    }
+
+    async Task UpdateResults()
+    {
+        loadingResults = true;
+        StateHasChanged();
+
+        var url = $"{api.walliClient.getResults}?page={currentPage}";
+        var response = await api.Get(url, await api.GetLoginHeader());
+
+        if (response?.IsSuccessStatusCode == true)
+        {
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
+            searchResults = JsonSerializer.Deserialize<SearchResults>(await response.Content.ReadAsStringAsync());
+            if (pagination != null)
+            {
+                pagination.currentPage = currentPage;
+            }
+        }
+
+        loadingResults = false;
+        StateHasChanged();
+    }
+
+    async Task UpdateSpecifyResults()
+    {
+        loadingResults = true;
+        StateHasChanged();
+
+        var response = await api.Get($"{api.walliClient.getMarkResult}?markId={ClientMark.Id}&page={currentPage}", await api.GetLoginHeader());
+
+        if (response?.IsSuccessStatusCode == true)
+        {
+            searchResults = JsonSerializer.Deserialize<SearchResults>(await response.Content.ReadAsStringAsync());
+        }
+
+        loadingResults = false;
+        StateHasChanged();
+    }
+
+    async Task CheckSpecify()
+    {
+        loadingResults = true;
+
+        await UpdateSpecifyResults();
+        await localStorage.SetInSession("currentPageSpecify", pagination.currentPage.ToString());
+
+        loadingResults = false;
+        StateHasChanged();
+    }
+
+    public class SearchResults
+    {
+        [JsonPropertyName("searchResults")]
+        public SearchResult[] Results { get; set; }
+
+        [JsonPropertyName("countPages")]
+        public int CountPages { get; set; }
+    }
+}

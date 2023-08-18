@@ -1,0 +1,44 @@
+﻿<div class="bg-zinc-300 hover:scale-105 transtion-all duration-300 rounded-xl h-[250px] flex flex-col justify-between items-center pt-2 pb-3 md:py-2 w-[260px] md:w-[200px]">
+    <div class="flex flex-col w-full flex jsutify-center items-center py-4">
+        <h1 class="text-sm">@CardTitle</h1>
+        <h2 class="text-xl">R$ @CardPrice</h2>
+        <p>por mês</p>
+    </div>
+
+    @if (!IsActive)
+    {
+        <button @onclick=@(() => OnSelected?.Invoke(Level)) class="border-0 outline-0 bg-black px-4 text-white rounded-xl text-lg font-bold py-2 hover:scale-110 hover:bg-green-500 transition-all duration-200">Obter plano</button>
+    }
+    else
+    {
+        <button disabled class="border-0 outline-0 bg-zinc-800 px-4 text-white rounded-xl text-lg font-bold py-2">Plano Ativo</button>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public bool Destaque { get; set; }
+
+    [Parameter]
+    public Action<int>? OnSelected { get; set; }
+
+    [Parameter]
+    public int Level { get; set; }
+
+    [Parameter]
+    public bool IsActive { get; set; } = false;
+
+    [Parameter]
+    public RenderFragment CardTitle { get; set; }
+
+    [Parameter]
+    public RenderFragment CardPrice { get; set; }
+
+    public string IsDestaque()
+    {
+        if (!Destaque)
+            return string.Empty;
+
+        return "scale-150";
+    }
+}

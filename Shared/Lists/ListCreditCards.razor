@@ -1,0 +1,70 @@
+﻿@inject NavigationStacker navManager;
+@inject Api api;
+
+@if (loadingCards == true)
+{
+    <div class="w-full h-full flex flex-col justify-center items-center">
+        <h1 class="text-white text-xl">Estamos carregando seus cartões cadastrados</h1>
+        <Loading />
+    </div>
+}
+else
+{
+    if (PartialCreditCards == null)
+    {
+        <div class="w-full h-full flex justify-center items-center">
+            <div class="w-1/3 flex flex-col gap-3 px-2 py-5 gap-3">
+                <ButtonStyled OnClick="UpdateCreditList">Tentar novamente</ButtonStyled>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="text-lg text-white py-2 font-bold">Seus cartões: </div>
+        <div class="w-full px-2 py-3 flex flex-col gap-2">
+            @foreach (var creditNumber in PartialCreditCards)
+            {
+                <h1 class="text-zinc-200 text-sm">@creditNumber.CardNumber</h1>
+            }
+            <div class="w-[200px] py-3">
+                <ButtonStyled OnClick=@(() => navManager.NavigateTo("/adicionar-cartão", true))>Adicionar Cartão</ButtonStyled>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    public bool loadingCards = true;
+    private List<Teste>? PartialCreditCards = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateCreditList();
+    }
+
+    async Task UpdateCreditList()
+    {
+        loadingCards = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.account.getCreditCards, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            PartialCreditCards = JsonSerializer.Deserialize<List<Teste>>(json);
+        }
+
+        loadingCards = false;
+        StateHasChanged();
+    }
+
+    public class Teste
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("cardNumber")]
+        public string CardNumber { get; set; } = string.Empty;
+    }
+}

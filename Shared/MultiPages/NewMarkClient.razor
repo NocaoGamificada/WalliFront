@@ -14,25 +14,20 @@
     <div class="w-full flex flex-col justify-center items-center">
         <div class="w-full h-fit md:w-[60%]">
             <div class="w-full h-fit flex flex-col gap-1 justify-center items-center">
-                <img class="w-[80%] max-h-[70px] object-contain" src="images/walli_logo.png" />
+                <img class="w-[80%] max-h-[200px] object-contain" src="images/walli_logo.png" />
                 <h1 class="text-zinc-100 text-[4vw] md:text-3xl">Adicione uma nova marca ao sistema</h1>
             </div>
 
             <div class="flex flex-col gap-3 w-full md:px-[100px]">
                 <InputForm Id="bradName" Data="brandNameInput" Placeholder="Digite o nome de sua marca">Nome da marca</InputForm>
+                <InputForm Id="ramo" Data="ramoInput" Placeholder="Digite o ramo de atuação">Ramo de atuação</InputForm>
                 <InputTerms @ref=terms ListTerms="Terms" />
+                <CheckListPlatforms @ref=checkLists />
             </div>
 
-            <div class="mt-auto-1.5 flex flex-col justify-center items-center w-full gap-0 md:px-[100px]">
-                <h1 class="text-2xl font-bold text-white">Valor Total: <span class="text-green-500">XXX</span></h1>
+            <div class="w-full flex flex-1 py-3 items-center justify-center">
                 <div class="w-[70%]">
-                    <InputForm Data="descontInput" Id="descont" Placeholder="Digite um cupom de desconto" Type="text" />
-                </div>
-            </div>
-
-            <div class="w-full flex flex-1 items-center justify-center">
-                <div class="w-[70%]">
-                    <ButtonStyled OnClick="ContinueToPayment">Continuar para pagamento</ButtonStyled>
+                    <ButtonStyled OnClick="ContinueToPayment">Salvar</ButtonStyled>
                 </div>
             </div>
         </div>
@@ -41,8 +36,11 @@
 
 @code {
     InputData brandNameInput = new();
+    InputData ramoInput = new();
     InputData termInput = new();
     InputData descontInput = new();
+
+    private CheckListPlatforms checkLists;
 
     private InputTerms terms;
     private List<string> Terms = new();
@@ -64,14 +62,17 @@
 
     public async void ContinueToPayment()
     {
+        var platformsList = checkLists.labels.Where(l => l.Value).Select(l => l.Key).ToList();
         Terms = terms.ListTerms;
         var findTerms = Terms.Select(t => new { term = t }).ToList();
         var data = new
         {
             brandName = brandNameInput.Value,
+            ramo = ramoInput.Value,
             findTerms = findTerms,
             ignoreUrls = new dynamic[0],
             dayOfWeek = 1,
+            platformsSelecteds = platformsList
         };
 
         var json = JsonSerializer.Serialize(data);

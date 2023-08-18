@@ -6,13 +6,13 @@
 @inject LocalStorage localStorage;
 
 <div class="flex flex-col h-screen max-w-screen items-center justify-center p-2 bg-zinc-900 text-zinc-100 gap-1">
-    <div class="h-[16%] mb-0 w-full items-center justify-center flex">
+    <div class="h-[100px] mb-0 w-[300px] items-center justify-center flex">
         <img src="images/walli_logo.png" class="w-full h-full object-contain"/>
     </div>
     <div class="flex w-full py-1 items-center justify-center">
         <h1>Faça seu login</h1>
     </div>
-    <div class="w-[60%]">
+    <div class="w-full md:w-[60%]">
         <div class="flex flex-col gap-2 w-full">
             <InputForm Data=emailField Id="email" Placeholder="Digite seu email" Type="email">Email</InputForm>
             <InputForm Data=passwordField Id="senha" Placeholder="Digite sua senha" Type="password">Senha</InputForm>
@@ -53,8 +53,14 @@
         isRequesting = true;
         StateHasChanged();
 
-        var route = api.account.login + $"?email={emailField.Value}&password={passwordField.Value}";
-        var res = await api.Get(route);
+        var json = JsonSerializer.Serialize(new
+        {
+            email = emailField.Value,
+            password = passwordField.Value,
+            platform = "walli"
+        });
+
+        HttpResponseMessage? res = await api.Post(api.account.login, json);
         if (res != null)
         {
             if (res.IsSuccessStatusCode)

@@ -18,6 +18,9 @@ namespace Walli.Data
         [JsonPropertyName("brandName")]
         public string BrandName { get; set; } = default!;
 
+        [JsonPropertyName("status")]
+        public string? Status { get; set; } = default!;
+
         [JsonPropertyName("IgnoreUrls")]
         public WalliTerm[] IgnoreUrls { get; set; } = default!;
 

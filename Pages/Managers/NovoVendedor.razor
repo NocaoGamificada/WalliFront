@@ -1,62 +1,141 @@
 ﻿@page "/novoVendedor";
+@using Newtonsoft.Json;
 @inject Api api;
+@inject IJSRuntime js;
 @inject LocalStorage localStorage;
 @inject NavigationStacker navManager;
+@using JsonSerializer = System.Text.Json.JsonSerializer;
 
-<div class="w-full h-full flex flex-col items-center justify-center">
-    <div class="md:w-[500px] h-[90%] px-5 md:bg-zinc-600 flex flex-col items-center overflow-y-auto md:rounded-3xl p-2">
-        <img class="md:w-[200px]" src="images/walli_logo.png" />
+<div class="w-full h-full flex flex-row items-center justify-center">
+    <div class="md:w-[500px] h-[97%] px-5 md:bg-zinc-600 flex flex-col items-center overflow-y-auto md:rounded-3xl py-4">
+        <img class="md:w-[125px]" src="images/walli_logo.png" />
         <h1 class="text-2xl text-white">Cadastrar Vendedor</h1>
-        <InputForm Id="name" Data="name" Placeholder="Digite o nome do franqueado">Nome</InputForm>
-        <InputForm Id="email" Data="email" Placeholder="Digite o nome do franqueado">Email</InputForm>
-        <InputForm Id="password" Data="password" Placeholder="Digite o nome do franqueado">Senha</InputForm>
-        <InputForm Id="repeat-password" Data="repeatPassword" Placeholder="Digite o nome do franqueado">Repetir Senha</InputForm>
-        <InputForm Id="cpf-cpnj" Data="indentification" Placeholder="Digite o nome do franqueado">CPF/CNPJ</InputForm>
-        <InputForm Id="cep" Data="cep" Placeholder="Digite o nome do franqueado">CEP</InputForm>
-        <InputForm Id="state" Data="state" Placeholder="Digite o nome do franqueado">Estado</InputForm>
-        <InputForm Id="country" Data="country" Placeholder="Digite o nome do franqueado">País</InputForm>
-        <InputForm Id="addres" Data="addres" Placeholder="Digite o nome do franqueado">Endereço</InputForm>
-        <InputForm Id="number" Data="number" Placeholder="Digite o nome do franqueado">Nº</InputForm>
-
-        <div class="w-[60%] my-3">
-            @if (!cadastrando)
-            {
-                <ButtonStyled OnClick="CadatrarVendedor">
-                    Cadastrar Vendedor
-                </ButtonStyled>
-            }
-            else
-            {
-                <ButtonStyled Color="bg-green-700" BgColorHover="bg-green-700">
-                    <div class="h-[30px]">
-                        <Loading />
+        @if (step > 0 && cadastrando == false)
+        {
+            <div class="w-[100px] py-2">
+                <ButtonStyled OnClick="LastStep">Voltar</ButtonStyled>
+            </div>
+        }
+        @if (step == 0)
+        {
+            <div class="w-full flex-1 flex flex-col justify-between">
+                <div class="w-full py-2">
+                    <div class="flex items-center justify-center">
+                        <h1 class="text-lg text-white">Dados do vendedor</h1>
                     </div>
+                    <InputForm Id="name" Data="name" Placeholder="Digite o nome do vendedor">Nome</InputForm>
+                    <InputForm Id="email" Data="email" Placeholder="Digite o nome do email">Email</InputForm>
+                    <InputForm Id="cpf" Mask="000.000.000-00" Data="indentification" Placeholder="000.000.000-00">CPF do vendedor</InputForm>
+                    <InputForm Id="password" Type="password" Data="password" Placeholder="Digite a senha do vendedor">Senha</InputForm>
+                </div>
+                <ButtonStyled OnClick="NextStep">
+                    Proxima etapa
                 </ButtonStyled>
-            }
-        </div>
+            </div>
+        }
+        else if (step == 1)
+        {
+            <InputForm Id="cep" Data="cep" Placeholder="Digite o cep do vendedor">CEP</InputForm>
+            <InputForm Id="state" Data="state" Placeholder="Digite UF">Estado</InputForm>
+            <InputForm Id="country" Data="country" Placeholder="Digite o pais do vendedor ex. br">País</InputForm>
+            <InputForm Id="addres" Data="address" Placeholder="Digite o endereço do vendedor">Endereço</InputForm>
+            <InputForm Id="number" Data="number" Type="number" Placeholder="Digite o numero da casa">Nº</InputForm>
+            <ButtonStyled OnClick="NextStep">
+                Proxima etapa
+            </ButtonStyled>
+        }else if (step == 2)
+        {
+            <div class="h-full flex w-full flex-col justify-between gap-3 items-center pb-5">
+                <div class="flex items-center justify-center">
+                    <h1 class="text-lg text-white">Telefone</h1>
+                </div>
+                <InputForm Mask="00" Placeholder="00" Id="country_number" Data="countryCode">Codigo do pais</InputForm>
+                <InputForm Mask="00" Placeholder="00" Id="code_number" Data="areaCode">Codigo do estado</InputForm>
+                <InputForm Mask="00000-0000" Placeholder="00000-0000" Id="phone_number" Data="phoneNumber">Número</InputForm>
+
+                @if (loggedRole == "master")
+                {
+                    <InputForm Mask="000.000.000-00" Id="franqued-cpf" Placeholder="000.000.000-00" Data="franquedCpf">Cpf do franqueado</InputForm>
+                }
+
+                <div class="w-full md:w-[60%]">
+                    @if (!cadastrando)
+                    {
+                        <ButtonStyled OnClick="CadatrarVendedor">
+                            Cadastrar Vendedor
+                        </ButtonStyled>
+                    }
+                    else
+                    {
+                        <ButtonStyled Color="bg-green-700" BgColorHover="bg-green-700">
+                            <div class="h-[30px]">
+                                <Loading />
+                            </div>
+                        </ButtonStyled>
+                    }
+                </div>
+            </div>
+        }
     </div>
 </div>
 
 @code {
+    int step = 0;
     bool cadastrando = false;
 
     InputData name = new();
     InputData email = new();
     InputData password = new();
-    InputData repeatPassword = new();
     InputData indentification = new();
+
     InputData cep = new();
     InputData state = new();
     InputData country = new();
-    InputData addres = new();
+    InputData address = new();
     InputData number = new();
 
+    InputData countryCode = new();
+    InputData areaCode = new();
+    InputData phoneNumber = new();
+
+    InputData franquedCpf = new();
+
     string messageError = "";
+    string loggedRole = "";
+
+    async void NextStep()
+    {
+        if (step + 1 == 1)
+        {
+            if (!await OnValidateUserCredentials())
+            {
+                step = 0;
+                return;
+            }
+        }
+
+        step++;
+        if (step > 2)
+            step = 2;
+
+        StateHasChanged();
+    }
+
+    void LastStep()
+    {
+        step--;
+        if (step < 0)
+            step = 0;
+
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        var loggedRole = await localStorage.Get("loggedRole");
-        if (loggedRole != "walli_franqued")
+        var rolesJson = await localStorage.Get("roles");
+        loggedRole = JsonSerializer.Deserialize<string[]>(rolesJson)?.FirstOrDefault();
+        Console.WriteLine(loggedRole);
+        if (loggedRole != "walli_franqued" && loggedRole != "master")
         {
             await navManager.NavigateBack();
             return;
@@ -71,36 +150,143 @@
         cadastrando = true;
         StateHasChanged();
 
-        await OnValidate();
+        await Register();
+
         cadastrando = false;
     }
 
-    private async Task OnValidate()
+    private async Task<bool> OnValidateUserCredentials()
+    {
+        if (!email.Value.Contains("@"))
+        {
+            await js.InvokeVoidAsync("window.alert", "Digite um email válido!");
+            return false;
+        }
+
+        if (name.Value.Length == 0)
+        {
+            await js.InvokeVoidAsync("window.alert", "Digite um nome!");
+            return false;
+        }
+
+        if (password.Value.Contains(" "))
+        {
+            await js.InvokeVoidAsync("window.alert", "Senha não pode conter espaços!");
+            return false;
+        }
+
+        if (password.Value.Length < 6)
+        {
+            await js.InvokeVoidAsync("window.alert", "Senha deve conter no minimo 6 caracteres");
+            return false;
+        }
+
+
+        var iden = indentification.Value.Replace(".", "").Replace("-", "");
+        if (iden.Length < 11 || iden.Length > 11)
+        {
+            await js.InvokeVoidAsync("window.alert", "Cpf somente pode possuir 11 digitos");
+            return false;
+        }
+
+        var res = await api.Post(api.walliSellerUp.checkClientExists, JsonSerializer.Serialize(new
+        {
+            email = email.Value,
+            cpf = iden,
+        }), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == false && res != null)
+        {
+            dynamic? objError = JsonConvert.DeserializeObject(await res.Content.ReadAsStringAsync());
+
+            if (objError?.messageError != null)
+            {
+            }
+            else
+            {
+            }
+            return false;
+        }else if (res == null)
+            return false;
+
+        return res?.IsSuccessStatusCode == true;
+    }
+
+    private async Task<bool> OnValidateAddresCredentials()
+    {
+        var _cep = cep.Value.Replace("-", "");
+
+        if (_cep.Length < 8 || _cep.Length > 8)
+        {
+            await js.InvokeVoidAsync("window.alert", "Cep tem que ter 8 digitos");
+            return false;
+        }
+
+        if (!int.TryParse(_cep, out var i))
+        {
+            await js.InvokeVoidAsync("window.alert", "Cep deve conter somente numeros");
+            return false;
+        }
+
+        if (state.Value.Replace(" ", "").Length < 2 || state.Value.Replace(" ", "").Length > 2)
+        {
+            await js.InvokeVoidAsync("window.alert", "Estado so contem duas letras");
+            return false;
+        }
+
+        if (country.Value.Replace(" ", "").Length < 2 || country.Value.Replace(" ", "").Length > 2)
+        {
+            await js.InvokeVoidAsync("window.alert", "País so contem duas letras");
+            return false;
+        }
+
+        if (int.TryParse(number.Value, out var numberI))
+        {
+            await js.InvokeVoidAsync("window.alert", "Numero da casa tem que ser um numero!");
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task Register()
     {
         var user = new
         {
             email = email.Value,
             password = password.Value,
             name = name.Value,
-            indentification = indentification.Value,
+            indentification = indentification.Value.Replace("-", "").Replace(".", "").Trim(),
             address = new
             {
-                cep = cep.Value,
+                cep = cep.Value.Replace("-", ""),
                 country = country.Value,
-                addressNumber = number.Value,
-                address = addres.Value
-            }
+                addressNumber = int.Parse(number.Value),
+                address = address.Value
+            },
+            userPhone = new
+            {
+                countryCode = countryCode.Value,
+                number = phoneNumber.Value,
+                areaCode = areaCode.Value
+            },
+            franquedCPF = franquedCpf.Value.Replace("-", "").Replace(".", "").Trim()
         };
 
-        var res = await api.Post(api.walliFranqued.addSeller, JsonSerializer.Serialize(user), await api.GetLoginHeader());
+        var url = "";
+
+        if (loggedRole == "walli_franqued")
+            url = api.walliFranqued.addSeller;
+        else
+            url = api.walliManager.addSeller;
+
+        var res = await api.Post(url, JsonSerializer.Serialize(user), await api.GetLoginHeader());
 
         if (res?.IsSuccessStatusCode == true)
         {
             await navManager.NavigateBack();
             return;
         }
-
-        Console.WriteLine(await res?.Content.ReadAsStringAsync());
 
         messageError = "Houve algum erro durante o envio dos dados por favor verifique :)";
         StateHasChanged();

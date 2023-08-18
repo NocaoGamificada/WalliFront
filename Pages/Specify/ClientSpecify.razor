@@ -1,22 +1,35 @@
-﻿@inject LocalStorage localStorage;
+﻿@page "/view/client/{Id:int}";
+
+@inject LocalStorage localStorage;
 @inject NavigationStacker navigationStacker;
 @inject Api api;
-@page "/view/client/{Id:int}";
 
-@if (sucessfull)
+@if (loaded)
 {
-    <div class="w-full h-full bg-zinc-800 overflow-y-auto">
-        <MarkseHeader>
-            <ButtonCustom>Adicionar</ButtonCustom>
-        </MarkseHeader>
-        <BackButton />
-        <div class="w-full py-4 flex justify-center items-center text-white text-2xl font-bold">@user.Name</div>
-        <div class="flex flex-col w-full p-4">
-            <SpecifyClientDashboard ClientId="Id"/>
-        </div>
+    if (sucessful)
+    {
+        <div class="w-full h-full bg-zinc-800 overflow-y-auto">
+            <MarkseHeader>
+                <ButtonCustom>Adicionar</ButtonCustom>
+            </MarkseHeader>
+            <BackButton />
+            <div class="w-full py-4 flex justify-center items-center text-white text-2xl font-bold">@user.Name</div>
+            <div class="flex flex-col w-full p-4">
+                <SpecifyClientDashboard ClientId="Id" />
+            </div>
 
-        <ListSpecifyResults ClientId="Id" />
-    </div>
+            <ListSpecifyResults ClientId="Id" />
+        </div>
+    }
+    else
+    {
+        <div class="w-full h-full flex flex-col items-center justify-center">
+            <div class="w-[55%] flex flex-col gap-3">
+                <ButtonStyled>Tentar novamente</ButtonStyled>
+                <ButtonStyled BgColor="bg-red-400" BgColorHover="bg-red-600">Voltar</ButtonStyled>
+            </div>
+        </div>
+    }
 }
 else
 {
@@ -29,7 +42,8 @@ else
     [Parameter]
     public int Id { get; set; }
     string loggedRole = "";
-    bool sucessfull = false;
+    bool loaded = false;
+    bool sucessful = false;
 
     private User user { get; set; }
 
@@ -37,19 +51,30 @@ else
     {
         string loggedRole = await localStorage.Get("loggedRole");
 
-            /*if (!CanAcess())
-            {
-            await navigationStacker.NavigateBack();
-            return;
-        }*/
-
-        var res = await api.Get(api.walliSellerUp.getClient+$"?userId={Id}", await api.GetLoginHeader());
-        sucessfull = res?.IsSuccessStatusCode ?? false;
-
-        if (sucessfull)
+        /*if (!CanAcess())
         {
-            user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
+        await navigationStacker.NavigateBack();
+        return;
+    }*/
+
+        await Update();
+    }
+
+    async Task Update()
+    {
+        loaded = false;
+        StateHasChanged();
+
+        var res = await api.Get(api.walliSellerUp.getClient + $"?userId={Id}", await api.GetLoginHeader());
+        sucessful = res?.IsSuccessStatusCode ?? false;
+        
+        if (sucessful && res != null)
+        {
+            user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync()) ?? new();
         }
+
+        loaded = true;
+        StateHasChanged();
     }
 
     string GetUrl()

@@ -1,4 +1,4 @@
-﻿@page "/viewSearch"
+﻿@page "/viewSearch/{SearchId:int}"
 @inject Api api;
 @inject NavigationStacker navManager;
 @inject IJSRuntime js;
@@ -6,7 +6,7 @@
 
 @if (loading) {
     <div class="w-full h-full flex justify-center items-center">
-        Loading...
+        <Loading></Loading>
     </div>
 }
 else
@@ -31,19 +31,41 @@ else
         }
         else
         {
-            <div class="w-full mt-4 flex justify-center items-center">
-                <div class="md:w-[60%] ms:w-[70%]">
-                    @if (!denunciando)
-                    {
-                        <ButtonStyled OnClick=@(() => navManager.NavigateTo("/marca/denunciar/"+result.Id))>Denunciar Agora</ButtonStyled>
-                    }
-                    else
-                    {
-                        <ButtonStyled><Loading /></ButtonStyled>
-                    }
-                    
+            if (loggedRole != "master" && loggedRole != "walli_expert")
+            {
+                <div class="w-full mt-4 flex justify-center items-center">
+                    <div class="md:w-[60%] ms:w-[70%]">
+                        @if (!denunciando)
+                        {
+                            <ButtonStyled OnClick=@(() => navManager.NavigateTo("/marca/denunciar/"+result.Id, true))>Denunciar Agora</ButtonStyled>
+                        }
+                        else
+                        {
+                            <ButtonStyled><Loading /></ButtonStyled>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="w-[70%] md:w-[40%] flex flex-col pl-10">
+                    <DropdownVertical Id="colidence-id" @ref=colidence OnChangeSelected=OnChangeSelect Data="data">
+                        <CustomLabel>Colidência:</CustomLabel>
+                    </DropdownVertical>
+                    <DropdownVertical Id="status-id" @ref=status OnChangeSelected=OnChangeSelect Data="data">
+                        <CustomLabel>Status:</CustomLabel>
+                    </DropdownVertical>
+                </div>
+
+                if (changed)
+                {
+                    <div class="py-2 w-full flex justify-center items-center">
+                        <div class="w-[70%] md:w-[40%]">
+                            <ButtonStyled OnClick="SaveChanges">Salvar alterações</ButtonStyled>
+                        </div>
+                    </div>
+                }
+            }
         }
     </div>
 }
@@ -54,40 +76,127 @@ else
     private string? Date { get => $"{result?.Date.Day}/{(result?.Date.Month < 10 ? $"0{result?.Date.Month}" : result?.Date.Month)}/{result?.Date.Year}"; }
     bool loading = true;
 
+    DropdownData[] data = new DropdownData[]
+    {
+        new(){ Label = "teste1", Value = "t1" },
+        new(){ Label = "teste2", Value = "t2" },
+        new(){ Label = "teste3", Value = "t3" }
+    };
+
     SearchResult? result = null;
+
+    DropdownVertical? status;
+    DropdownVertical? colidence;
 
     string? Termo { get => result?.Term; }
     string? Link { get => result?.Link; }
 
     bool denunciando = false;
 
-    protected override async Task OnInitializedAsync()
+    bool changed = false;
+
+    private string loggedRole = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var _resultCached = await localStorage.GetInSession("searchResultChache");
-        if (string.IsNullOrEmpty(_resultCached))
+        if (firstRender)
         {
-            await navManager.NavigateBack();
-            return;
-        }
+            loggedRole = await localStorage.GetLoggedRole();
 
-        result = JsonSerializer.Deserialize<SearchResult>(_resultCached);
-        if (result == null)
-        {
-            await navManager.NavigateBack();
-            return;
-        }
+            var url = "";
+            if (loggedRole != "")
+                url = api.walliSellerUp.getResult;
+            else
+                url = api.walliClient.getResult;
 
-        if (!result.Visualized)
-        {
-            var res = await api.Put(api.walliClient.setVisualizedResult + $"?resultId={result.Id}", "", await api.GetLoginHeader());
+            var _res = await api.Get(url + $"?resultId={SearchId}", await api.GetLoginHeader());
 
-            if (res?.IsSuccessStatusCode == true)
+            if (_res == null || _res?.IsSuccessStatusCode == false)
             {
-                await localStorage.StartAuthSession();
+                await navManager.NavigateBack();
+                return;
+            }
+
+            result = JsonSerializer.Deserialize<SearchResult>(await _res.Content.ReadAsStringAsync());
+            if (result == null)
+            {
+                await navManager.NavigateBack();
+                return;
+            }
+
+            loading = false;
+            StateHasChanged();
+
+            await LoadStatus();
+        }
+    }
+
+    async Task LoadStatus()
+    {
+        var res = await api.Get(api.walliSellerUp.getResultStatus+$"?resultId={SearchId}", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            ResultStatus? obj = JsonSerializer.Deserialize<ResultStatus>(json);
+
+            if (obj != null)
+            {
+                var index = Array.IndexOf(data, data.FirstOrDefault(d => d.Value == obj.Status));
+                if (index == -1)
+                    index = 0;
+
+                status.SelectedIndex = index;
+
+                var _index = Array.IndexOf(data, data.FirstOrDefault(d => d.Value == obj.Colidence));
+                if (_index < 0)
+                    _index = 0;
+
+                colidence.SelectedIndex = _index;
             }
         }
 
-        loading = false;
         StateHasChanged();
+    }
+
+    async Task SaveChanges()
+    {
+        if (changed == false)
+            return;
+
+        var res = await api.Post(api.walliSellerUp.updateResultStatus, JsonSerializer.Serialize(new
+        {
+            status = status.Current.Value,
+            colidence = colidence.Current.Value,
+            searchResultId = result.Id
+        }), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            await navManager.NavigateBack();
+            return;
+        }
+        else
+        {
+            await js.InvokeVoidAsync("window.alert", "Houve algum erro ao tentar salvar o arquivo por favor tente novamente");
+        }
+    }
+
+    void OnChangeSelect()
+    {
+        if (changed == false)
+        {
+            changed = true;
+            StateHasChanged();
+        }
+    }
+
+    public class ResultStatus
+    {
+        [JsonPropertyName("colidence")]
+        public string Colidence { get; set; } = string.Empty;
+
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = string.Empty;
     }
 }

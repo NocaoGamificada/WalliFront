@@ -12,12 +12,16 @@
         <ButtonStyled>Fale com nossos especialistas</ButtonStyled>
         <div class="w-full my-3 flex flex-col gap-4" >
             <div class="w-full flex flex-col">
-                <h1 class="text-xl text-white font-bold">O que é Denúncia na plataforma?</h1>
-                <p class="text-white">Escolha essa opção se</p>
+                <h1 class="text-xl text-white font-bold">O que é Denuncia administrativa?</h1>
+                <p class="text-white">Denuncia formal junto à plataforma ou site que ocorrer a indevida reprodução da marca registrada  </p>
             </div>
             <div class="w-full flex flex-col">
-                <h1 class="text-xl text-white font-bold">O que é uma notificação extra judicial?</h1>
-                <p class="text-white">Escolha essa opção se</p>
+                <h1 class="text-xl text-white font-bold">O que é Ação Judicial?</h1>
+                <p class="text-white">Processo legal perante tribunal ou órgão judicial</p>
+            </div>
+            <div class="w-full flex flex-col">
+                <h1 class="text-xl text-white font-bold">O que é uma Notificação Extrajudicial?</h1>
+                <p class="text-white">Notificação extrajudicial via correios, notificação confeccionada e assinada por advogados especializados em defesa de marca. Recebimento validado pelos correios</p>
             </div>
         </div>
     </div>
@@ -30,10 +34,5 @@
     private async Task NavDenuncing(int Id)
     {
         await navManager.NavigateTo("/tomarMedida/"+Id+"/"+SearchId);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        
     }
 }

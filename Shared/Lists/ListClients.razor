@@ -10,6 +10,7 @@
         <HeaderContent>
             <td align="center" class="text-white">Nome</td>
             <td align="center" class="text-white">Email</td>
+            <td align="center" class="text-white">Cpf</td>
             <td align="center" class="text-white">Status</td>
         </HeaderContent>
         <PaginationContent>
@@ -21,6 +22,7 @@
                 <ClientLine Id="user.Id">
                     <Name>@user.Name</Name>
                     <Email>@user.Email</Email>
+                    <Cpf>@user.Indentification</Cpf>
                     <Status>@GetUserStatus(user)</Status>
                 </ClientLine>
             }
@@ -81,7 +83,6 @@ else
             else
             {
                 clientResults = JsonSerializer.Deserialize<ClientResults>(json);
-                await localStorage.SetCacheInSession("clientIndex", json);
             }
         }
 

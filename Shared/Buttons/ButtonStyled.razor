@@ -22,7 +22,7 @@
     public string CustomWidth { get; set; } = "";
 
     [Parameter]
-    public string FontSize { get; set; }
+    public string FontSize { get; set; } = "text-lg";
 
     string _Class { get => $"flex items-center justify-center {Color} {BgColor} hover:{BgColorHover} font-semibold py-2 px-3 w-full rounded focus:outline-none focus:shadow-outline {FontSize}"; }
 }

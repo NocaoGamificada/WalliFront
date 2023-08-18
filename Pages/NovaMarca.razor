@@ -1,10 +1,7 @@
 ﻿@page "/novamarca";
 @inject LocalStorage localStorage;
 
-@if (loggedRole == "walli_client")
-{
-    <NewMarkClient />
-}else if (loggedRole == "master")
+@if (loggedRole == "master")
 {
     <NewMarkManager />
 }
@@ -15,6 +12,10 @@ else if (loggedRole == "walli_franqued")
 else if (loggedRole == "walli_seller")
 {
     <NewClient />
+}
+else
+{
+    <NewMarkClient />
 }
 
 @code {

@@ -13,6 +13,10 @@
       "url": "css\/bootstrap\/bootstrap.min.css.map"
     },
     {
+      "hash": "sha256-71O75rog6zo+OrrgExDwwl350nz9o9OlNKxFw6OkqgA=",
+      "url": "css\/box-animations.css"
+    },
+    {
       "hash": "sha256-VkuLmpCQLbp+PtvsPS6dfncopqeGSyee9Zrcj8sSGsA=",
       "url": "css\/loadingBar.css"
     },
@@ -85,8 +89,16 @@
       "url": "images\/icones\/add.png"
     },
     {
+      "hash": "sha256-laWaCwbRE352CO1S4ZjN3IBCtb9SDAzBLlHlNLm6FCU=",
+      "url": "images\/icones\/bot-icon.png"
+    },
+    {
       "hash": "sha256-oDrmKjKwbTCKy2yxFeapwFU+9ArFuKiBjCH30\/D57eA=",
       "url": "images\/icones\/close.svg"
+    },
+    {
+      "hash": "sha256-bofdQtLxHDuRmbWD9\/3JUSh8JBp5GSkxeZAu6jDHjP0=",
+      "url": "images\/icones\/credit_card_icon.png"
     },
     {
       "hash": "sha256-3q0KSrluLl7xbOI4zTuBaRum3Rj0a2dk4oMP\/AFimas=",
@@ -105,12 +117,20 @@
       "url": "images\/icones\/notify.png"
     },
     {
+      "hash": "sha256-W7IgTxujew4DRsa\/1pybL\/dNmuSjfiuBjj\/oMMjK3Nc=",
+      "url": "images\/icones\/paper-plane.png"
+    },
+    {
       "hash": "sha256-4AN+AwE39IJ6Brc13\/Edt9VKAi1sfixd5cZ3JaqJO5M=",
       "url": "images\/icones\/perfil.png"
     },
     {
       "hash": "sha256-oFwGr8phLOzIrL6Pmrk8ZThFVjfutr61tE\/ZZUJQ6i0=",
       "url": "images\/icones\/pesquisar.png"
+    },
+    {
+      "hash": "sha256-M6nFmWuIM2orjd4UizBGl7QvhN5owiqje5vfOQ72skA=",
+      "url": "images\/icones\/reload-icon-circle.png"
     },
     {
       "hash": "sha256-7UWpXR4s3Ixghf5wICx8+Vs9a7V\/mCpZXHlWyb4zt+0=",
@@ -125,15 +145,31 @@
       "url": "images\/loading.gif"
     },
     {
+      "hash": "sha256-8hrlB3FR341glB6ZNbNlVk0mYKIrC\/nZV9lVjuS6qYQ=",
+      "url": "images\/pagamento\/boleto.png"
+    },
+    {
+      "hash": "sha256-YyrFjWvrwogD8pTe69CQmyYcCvzQdSHQ0nAMEa2chbw=",
+      "url": "images\/pagamento\/cartao.png"
+    },
+    {
+      "hash": "sha256-gjmj5N8J09NWApyNqVprOs9MGMnod2MJqEtRHZPQJ80=",
+      "url": "images\/pagamento\/loading-circle.svg"
+    },
+    {
+      "hash": "sha256-xDClpgbQHmJ2o97KeoeXlrRzh5Wexqtiti0hMB8qg0E=",
+      "url": "images\/pagamento\/pix.png"
+    },
+    {
       "hash": "sha256-UFjOGmEAK+Y\/5dNuqPPGtqH5MJ1iIyB6QjZuRbfPLjw=",
       "url": "images\/right-arrow.png"
     },
     {
-      "hash": "sha256-\/VSp1Gx3kyMRqbYdz02BKg7pit4+bgH1hPG+Nd3ZQ0c=",
+      "hash": "sha256-mznENdmhXITr8z8121BXjZyOdABjoVsngr0SO9JOcQM=",
       "url": "images\/walli_logo.png"
     },
     {
-      "hash": "sha256-6v9ouQPkvHWHA+Kq5bPkWICURio+kffBHcCCRrhJ4NM=",
+      "hash": "sha256-TyN41lYgXMTYanj+ekQChsZwzPrvR9aHUm8TOxWaAjI=",
       "url": "index.html"
     },
     {
@@ -945,11 +981,11 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-RoIu\/H5B\/M2uk6uuXJaMTOhmuncld25+sYHOiR9EUFE=",
+      "hash": "sha256-3xrm1Bs3hLOU8wlIaEsO0AcK0pI7VmwNRt56uGJSxvU=",
       "url": "_framework\/WalliFront.dll"
     },
     {
-      "hash": "sha256-YSz1QmQ93VmOcVnU+Pon3tgSLCVkwW8iI4Vtv\/p9XTc=",
+      "hash": "sha256-JPCVAFB3q0l+AXM16mNeQP23jcNcAmgjgvFvAQyEwW0=",
       "url": "_framework\/WalliFront.pdb"
     },
     {
@@ -957,9 +993,45 @@
       "url": "_framework\/blazor.webassembly.js"
     },
     {
-      "hash": "sha256-2f65YQjwNs3AnznNjEaQwIIEYdU8Oszb0+rvWYAY8Nw=",
+      "hash": "sha256-3VUNfFW\/mbwMHz36duUlJfiV35556ZaDntzOqIePzfk=",
       "url": "_framework\/blazor.boot.json"
+    },
+    {
+      "hash": "sha256-DxK8efjWq69WRHPYhqbZldj39r6w9WQDFknjlDJqLDY=",
+      "url": "_framework\/Microsoft.AspNetCore.Connections.Abstractions.dll"
+    },
+    {
+      "hash": "sha256-VEhRO1eAOppFJM2rEmNIYqQJMv+sYDlLbaxBt3JzTiA=",
+      "url": "_framework\/Microsoft.AspNetCore.Http.Connections.Client.dll"
+    },
+    {
+      "hash": "sha256-4MVf8ut\/i9kcbdFWWIQLt\/dxXMqaYT\/FpnGS1WNMrwM=",
+      "url": "_framework\/Microsoft.AspNetCore.Http.Connections.Common.dll"
+    },
+    {
+      "hash": "sha256-y9sG1iDyKQI9aOo1aHZJTEOerOsgRdUzLNqvwAZPeww=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Client.dll"
+    },
+    {
+      "hash": "sha256-nn3MenP9NhlEc3EKgIYhI1g3loYSO8n9aSSw8rm6S9Q=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Client.Core.dll"
+    },
+    {
+      "hash": "sha256-ILTYNLiILiNR+uoI\/akFDCzIDFcwwQopHJDZPH7SVUs=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Common.dll"
+    },
+    {
+      "hash": "sha256-EdgTP7Xs5Mz9IBmj1\/kNWRx0ylYLUjgcG1xjqfmUc9s=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Protocols.Json.dll"
+    },
+    {
+      "hash": "sha256-0dp2FBcPRf841phIQ\/ad\/hZpI8pM4CqAe+x7EcLvUQQ=",
+      "url": "_framework\/Microsoft.Extensions.Features.dll"
+    },
+    {
+      "hash": "sha256-IsZJ91\/OW+fHzNqIgEc7Y072ns8z9dGritiSyvR9Wgc=",
+      "url": "_framework\/Newtonsoft.Json.dll"
     }
   ],
-  "version": "OXjnfRIY"
+  "version": "qDQxip6y"
 };

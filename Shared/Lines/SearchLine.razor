@@ -1,12 +1,13 @@
 ﻿@inject NavigationStacker navManager;
 @inject LocalStorage localStorage;
+@inject Api api;
 
-<LineTable OnClick=Click>
+<LineTable Class=@(BgColor()) OnClick=Click>
+    <td width="32px" align="center">@Index</td>
     <td width="32px" align="center"><div class="w-2.5 h-2.5 rounded-full @Color()" /></td>
-    <td align="center" class="text-white">@Result.Search.BrandName</td>
-    <td align="center" class="text-white">@Result.Type.ToUpper()</td>
-    <td align="center" class="text-white">@Violation()</td>
-    <td align="center" class="text-white">@Result.Date</td>
+    <td align="center" class="text-white py-2">@Result.Search.BrandName</td>
+    <td align="center" class="text-white py-2">@Result.Type.ToUpper()</td>
+    <td align="center" class="text-white py-2">@Violation()</td>
 </LineTable>
 
 @code {
@@ -14,8 +15,9 @@
     public SearchResult Result { get; set; }
 
     [Parameter]
-    public bool NoChangeColor { get; set; }
+    public int Index { get; set; }
 
+    bool clicked = false;
     bool isDanger = false;
 
     bool HaveViolation()
@@ -34,8 +36,8 @@
 
     string BgColor()
     {
-        if (Result.Visualized == true && NoChangeColor == false)
-            return "background-color: #6D6D75;";
+        if (Result.Visualized == true)
+            return "bg-zinc-600";
 
         return "";
     }
@@ -51,7 +53,15 @@
 
     async Task Click()
     {
-        await localStorage.SetCacheInSession("searchResultChache", JsonSerializer.Serialize(Result));
-        await navManager.NavigateTo("/viewSearch", true);
+        if (clicked)
+            return;
+
+        clicked = true;
+        if (!Result.Visualized)
+        {
+            var res = await api.Put(api.walliClient.setVisualizedResult + $"?resultId={Result.Id}", "", await api.GetLoginHeader());
+        }
+
+        await navManager.NavigateTo("/viewSearch/"+Result.Id, true);
     }
 }

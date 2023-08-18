@@ -1,0 +1,73 @@
+﻿@page "/upgrade-plano";
+@inject Api api;
+
+<div class="w-full h-full overflow-y-auto gap-3 flex-col bg-white justify-center items-center pb-10">
+    @if (loadingFake)
+    {
+        <div class="w-full h-full flex justify-center items-center">
+            <div class="w-8 h-8 max-h-full">
+                <img class="w-full h-full object-contain" src="images/pagamento/loading-circle.svg" />
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-col items-center py-4 w-full">
+            <img src="images/walli_logo.png" class="w-[300px] object-contain" />
+        </div>
+        @if (!Selected)
+        {
+            <div class="w-full flex justify-center items-center font-semibold">
+                <h1 class="text-black text-center text-xl">A Mark-se Pensou nos melhores preços para você proteger a sua marca</h1>
+            </div>
+            <div class="w-full items-center flex flex-col md:flex-row px-3 justify-center gap-4 flex-1 pt-11">
+                <PlanCard OnSelected=SelectedCard Level="1" IsActive=@(assinature?.Level == 1)>
+                    <CardTitle>Básico</CardTitle>
+                    <CardPrice>150</CardPrice>
+                </PlanCard>
+
+                <PlanCard OnSelected=SelectedCard Level="2" IsActive=@(assinature?.Level == 2)>
+                    <CardTitle>Premium</CardTitle>
+                    <CardPrice>550</CardPrice>
+                </PlanCard>
+            </div>
+        }
+        else
+        {
+            <PaymentSelect LevelSelected="levelSelected"></PaymentSelect>
+        }
+    }
+</div>
+
+@code {
+    Assinature? assinature;
+    bool Selected = false;
+    int levelSelected = 0;
+
+    bool loadingFake = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetCurrentAssinature();
+
+        await Task.Delay(1500);
+        loadingFake = false;
+    }
+
+    public void SelectedCard(int level)
+    {
+        levelSelected = level;
+        Selected = true;
+        StateHasChanged();
+    }
+
+    async Task GetCurrentAssinature()
+    {
+        var res = await api.Get(api.walliClient.getCurrentPlan, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode != true)
+            return;
+
+        assinature = JsonSerializer.Deserialize<Assinature>(await res.Content.ReadAsStringAsync());
+    }
+}

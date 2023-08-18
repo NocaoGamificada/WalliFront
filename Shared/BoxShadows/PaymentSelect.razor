@@ -1,0 +1,180 @@
+﻿@inject Api api;
+@inject IJSRuntime js;
+@inject NavigationStacker navManager;
+
+<div class="flex flex-1 w-full flex-col">
+    <div class="w-full py-3 flex flex-col items-center text-xl text-black">
+        @if (LevelSelected == 1)
+        {
+            <h1>Plano Selecionado: Basico</h1>
+        }
+        else
+        {
+            <h1>Plano Selecionado: Premium</h1>
+        }
+    </div>
+
+    @if (!paymenting)
+    {
+        if (!SelecionouCartao && !SelecionouBoleto && !ShowQrCode)
+        {
+            <div class="flex justify-center items-center flex-col md:flex-row gap-4">
+                <div class="w-[40%] max-h-[400px] md:w-[20%]">
+                    <img @onclick=@(() => SelectedMethod("boleto")) class="w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/boleto.png" />
+                </div>
+                <div class="w-[40%] max-h-[400px] md:w-[20%]">
+                    <img @onclick=@(() => SelectedMethod("credit_card")) class="w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/cartao.png" />
+                </div>
+                <div class="w-[40%] max-h-[400px] md:w-[20%]">
+                    <img @onclick=@(() => SelectedMethod("pix")) class="w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/pix.png" />
+                </div>
+            </div>
+        }
+        else if (SelecionouCartao)
+        {
+            <div class="pl-2">
+                <button @onclick=@(() => {
+                    SelecionouCartao = false;
+                    StateHasChanged();
+                }) class="w-[125px] py-2 pl-2 bg-green-400 rounded-xl px-2">Voltar</button>
+            </div>
+            <ListCreditCardsPayment onSelected="SelectCreditCard" />
+        }
+        else if (SelecionouBoleto)
+        {
+
+        }
+        else
+        {
+            <div class="flex-col flex justify-center items-center">
+                <h1>Aponte a camera do seu celular para scanear o QrCode</h1>
+                <img src="@qrcodePix" class="object-contain w-[200px]" />
+                <p>Valor total a pagar: @PriceToPay</p>
+            </div>
+        }
+    }else
+    {
+        if (!sucessfull)
+        {
+            <div class="w-full h-full flex justify-center items-center">
+                <h1>So um segundo....</h1>
+                <div class="w-full h-full flex justify-center items-center">
+                    <div class="w-9 h-9 max-h-full">
+                        <img class="w-full h-full object-contain" src="images/pagamento/loading-circle.svg" />
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int LevelSelected { get; set; }
+
+    bool SelecionouCartao { get; set; }
+    bool SelecionouBoleto { get; set; }
+
+    bool ShowQrCode { get; set; }
+
+    public Action? Return { get; set; }
+
+    bool paymenting = false;
+    bool sucessfull = false;
+    string method = string.Empty;
+
+    PaymentSignalR? hub;
+
+    private int creditCardId = 0;
+
+    private string qrcodePix = string.Empty;
+    private int PriceToPay { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (LevelSelected != 1 || LevelSelected != 2)
+        {
+            Return?.Invoke();
+        }
+    }
+
+    public async Task SelectedMethod(string method)
+    {
+        this.method = method;
+
+        if (method == "credit_card")
+        {
+            SelecionouCartao = true;
+            StateHasChanged();
+            return;
+        }
+        else if (method== "boleto")
+        {
+            SelecionouBoleto = true;
+            StateHasChanged();
+            return;
+        }
+
+        var res = await api.Post(api.walliClient.buyPlan + $"?level={LevelSelected}&payment_type={method}", "", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var obj = JsonSerializer.Deserialize<PixResponse>(await res.Content.ReadAsStringAsync());
+            if (obj == null)
+                return;
+
+            qrcodePix = obj.QrCodeUrl;
+            PriceToPay = obj.Price;
+
+            ShowQrCode = true;
+            StateHasChanged();
+
+            hub = new();
+
+            hub.OnSuccess = async () =>
+            {
+                await js.InvokeVoidAsync("window.alert", "Deu bom pai :)");
+                await navManager.ClearPreviousPages();
+                await navManager.NavigateTo("/perfil", true);
+            };
+
+            await hub.Connect();
+            await hub.RegisterOrder(obj.OrderId);
+        }
+        else
+        {
+
+        }
+    }
+
+    public async Task SelectCreditCard(int cardId)
+    {
+        creditCardId = cardId;
+        var res = await api.Post(api.walliClient.buyPlan + $"?level={LevelSelected}&payment_type={method}&creditCardId={creditCardId}", "", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            await js.InvokeVoidAsync("window.alert", "Você comprou o plano com sucesso :D");
+            await navManager.NavigateTo("/perfil", true);
+        }
+    }
+
+    public class PixResponse
+    {
+        [JsonPropertyName("orderId")]
+        public string OrderId { get; set; } = string.Empty;
+
+        [JsonPropertyName("qrCode")]
+        public string QrCode { get; set; } = string.Empty;
+
+        [JsonPropertyName("qrCodeUrl")]
+        public string QrCodeUrl { get; set; } = string.Empty;
+
+        [JsonPropertyName("price")]
+        public int Price { get; set; }
+    }
+}

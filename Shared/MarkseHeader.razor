@@ -1,13 +1,14 @@
 ﻿@inject NavigationStacker navManager;
 
 <header class="w-full h-[60px] py-1 bg-zinc-600 flex flex-row gap-2 items-center justify-between md:h-[80px] md:px-12">
-    <img tabindex="0" src="images/walli_logo.png" class="object-contain w-[40%] ml-3 h-full md:w-auto"/>
+    <img tabindex="0" title="Logo da mark-se" src="images/walli_logo.png" class="object-contain  w-[160px] ml-3 h-full md:w-[225px]" />
     <div class="w-[50%] flex flex-row md:w-[30%] justify-end">
         <div class="w-[70%] py-5 px-2">
             <ButtonStyled Color="text-zinc-900" FontSize="text-[8pt]" OnClick="Click">Fale pelo chat</ButtonStyled>
         </div>
     </div>
 </header>
+
 
 
 @code{
@@ -17,8 +18,8 @@
     [Parameter]
     public string TargetRoute { get; set; } = "/novamarca";
 
-    public void Click()
+    public async void Click()
     {
-        navManager.NavigateTo("/chat", true);
+        await navManager.NavigateTo("/chat", false);
     }
 }

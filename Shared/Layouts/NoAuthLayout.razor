@@ -27,7 +27,7 @@ else if (haveCredentials)
         </div>
     </div>
 }else{
-    <div class="w-full h-full">
+    <div class="w-full h-screen overflow-y-auto">
         @Body
     </div>
 }
@@ -102,6 +102,8 @@ else if (haveCredentials)
     {
         await localStorage.ClearSession();
         await localStorage.Clear();
+        haveCredentials = false;
         navManager.NavigateTo("/login");
+        StateHasChanged();
     }
 }

@@ -3,7 +3,7 @@
     {
         <h1 @onclick=@(() => OnReSend(ChatMessage)) class="text-lg">Reenviar</h1>
     }
-    <div class="@GetBgColor() py-3 px-4 max-w-[70%] rounded-3xl @GetTextColor()">
+    <div class="@GetBgColor() py-3 px-4 max-w-[90%] md:max-w-[70%] rounded-3xl text-sm @GetTextColor()">
         @ChatMessage.Message
     </div>
 </div>

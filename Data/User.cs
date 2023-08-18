@@ -13,11 +13,8 @@ namespace Walli.Data
         [JsonPropertyName("email")]
         public string Email { get; set; } = string.Empty;
 
-        [JsonPropertyName("cpf")]
-        public string? CPF { get; set; } = string.Empty;
-
-        [JsonPropertyName("cnpj")]
-        public string? CNPJ { get; set; } = string.Empty;
+        [JsonPropertyName("indentification")]
+        public string Indentification { get; set; } = string.Empty;
 
         [JsonPropertyName("password")]
         public string Password { get; set; } = string.Empty;

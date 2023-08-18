@@ -1,0 +1,182 @@
+﻿@page "/novoCliente";
+@using Newtonsoft.Json;
+@inject Api api;
+@inject IJSRuntime js;
+@inject LocalStorage localStorage;
+@inject NavigationStacker navManager;
+@using JsonSerializer = System.Text.Json.JsonSerializer;
+
+<div class="w-full h-full flex flex-row items-center justify-center">
+    <div class="md:w-[500px] h-[97%] px-5 md:bg-zinc-600 flex flex-col items-center overflow-y-auto md:rounded-3xl py-4">
+        <img class="md:w-[125px]" src="images/walli_logo.png" />
+        <h1 class="text-xl text-white">Cadastrar Cliente</h1>
+  
+        <div class="w-full flex-1 flex flex-col justify-between">
+            <div class="w-full py-2">
+                <InputForm Id="name" Data="name" Placeholder="Digite o nome do cliente">Nome</InputForm>
+                <InputForm Id="email" Data="email" Placeholder="Digite o email do cliente">Email</InputForm>
+                <InputForm Id="cpf" Mask="000.000.000-00" Data="indentification" Placeholder="000.000.000-00">CPF</InputForm>
+                <InputForm Id="password" Data="password" Placeholder="Digite a senha do cliente">Senha</InputForm>
+
+                @if (loggedRole != "walli_seller")
+                {
+                    <InputForm Id="seller-cpf" Mask="000.000.000-00" Data="sellerCpf" Placeholder="000.000.000-00">Cpf do vendedor</InputForm>
+                }
+            </div>
+            <ButtonStyled OnClick="CadatrarClient">
+                Cadastrar Cliente
+            </ButtonStyled>
+        </div>
+        
+    </div>
+</div>
+
+@code {
+    int step = 0;
+    bool cadastrando = false;
+
+    InputData name = new();
+    InputData email = new();
+    InputData password = new();
+    InputData indentification = new();
+
+    InputData sellerCpf = new();
+
+    string messageError = "";
+    string loggedRole = "";
+
+    async void NextStep()
+    {
+        if (step + 1 == 1)
+        {
+            if (!await OnValidateUserCredentials())
+            {
+                step = 0;
+                return;
+            }
+        }
+
+        step++;
+        if (step > 2)
+            step = 2;
+
+        StateHasChanged();
+    }
+
+    void LastStep()
+    {
+        step--;
+        if (step < 0)
+            step = 0;
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var rolesJson = await localStorage.Get("roles");
+        loggedRole = JsonSerializer.Deserialize<string[]>(rolesJson)?.FirstOrDefault();
+        Console.WriteLine(loggedRole);
+        if (loggedRole != "walli_franqued" && loggedRole != "master")
+        {
+            await navManager.NavigateBack();
+            return;
+        }
+    }
+
+    private async Task CadatrarClient()
+    {
+        if (cadastrando)
+            return;
+
+        cadastrando = true;
+        StateHasChanged();
+
+        await Register();
+
+        cadastrando = false;
+    }
+
+    private async Task<bool> OnValidateUserCredentials()
+    {
+        if (!email.Value.Contains("@"))
+        {
+            await js.InvokeVoidAsync("window.alert", "Digite um email válido!");
+            return false;
+        }
+
+        if (name.Value.Length == 0)
+        {
+            await js.InvokeVoidAsync("window.alert", "Digite um nome!");
+            return false;
+        }
+
+        if (password.Value.Contains(" "))
+        {
+            await js.InvokeVoidAsync("window.alert", "Senha não pode conter espaços!");
+            return false;
+        }
+
+        if (password.Value.Length < 6)
+        {
+            await js.InvokeVoidAsync("window.alert", "Senha deve conter no minimo 6 caracteres");
+            return false;
+        }
+
+
+        var iden = indentification.Value.Replace(".", "").Replace("-", "");
+        if (iden.Length < 11 || iden.Length > 11)
+        {
+            await js.InvokeVoidAsync("window.alert", "Cpf somente pode possuir 11 digitos");
+            return false;
+        }
+
+        var res = await api.Post(api.walliSellerUp.checkClientExists, JsonSerializer.Serialize(new
+        {
+            email = email.Value,
+            cpf = indentification
+        }), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == false && res != null)
+        {
+            dynamic? objError = JsonConvert.DeserializeObject(await res.Content.ReadAsStringAsync());
+
+            if (objError?.messageError != null)
+            {
+            }
+            else
+            {
+            }
+            return false;
+        }
+        else if (res == null)
+            return false;
+
+        return res?.IsSuccessStatusCode == true;
+    }
+
+    private async Task Register()
+    {
+        var user = new
+        {
+            email = email.Value,
+            password = password.Value,
+            name = name.Value,
+            indentification = indentification.Value.Replace("-", "").Replace(".", "").Trim(),
+            sellerCpf = sellerCpf.Value.Replace("-", "").Replace(".", "").Trim()
+        };
+
+        var url = loggedRole == "walli_seller" ? api.walliSeller.addClient : api.walliSellerUp.addClient;
+
+        var res = await api.Post(url, JsonSerializer.Serialize(user), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            await navManager.NavigateBack();
+            return;
+        }
+
+        messageError = "Houve algum erro durante o envio dos dados por favor verifique :)";
+        StateHasChanged();
+    }
+}

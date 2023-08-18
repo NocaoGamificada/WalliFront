@@ -67,13 +67,11 @@
         }
 
         homeData = await api.GetJson<SellerHomeData>(api.walliSeller.getHomeData, await api.GetLoginHeader());
-        await localStorage.SetCacheInSession("sellerDataIndex", JsonSerializer.Serialize(homeData));
         LoadingHomeData = false;
     }
 
     async Task ViewMark(ClientMark mark)
     {
-        await localStorage.SetCacheInSession("cachedMark", JsonSerializer.Serialize(mark));
         await navManager.NavigateTo("/viewMark", true);
     }
 

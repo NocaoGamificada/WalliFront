@@ -13,7 +13,7 @@
                 @for (int i = 0; i < Data.labels.Length; i++)
                 {
                     var _i = i;
-                    <ChartLine Color="@Colors[_i]">@Data.labels[_i]</ChartLine>
+                    <ChartLine Color="@Colors[_i]">@Data.labels[_i]: @Data.data[_i]</ChartLine>
                 }
             </div>
         }
@@ -48,7 +48,10 @@
         "#FB3569",
         "#82CD47",
         "black",
-        "white"
+        "white",
+        "red",
+        "yellow",
+        "green"
     };
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

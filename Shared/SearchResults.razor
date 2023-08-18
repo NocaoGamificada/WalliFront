@@ -24,7 +24,7 @@ else
     public int markId;
     [Parameter]
     public bool isHome { get; set; }
-    GraphicData graphicData;
+    List<GraphicPie> graphicData;
 
     PieData dataViolations = new();
     PieData dataGood = new();
@@ -38,30 +38,15 @@ else
         }
         else
         {
-            if (await localStorage.GetInSession("lastGraphicMarkId") == markId.ToString())
-            {
-                var chachedGraphics = await localStorage.GetInSession("chachedGraphicsMark");
-                if (!string.IsNullOrEmpty(chachedGraphics))
-                {
-                    graphicData = JsonSerializer.Deserialize<GraphicData>(chachedGraphics);
-                    SetupGraphic();
-                    loading = false;
-                    StateHasChanged();
-                    return;
-                }
-            }
-
             var res = await api.Get(api.walliClient.getHomeGraphics, await api.GetLoginHeader());
 
             if (res != null)
             {
                 if (res.IsSuccessStatusCode)
                 {
-                    graphicData = JsonSerializer.Deserialize<GraphicData>(await res.Content.ReadAsStringAsync());
+                    graphicData = JsonSerializer.Deserialize<List<GraphicPie>>(await res.Content.ReadAsStringAsync());
                     SetupGraphic();
                     loading = false;
-                    await localStorage.SetCacheInSession("chachedGraphicsIndex", JsonSerializer.Serialize(graphicData));
-                    await localStorage.SetInSession("lastGraphicMarkId", markId.ToString());
                 }
             }
         }
@@ -69,25 +54,15 @@ else
 
     async Task SetupHome()
     {
-        var chachedGraphics = await localStorage.GetInSession("chachedGraphicsIndex");
-        if (!string.IsNullOrEmpty(chachedGraphics))
-        {
-            graphicData = JsonSerializer.Deserialize<GraphicData>(chachedGraphics);
-            SetupGraphic();
-            loading = false;
-            return;
-        }
-
         var res = await api.Get(api.walliClient.getHomeGraphics, await api.GetLoginHeader());
 
         if (res != null)
         {
             if (res.IsSuccessStatusCode)
             {
-                graphicData = JsonSerializer.Deserialize<GraphicData>(await res.Content.ReadAsStringAsync());
+                graphicData = JsonSerializer.Deserialize<List<GraphicPie>>(await res.Content.ReadAsStringAsync());
                 SetupGraphic();
                 loading = false;
-                await localStorage.SetCacheInSession("chachedGraphicsIndex", JsonSerializer.Serialize(graphicData));
             }
         }
     }
@@ -98,33 +73,12 @@ else
         var goods = new Dictionary<string, int>();
         var bads = new Dictionary<string, int>();
 
-        if (graphicData.Google.Violations > 0)
-            violations.Add("Google", graphicData.Google.Violations);
-        if (graphicData.Google.Good > 0)
-            goods.Add("Google", graphicData.Google.Good);
-        if (graphicData.Google.Bad > 0)
-            bads.Add("Google", graphicData.Google.Bad);
-
-        if (graphicData.Twitter.Violations > 0)
-            violations.Add("Twitter", graphicData.Twitter.Violations);
-        if (graphicData.Twitter.Good > 0)
-            goods.Add("Twitter", graphicData.Twitter.Good);
-        if (graphicData.Twitter.Bad > 0)
-            bads.Add("Twitter", graphicData.Twitter.Bad);
-
-        if (graphicData.Facebook.Violations > 0)
-            violations.Add("Facebook", graphicData.Facebook.Violations);
-        if (graphicData.Facebook.Good > 0)
-            goods.Add("Facebook", graphicData.Facebook.Good);
-        if (graphicData.Facebook.Bad > 0)
-            bads.Add("Facebook", graphicData.Facebook.Bad);
-
-        if (graphicData.Koo.Violations > 0)
-            violations.Add("Koo", graphicData.Koo.Violations);
-        if (graphicData.Koo.Good > 0)
-            goods.Add("Koo", graphicData.Koo.Good);
-        if (graphicData.Koo.Bad > 0)
-            bads.Add("Koo", graphicData.Koo.Bad);
+        graphicData.ForEach(g =>
+        {
+            violations.Add(g.Name, g.Violations);
+            goods.Add(g.Name, g.Good);
+            bads.Add(g.Name, g.Bad);
+        });
 
         dataBad.data = bads.Values.ToArray();
         dataBad.labels = bads.Keys.ToArray();

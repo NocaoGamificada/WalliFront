@@ -1,6 +1,4 @@
-﻿
-
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -68,7 +66,7 @@ namespace Features
             return default;
         }
 
-        public async Task<HttpResponseMessage>? Post(string route, string json, Dictionary<string, string> headers = null)
+        public async Task<HttpResponseMessage>? Post(string route, string json, Dictionary<string, string>? headers = null)
         {
             try
             {
@@ -170,12 +168,20 @@ namespace Features
     public class Account
     {
         public string login = "account/user/login";
+
         public string register = "account/user/register";
         public string resetPassword = "account/user/reset-password";
+
         public string validResetPasswordCode = "account/user/valid-reset-password-code";
         public string changePassword = "account/user";
         public string checkLogin = "account/user/check-login";
+
         public string getOwn = "account/user/get-own";
+        public string getCreditCards = "account/user/get-all-credits";
+        public string getRegisteredAddress = "account/user/get-user-address";
+
+        public string addCreditCard = "account/user/add-credit-card";
+        public string registerAddress = "account/user/register-address";
     }
 
     public class WalliClient
@@ -185,13 +191,16 @@ namespace Features
         public string getResult = "walli/client/get-specify-result";
         public string addSearch = "walli/client/add-search";
         public string getMarks = "walli/client/get-marks";
+        public string getMark = "walli/client/get-mark-info";
         public string getMarkResult = "walli/client/get-mark-results";
-        public string getMark = "walli/client/get-specify-result";
         public string getMarkAnalysis = "walli/client/get-mark-analysis";
         public string deleteSearch = "walli/client/delete-search";
         public string deleteMark = "walli/client/delete-mark";
         public string getHomeGraphics = "walli/client/get-home-graphics";
         public string setVisualizedResult = "walli/client/set-view-result";
+
+        public string getCurrentPlan = "account/user/get-current-plan";
+        public string buyPlan = "walli/client/buy-assinature";
     }
 
     public class WalliSeller
@@ -223,17 +232,28 @@ namespace Features
     {
         public string getHomeDate = "walli/manager/get-home-date";
         public string getFatured = "walli/manager/get-fatured";
+        public string getMarks = "walli/manager/get-marks";
         public string getAnalysisSells = "walli/manager/get-analysis-sells";
+        public string getResultCount = "walli/manager/get-result-count";
+
+        public string addClient = "walli/manager/add-user";
+        public string deleteClientes = "walli/manager/delete-user";
+
         public string getClients = "walli/manager/get-users";
         public string getFranqueds = "walli/manager/get-franqueds";
         public string getSellers = "walli/manager/get-sellers";
-        public string registerClient = "walli/manager/register-franqued";
+
         public string addFranqued = "walli/manager/add-franqued";
-        public string getMarks = "walli/manager/get-marks";
+        public string removeFranqued = "walli/manager/remove-franqued";
+
+        public string addSeller = "walli/manager/add-seller";
+        public string removeSeller = "walli/manager/remove-seller";
     }
 
     public class WalliSellerUp
     {
+        public string updateResultStatus = "walli/sellerUp/update-result-status";
+        public string getResultStatus = "walli/sellerUp/get-result-status";
         public string getResults = "walli/sellerUp/get-results";
         public string getResult = "walli/sellerUp/get-specify-result";
         public string addSearch = "walli/sellerUp/add-search";
@@ -243,7 +263,11 @@ namespace Features
         public string getMarkAnalysis = "walli/sellerUp/get-mark-analysis";
         public string deleteSearch = "walli/sellerUp/delete-search";
         public string getHomeGraphics = "walli/sellerUp/get-home-graphics";
+        public string getSellerHomeData = "walli/sellerUp/get-seller-home-data";
         public string setVisualizedResult = "walli/sellerUp/set-view-result";
         public string getClient = "walli/sellerUp/get-info-client";
+        public string getSeller = "walli/sellerUp/get-info-seller";
+        public string checkClientExists = "account/user/check-exists";
+        public string addClient = "/walli/sellerUp/add-client";
     }
 }

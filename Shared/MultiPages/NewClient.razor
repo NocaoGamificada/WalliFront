@@ -95,7 +95,6 @@
 
         if (res?.IsSuccessStatusCode == true)
         {
-            await localStorage.SetCacheInSession("clientIndex", "");
             await navManager.NavigateBack();
             return;
         }

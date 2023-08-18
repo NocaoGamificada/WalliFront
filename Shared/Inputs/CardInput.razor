@@ -1,0 +1,31 @@
+﻿@inject IJSRuntime js;
+
+<div class="w-full flex flex-col gap-2">
+    <label for="@Id" class="text-xl text-white">@ChildContent</label>
+    <input id="@Id" maxlength="3" @bind="Data.Value" type="text" class="shadow outline-0 border-0 bg-zinc-700 border rounded-2xl w-full py-2 px-3 text-zinc-200 leading-tight focus:outline-none focus:shadow-outline" />
+</div>
+
+@code {
+    [Parameter]
+    public InputData Data { get; set; } = default!;
+
+    [Parameter]
+    public string Mask { get; set; } = "";
+
+    [Parameter]
+    public string Placeholder { get; set; } = "";
+
+    [Parameter]
+    public string Id { get; set; } = "";
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await js.InvokeVoidAsync("maskInput", Id, Mask, new { placeholder = Placeholder });
+        }
+    }
+}

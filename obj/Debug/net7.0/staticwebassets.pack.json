@@ -145,6 +145,10 @@
       "PackagePath": "staticwebassets\\images\\icones\\pesquisar.png"
     },
     {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\reload-icon-circle.png",
+      "PackagePath": "staticwebassets\\images\\icones\\reload-icon-circle.png"
+    },
+    {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\left-arrow.png",
       "PackagePath": "staticwebassets\\images\\left-arrow.png"
     },
@@ -155,6 +159,22 @@
     {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\loading.gif",
       "PackagePath": "staticwebassets\\images\\loading.gif"
+    },
+    {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\pagamento\\boleto.png",
+      "PackagePath": "staticwebassets\\images\\pagamento\\boleto.png"
+    },
+    {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\pagamento\\cartao.png",
+      "PackagePath": "staticwebassets\\images\\pagamento\\cartao.png"
+    },
+    {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\pagamento\\loading-circle.svg",
+      "PackagePath": "staticwebassets\\images\\pagamento\\loading-circle.svg"
+    },
+    {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\pagamento\\pix.png",
+      "PackagePath": "staticwebassets\\images\\pagamento\\pix.png"
     },
     {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\right-arrow.png",

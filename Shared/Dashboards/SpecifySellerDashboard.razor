@@ -1,0 +1,61 @@
+﻿@inject Api api;
+@inject LocalStorage localStorage;
+
+@if (loading)
+{
+    <div class="w-full flex flex-1 justify-center items-center">
+        <Loading />
+    </div>
+}
+else
+{
+    if (homeData != null)
+    {
+        <div class="w-full h-fit flex flex-col gap-3">
+            <div class="flex flex-col gap-2 w-full md:w-[45%]">
+                <LabelRounded Value="@homeData.TotalClients.ToString()">Total de Clientes</LabelRounded>
+                <LabelRounded Value="@homeData.TotalMarks.ToString()">Total de Marcas</LabelRounded>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="w-full h-[250px] flex justify-between items-center">
+            <div class="w-[55%] flex flex-col gap-3">
+                <h1 class="text-xl w-full text-red">Houve algum erro de nossa parte por favor tente novamente</h1>
+                <ButtonStyled OnClick="GetHomeData">Tentar novamente</ButtonStyled>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    bool loading = true;
+
+    [Parameter]
+    public int SellerId { get; set; }
+
+    HomeData? homeData;
+
+    protected override async Task OnInitializedAsync() => await GetHomeData();
+
+
+    async Task GetHomeData()
+    {
+        loading = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.walliSellerUp.getSellerHomeData + $"?sellerId={SellerId}", await api.GetLoginHeader());
+
+        if (res != null)
+        {
+            if (res.IsSuccessStatusCode)
+            {
+                homeData = JsonSerializer.Deserialize<HomeData>(await res.Content.ReadAsStringAsync());
+            }
+        }
+
+        loading = false;
+        StateHasChanged();
+    }
+}

@@ -6,22 +6,16 @@
     <div class="w-full flex justify-center">
        <ButtonStyled OnClick="Go" CustomWidth="70%" Color="text-zinc-900">Inicie uma nova marca</ButtonStyled>
     </div>
-    <div class="w-full md:w-[50%] rounded-3xl px-3 py-5 flex flex-row justify-center bg-[rgba(22,22,22,255)]">
-        <div class="w-[40%] flex flex-col items-center justify-center gap-2">
-            <h1 class="text-white text-center font-bold">Buscas Realizadas</h1>
-            <h2 class="text-green-400">@totalResults</h2>
-        </div>
-    </div>
     
     @if (clientMarks != null)
     {
-        <div style="margin-top: 2px;" class="flex w-full sm:flex sm:flex-row sm:justify-center">
+        <div style="margin-top: 2px;" class="flex w-full sm:flex flex-col">
             @foreach (var mark in clientMarks)
             {
                 var _mark = mark;
-                <div style="cursor: pointer;" class="w-full md:w-[50%] py-2 pl-1 text-green-600 text-2xl flex flex-row px-2 justify-between">
+                <div style="cursor: pointer;" class="w-full py-2 pl-1 text-green-600 text-2xl flex flex-row px-2 justify-between">
                     <span @onclick=@(async () => await ViewMark(_mark)) class="hover:text-green-400 hover:font-bold">
-                        @mark.BrandName
+                        Marca: @mark.BrandName
                     </span>
 
                     <ButtonMarkOptions OnDeleteAction=OnDeleteMark Mark="_mark" />
@@ -29,9 +23,19 @@
             }
         </div>
     }
+
+    <div class="w-full md:w-[50%] rounded-3xl px-3 py-5 flex flex-row justify-center bg-[rgba(22,22,22,255)]">
+        <div class="w-[40%] flex flex-col items-center justify-center gap-2">
+            <h1 class="text-white text-center font-bold">Buscas Realizadas</h1>
+            <h2 class="text-green-400">@totalResults</h2>
+        </div>
+    </div>
 </div>
 
 @code{
+    [Parameter]
+    public Action? OnDelete { get; set; }
+
     private ClientMark[] clientMarks;
     private int totalResults = 0;
 
@@ -70,14 +74,12 @@
         {
             var json = await res.Content.ReadAsStringAsync();
             clientMarks = JsonSerializer.Deserialize<ClientMark[]>(json);
-            await localStorage.SetCacheInSession("cachedIndexMarks", json, 1);
         }
     }
 
     async Task ViewMark(ClientMark mark)
     {
-        await localStorage.SetCacheInSession("cachedMark", JsonSerializer.Serialize(mark));
-        await navManager.NavigateTo("/viewMark", true);
+        await navManager.NavigateTo("/viewMark/"+mark.Id, true);
     }
 
     async Task Go()
@@ -88,6 +90,7 @@
     async Task OnDeleteMark(ClientMark mark)
     {
         await Update();
+        OnDelete?.Invoke();
         StateHasChanged();
     }
 }

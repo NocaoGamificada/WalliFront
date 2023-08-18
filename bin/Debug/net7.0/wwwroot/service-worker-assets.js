@@ -129,6 +129,10 @@
       "url": "images\/icones\/pesquisar.png"
     },
     {
+      "hash": "sha256-M6nFmWuIM2orjd4UizBGl7QvhN5owiqje5vfOQ72skA=",
+      "url": "images\/icones\/reload-icon-circle.png"
+    },
+    {
       "hash": "sha256-7UWpXR4s3Ixghf5wICx8+Vs9a7V\/mCpZXHlWyb4zt+0=",
       "url": "images\/left-arrow.png"
     },
@@ -141,15 +145,31 @@
       "url": "images\/loading.gif"
     },
     {
+      "hash": "sha256-8hrlB3FR341glB6ZNbNlVk0mYKIrC\/nZV9lVjuS6qYQ=",
+      "url": "images\/pagamento\/boleto.png"
+    },
+    {
+      "hash": "sha256-YyrFjWvrwogD8pTe69CQmyYcCvzQdSHQ0nAMEa2chbw=",
+      "url": "images\/pagamento\/cartao.png"
+    },
+    {
+      "hash": "sha256-gjmj5N8J09NWApyNqVprOs9MGMnod2MJqEtRHZPQJ80=",
+      "url": "images\/pagamento\/loading-circle.svg"
+    },
+    {
+      "hash": "sha256-xDClpgbQHmJ2o97KeoeXlrRzh5Wexqtiti0hMB8qg0E=",
+      "url": "images\/pagamento\/pix.png"
+    },
+    {
       "hash": "sha256-UFjOGmEAK+Y\/5dNuqPPGtqH5MJ1iIyB6QjZuRbfPLjw=",
       "url": "images\/right-arrow.png"
     },
     {
-      "hash": "sha256-\/VSp1Gx3kyMRqbYdz02BKg7pit4+bgH1hPG+Nd3ZQ0c=",
+      "hash": "sha256-mznENdmhXITr8z8121BXjZyOdABjoVsngr0SO9JOcQM=",
       "url": "images\/walli_logo.png"
     },
     {
-      "hash": "sha256-RsuqyikkPFOsSxCe7FA+tvrtt2XKdlUp8gtsCSzx\/sg=",
+      "hash": "sha256-TyN41lYgXMTYanj+ekQChsZwzPrvR9aHUm8TOxWaAjI=",
       "url": "index.html"
     },
     {
@@ -189,8 +209,36 @@
       "url": "_framework\/Microsoft.AspNetCore.Components.WebAssembly.dll"
     },
     {
+      "hash": "sha256-DxK8efjWq69WRHPYhqbZldj39r6w9WQDFknjlDJqLDY=",
+      "url": "_framework\/Microsoft.AspNetCore.Connections.Abstractions.dll"
+    },
+    {
+      "hash": "sha256-VEhRO1eAOppFJM2rEmNIYqQJMv+sYDlLbaxBt3JzTiA=",
+      "url": "_framework\/Microsoft.AspNetCore.Http.Connections.Client.dll"
+    },
+    {
+      "hash": "sha256-4MVf8ut\/i9kcbdFWWIQLt\/dxXMqaYT\/FpnGS1WNMrwM=",
+      "url": "_framework\/Microsoft.AspNetCore.Http.Connections.Common.dll"
+    },
+    {
       "hash": "sha256-jddQwxkgfjmJ6vlXok+PbfnIquNDs6VHvspFEopiTAY=",
       "url": "_framework\/Microsoft.AspNetCore.Metadata.dll"
+    },
+    {
+      "hash": "sha256-y9sG1iDyKQI9aOo1aHZJTEOerOsgRdUzLNqvwAZPeww=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Client.dll"
+    },
+    {
+      "hash": "sha256-nn3MenP9NhlEc3EKgIYhI1g3loYSO8n9aSSw8rm6S9Q=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Client.Core.dll"
+    },
+    {
+      "hash": "sha256-ILTYNLiILiNR+uoI\/akFDCzIDFcwwQopHJDZPH7SVUs=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Common.dll"
+    },
+    {
+      "hash": "sha256-EdgTP7Xs5Mz9IBmj1\/kNWRx0ylYLUjgcG1xjqfmUc9s=",
+      "url": "_framework\/Microsoft.AspNetCore.SignalR.Protocols.Json.dll"
     },
     {
       "hash": "sha256-PqQvp77oZ4+uuy2ElXk8AU9I6RfZSf18UGTrd4rulOo=",
@@ -219,6 +267,10 @@
     {
       "hash": "sha256-jrAm+30mcWoI54hsUTOr+RMOzHIq+zO8ZuRBVrBvCoo=",
       "url": "_framework\/Microsoft.Extensions.DependencyInjection.Abstractions.dll"
+    },
+    {
+      "hash": "sha256-0dp2FBcPRf841phIQ\/ad\/hZpI8pM4CqAe+x7EcLvUQQ=",
+      "url": "_framework\/Microsoft.Extensions.Features.dll"
     },
     {
       "hash": "sha256-Zt6OY6gg\/1Tzt9oFOQBkezPvUVkFK4dyM6Pfk+MTUvg=",
@@ -255,6 +307,10 @@
     {
       "hash": "sha256-UMZ1e9p6NSVG4ZBbBBmiR4UxngXA\/gxaNKRUxLjyuUg=",
       "url": "_framework\/Microsoft.JSInterop.WebAssembly.dll"
+    },
+    {
+      "hash": "sha256-IsZJ91\/OW+fHzNqIgEc7Y072ns8z9dGritiSyvR9Wgc=",
+      "url": "_framework\/Newtonsoft.Json.dll"
     },
     {
       "hash": "sha256-P\/MqD0fCBd5bgTM16JC1QC\/Zz7s+CwViyzmDFkBG4\/c=",
@@ -961,11 +1017,11 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-t1zk2NY\/Vg2wIGeKzvLviQhnhngn+bFqR5xgO479SRo=",
+      "hash": "sha256-ecqKIVW9FuEQgN6kuuQZnU7wG26jRNsqrLNcPrhMeLo=",
       "url": "_framework\/WalliFront.dll"
     },
     {
-      "hash": "sha256-fmjlyi7+wsdGvaE7cqk+doQnNYBNhXzLA\/0Obs5d7fI=",
+      "hash": "sha256-7MnNgL4K4\/TWQaXbBp9z3kWaxJrJONSel2efI1jbALM=",
       "url": "_framework\/WalliFront.pdb"
     },
     {
@@ -973,9 +1029,9 @@
       "url": "_framework\/blazor.webassembly.js"
     },
     {
-      "hash": "sha256-ueMeAJBpcoFXZpFd01KbvqPB80uofUsN76o8\/WHSgx4=",
+      "hash": "sha256-f3OqFEbGOEPArsid4GHuZU6Ht3LuZBiLBfZfomB0klQ=",
       "url": "_framework\/blazor.boot.json"
     }
   ],
-  "version": "ZVjWsg35"
+  "version": "5GduL5F0"
 };

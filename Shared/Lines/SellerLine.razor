@@ -4,6 +4,7 @@
 <LineTable OnClick=@(() => navigationManager.NavigateTo($"/view/seller/{Id}", true))>
     <td style="max-width: 200px;" align="center" class="text-white">@Name</td>
     <td style="max-width: 200px;" align="center" class="text-white">@Email</td>
+    <td style="max-width: 200px;" align="center" class="text-white">@Cpf</td>
 </LineTable>
 
 @code {
@@ -15,4 +16,7 @@
 
     [Parameter]
     public RenderFragment Email { get; set; }
+
+    [Parameter]
+    public RenderFragment Cpf { get; set; }
 }

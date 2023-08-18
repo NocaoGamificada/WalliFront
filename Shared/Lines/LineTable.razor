@@ -1,4 +1,4 @@
-﻿<tr align="center" @onclick=OnClick class="@ShowLine() @Class cursor-pointer @HoverClass() p-3 text-white">
+﻿<tr align="center" @onclick=OnClick class="@ShowLine() @Class @ShowLine() cursor-pointer @HoverClass() p-3 text-white">
     @ChildContent
 </tr>
 
@@ -25,6 +25,6 @@
 
     private string ShowLine()
     {
-        return ShowLines ? "border-t border-b" : "";
+        return ShowLines ? "border-t border-b border-black" : "";
     }
 }

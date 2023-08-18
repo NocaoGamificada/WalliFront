@@ -28,9 +28,14 @@
                             </tr>
                         </thead>
                         <tbody class="pt-4">
-                            @foreach (var result in searchResults.Results)
+                            @for (int i = 0; i < searchResults.Results.Length; i++)
                             {
-                                <SearchLine NoChangeColor="true" Result="result" />
+                                var result = searchResults.Results[i];
+                                if (result != null && result.Analysis != null)
+                                {
+                                    var index = (currentPage - 1) * 10 + i + 1;
+                                    <SearchLine Index="index" Result="result" />
+                                }
                             }
                         </tbody>
                     </table>
@@ -69,7 +74,7 @@
 
     async Task UpdateResults()
     {
-        var res = await api.Get(api.walliSellerUp.getResults + $"?userId={ClientId}&page={currentPage}");
+        var res = await api.Get(api.walliSellerUp.getResults + $"?userId={ClientId}&page={currentPage}", await api.GetLoginHeader());
         if (res?.IsSuccessStatusCode == true)
         {
             var json = await res.Content.ReadAsStringAsync();

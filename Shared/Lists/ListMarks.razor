@@ -98,7 +98,6 @@ else
             else
             {
                 marksResults = JsonSerializer.Deserialize<MarkResults>(json);
-                await localStorage.SetCacheInSession("marksIndex", json);
             }
         }
 

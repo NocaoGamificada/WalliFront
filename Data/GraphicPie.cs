@@ -5,6 +5,8 @@ namespace Walli.Data
 {
     public class GraphicPie
     {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
         [JsonPropertyName("good")]
         public int Good { get; set; }
 

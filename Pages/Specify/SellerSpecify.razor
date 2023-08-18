@@ -1,0 +1,91 @@
+﻿@page "/view/seller/{SellerId:int}";
+@inject LocalStorage localStorage;
+@inject NavigationStacker navigationStacker;
+@inject Api api;
+
+@if (loaded)
+{
+    if (sucessful)
+    {
+        <div class="w-full h-full bg-zinc-800 overflow-y-auto">
+            <MarkseHeader />
+            <BackButton />
+
+            <div class="w-full py-4 flex justify-center items-center text-white text-2xl font-bold">@user.Name</div>
+            <div class="flex flex-col w-full p-4">
+                <SpecifySellerDashboard SellerId="SellerId" />
+            </div>
+
+            <ListSpecifyResults ClientId="SellerId" />
+        </div>
+    }
+    else
+    {
+        <div class="w-full h-full flex flex-col items-center justify-center">
+            <div class="w-[55%] flex flex-col gap-3">
+                <ButtonStyled OnClick="Update">Tentar novamente</ButtonStyled>
+                <ButtonStyled BgColor="bg-red-400" BgColorHover="bg-red-600">Voltar</ButtonStyled>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="w-full h-full flex items-center justify-center">
+        <Loading />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int SellerId { get; set; }
+    string loggedRole = "";
+    bool loaded = false;
+    bool sucessful = false;
+
+    private User user { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        string loggedRole = await localStorage.Get("loggedRole");
+
+        /*if (!CanAcess())
+        {
+        await navigationStacker.NavigateBack();
+        return;
+    }*/
+
+        await Update();
+    }
+
+    async Task Update()
+    {
+        loaded = false;
+        StateHasChanged();
+
+        var res = await api.Get(api.walliSellerUp.getSeller + $"?sellerId={SellerId}", await api.GetLoginHeader());
+        sucessful = res?.IsSuccessStatusCode ?? false;
+
+        if (sucessful && res != null)
+        {
+            user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync()) ?? new();
+        }
+
+        loaded = true;
+        StateHasChanged();
+    }
+
+    string GetUrl()
+    {
+        if (loggedRole == "walli_franqued")
+            return "";
+        else if (loggedRole == "walli_seller")
+            return "";
+        else if (loggedRole == "master")
+            return "";
+
+        return "";
+    }
+
+    bool CanAcess() => loggedRole == "walli_franqued" || loggedRole == "walli_seller" || loggedRole == "master";
+}

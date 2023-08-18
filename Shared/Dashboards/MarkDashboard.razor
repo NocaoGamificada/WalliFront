@@ -2,84 +2,107 @@
 @inject Api api;
 @inject LocalStorage localStorage;
 
-@if (mark != null)
+@if (Mark != null)
 {
     <div class="flex w-full pt-2 flex-col gap-3">
         <BackButton />
-        @if (mark != null)
+        @if (Mark != null)
         {
             <div class="w-full flex flex-col justify-center items-center">
-                <h1 class="text-white text-5xl font-bold">@mark.BrandName</h1>
+                <h1 class="text-white text-xl font-bold">@Mark.BrandName</h1>
             </div>
             <div class="w-full flex items-center justify-center items-center">
-                <div class="w-[80%] md:w-[55%] rounded-3xl px-3 py-6 flex flex-row bg-zinc-900 justify-center items-center">
+                <div class="w-[70%] md:w-[55%] rounded-3xl px-3 py-4 flex flex-row bg-zinc-900 justify-center items-center">
                     <div class="w-[40%] flex flex-col items-center justify-center gap-4">
-                        <h1 class="text-white text-2xl text-center font-bold">Total de buscas</h1>
+                        <h1 class="text-white text-lg text-center font-bold">Total de buscas</h1>
                         <h2 class="text-green-400 text-xl">@countResults</h2>
                     </div>
                 </div>
             </div>
-            <div class="w-full py-3 flex justify-center items-center ">
+            if (!loadingAnalysis)
+            {
                 @if (analysis != null)
                 {
-                    <div class="w-full md:w-[45%] flex flex-row justify-between">
-                        <div class="flex flex-col justify-center items-center flex-1">
-                            <h1 class="text-2xl text-green-400">XXX</h1>
-                            <p class="text-sm text-white">Total</p>
-                        </div>
-                        <div class="flex flex-col justify-center items-center flex-1">
-                            <h1 class="text-2xl text-green-400">XXX</h1>
-                            <p class="text-sm text-white">Considerados</p>
-                        </div>
-                        <div class="flex flex-col justify-center items-center flex-1">
-                            <h1 class="text-2xl text-green-400">XXX</h1>
-                            <p class="text-sm text-white">Desconsiderados</p>
+                    <div class="w-full py-3 flex justify-center items-center ">
+                        <div class="w-full md:w-[45%] flex flex-row justify-between">
+                            <div class="flex flex-col justify-center items-center flex-1">
+                                <h1 class="text-2xl text-green-400">@analysis.Total</h1>
+                                <p class="text-sm text-white">Total</p>
+                            </div>
+                            <div class="flex flex-col justify-center items-center flex-1">
+                                <h1 class="text-2xl text-green-400">@analysis.Considered</h1>
+                                <p class="text-sm text-white">Considerados</p>
+                            </div>
+                            <div class="flex flex-col justify-center items-center flex-1">
+                                <h1 class="text-2xl text-green-400">@analysis.Disregarded</h1>
+                                <p class="text-sm text-white">Desconsiderados</p>
+                            </div>
                         </div>
                     </div>
                 }
                 else
                 {
-                    <h1 class="text-white text-xl font-bold">Houve algum problemas ao carregar as analises por favor tente novamente</h1>
+                    <div class="w-full py-2 flex flex-col justify-center items-center gap-2">
+                        <h1 class="text-white text-xl font-bold">Houve algum problema ao carregar as analises por favor tente novamente</h1>
+                        <img @onclick=GetAnalysis class="w-8 h-8" src="images/icones/reload-icon-circle.png" alt="available-updates--v1" />
+                    </div>
                 }
-            </div>
+            }
+            else
+            {
+                <div class="w-full h-full flex justify-center items-center">
+                    <Loading />
+                </div>
+            }
         }
     </div>
 }
 
 @code {
-    private ClientMark mark;
-    private MarkAnalysis analysis;
+    [Parameter]
+    public ClientMark Mark { get; set; }
+
+    private MarkAnalysis? analysis;
 
     private int countResults;
 
+    private bool loadingMark = true;
+    private bool loadingAnalysis = true;
+
     protected override async Task OnInitializedAsync()
     {
-        mark = JsonSerializer.Deserialize<ClientMark>(await localStorage.GetInSession("cachedMark"));
-        if (mark == null)
-            return;
-
-        var res = await api.Get(api.walliClient.getMarkAnalysis + $"?markId={mark.Id}", await api.GetLoginHeader());
-
-        if (res?.IsSuccessStatusCode == true)
-        {
-            analysis = JsonSerializer.Deserialize<MarkAnalysis>(await res.Content.ReadAsStringAsync());
-        }
-
-        res = await api.Get(api.walliClient.getSearchCount + $"?markId={mark.Id}", await api.GetLoginHeader());
-
-        if (res?.IsSuccessStatusCode == true)
-        {
-            countResults = Convert.ToInt32(await res.Content.ReadAsStringAsync());
-        }
+        await GetCountResults();
+        await GetAnalysis();
     }
+
 
     async Task Go()
     {
         await navManager.NavigateTo("/novamarca", true);
     }
 
-    public class TotalStatics
+    async Task GetAnalysis()
     {
-        
+        loadingAnalysis = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.walliClient.getMarkAnalysis + $"?markId={Mark.Id}", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            analysis = JsonSerializer.Deserialize<MarkAnalysis>(await res.Content.ReadAsStringAsync());
+        }
+
+        loadingAnalysis = false;
+    }
+
+    async Task GetCountResults()
+    {
+        var res = await api.Get(api.walliClient.getSearchCount + $"?markId={Mark.Id}", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            countResults = Convert.ToInt32(await res.Content.ReadAsStringAsync());
+        }
     }
 }

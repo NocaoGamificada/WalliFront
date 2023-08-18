@@ -10,6 +10,7 @@
         <HeaderContent>
             <th class="text-white">Nome</th>
             <th class="text-white">Email</th>
+            <th class="text-white">CPF</th>
         </HeaderContent>
         <ChildContent>
             @if (franquedResults != null)
@@ -18,11 +19,12 @@
                     <FranquedLine>
                         <Name>@f.Name</Name>
                         <Email>@f.Email</Email>
+                        <Cpf>@f.Indentification</Cpf>
                     </FranquedLine>
                 }
         </ChildContent>
         <PaginationContent>
-            <Pagination @ref=pagination CountPages="franquedResults.CountPages" UpdateResults="UpdateResults" />
+            <Pagination @ref=pagination CountPages="franquedResults?.CountPages ?? 0" UpdateResults="UpdateResults" />
         </PaginationContent>
     </ListDefaultTable>
 }
@@ -34,24 +36,15 @@ else
 }
 
 @code{
-    private Pagination pagination;
+    private Pagination? pagination;
     private int currentPage { get => pagination == null ? 1 : pagination.currentPage; }
     private bool loading = true;
-    private FranquedResults franquedResults;
+    private FranquedResults? franquedResults;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
-
-        var cached = await localStorage.GetInSession("franquedsIndex");
-        if (!string.IsNullOrEmpty(cached))
-        {
-            franquedResults = JsonSerializer.Deserialize<FranquedResults>(cached);
-            loading = false;
-            StateHasChanged();
-            return;
-        }
 
         await UpdateResults();
     }
@@ -61,12 +54,19 @@ else
         loading = true;
         StateHasChanged();
 
-        var res = await api.Get(api.walliManager.getFranqueds + $"?page={currentPage}", await api.GetLoginHeader());
+        var loginHeader = await api.GetLoginHeader();
+        var http = new HttpClient();
+
+        foreach (var h in loginHeader)
+            http.DefaultRequestHeaders.Add(h.Key, h.Value);
+
+        var res = await http.GetAsync($"{api.baseAddres}/{api.walliManager.getFranqueds}");
+
         if (res?.IsSuccessStatusCode == true)
         {
-            var json = await res.Content.ReadAsStringAsync();
+            string json = await res.Content.ReadAsStringAsync();
             franquedResults = JsonSerializer.Deserialize<FranquedResults>(json);
-            await localStorage.SetCacheInSession("franquedsIndex", json);
+            Console.WriteLine(json);
         }
 
         loading = false;

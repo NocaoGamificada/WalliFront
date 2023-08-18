@@ -4,15 +4,15 @@
 @inject Api api;
 @inject LocalStorage localStorage;
 
-<div class="flex flex-col w-full gap-1 items-center overflow-y-auto">
+<div class="flex flex-col w-full gap-1 items-center py-3">
     <div class="w-full h-fit flex flex-col gap-1 items-center">
         <ListDefaultTable>
             <HeaderContent>
                 <td width="32px"></td>
+                <td width="32px"></td>
                 <td align="center">Marca</td>
                 <td align="center">Origem</td>
                 <td align="center">Violação</td>
-                <td width="100px" align="center">Data</td>
             </HeaderContent>
             <ChildContent>
                 @if (!loadingResults)
@@ -23,9 +23,14 @@
                     }
                     else
                     {
-                        @foreach (var result in searchResults.Results)
+                        @for (int i = 0; i < searchResults.Results.Length; i++)
                         {
-                            <SearchLine Result="result" />
+                            var result = searchResults.Results[i];
+                            if (result != null && result.Analysis != null)
+                            {
+                                var index = (currentPage - 1) * 10 + i + 1;
+                                <SearchLine Index="index" Result="result" />
+                            }
                         }
                     }
                 }
@@ -64,42 +69,24 @@
             return;
 
         loadingResults = true;
+        StateHasChanged();
+
+
         if (!IsEspecificy)
         {
-
-            var _currentPage = await localStorage.GetInSession("currentPage");
-            var _lastPageChached = await localStorage.GetInSession("lastPage");
-
-            if (!string.IsNullOrEmpty(_currentPage))
-                pagination.currentPage = Convert.ToInt32(_currentPage);
-
-            if (!string.IsNullOrEmpty(_lastPageChached))
-            {                
-                searchResults = JsonSerializer.Deserialize<SearchResults>(_lastPageChached);
-            }
-            else
-            {
-                await UpdateResults();
-            }
+            var id = await localStorage.GetInSession("currentPage");
+            pagination.currentPage = string.IsNullOrEmpty(id) ? 1 : int.Parse(id);
+            await UpdateResults();
+            await localStorage.SetInSession("currentPage", pagination.currentPage.ToString());
         }
         else
         {
-            var _currentPage = await localStorage.GetInSession("currentPageMark");
-            var _lastMarkId = await localStorage.GetInSession("lastMarkId");
-
-            if (_lastMarkId == currentPage.ToString())
-            {
-                pagination.currentPage = Convert.ToInt32(_currentPage);
-                searchResults = JsonSerializer.Deserialize<SearchResults>(await localStorage.GetInSession("lastPageMark"));
-            }
-            else
-            {
-                await localStorage.SetCacheInSession("currentPageMark", "");
-                await localStorage.SetCacheInSession("lastPageMark", "{}");
-                await localStorage.SetCacheInSession("lastMarkId", "");
-                await UpdateSpecifyResults();
-            }
+            var id = await localStorage.GetInSession("currentPageSpecify");
+            pagination.currentPage = string.IsNullOrEmpty(id) ? 1 : int.Parse(id);
+            await UpdateSpecifyResults();
+            await localStorage.SetInSession("currentPageSpecify", pagination.currentPage.ToString());
         }
+
         loadingResults = false;
         StateHasChanged();
     }
@@ -114,10 +101,8 @@
 
         if (response?.IsSuccessStatusCode == true)
         {
+            Console.WriteLine(await response.Content.ReadAsStringAsync());
             searchResults = JsonSerializer.Deserialize<SearchResults>(await response.Content.ReadAsStringAsync());
-            await localStorage.SetCacheInSession("lastPage", JsonSerializer.Serialize(searchResults));
-            await localStorage.SetCacheInSession("currentPage", currentPage.ToString());
-
             if (pagination != null)
             {
                 pagination.currentPage = currentPage;
@@ -138,26 +123,29 @@
         if (response?.IsSuccessStatusCode == true)
         {
             searchResults = JsonSerializer.Deserialize<SearchResults>(await response.Content.ReadAsStringAsync());
-            await localStorage.SetCacheInSession("lastPageMark", JsonSerializer.Serialize(searchResults));
-            await localStorage.SetCacheInSession("currentPageMark", currentPage.ToString());
         }
 
-        StateHasChanged();
         loadingResults = false;
+        StateHasChanged();
     }
 
-    async Task CheckSpecify()
+    public async Task CheckSpecify()
     {
         loadingResults = true;
         if (!IsEspecificy)
+        {
             await UpdateResults();
+            await localStorage.SetInSession("currentPageSpecify", pagination.currentPage.ToString());
+        }
         else
+        {
             await UpdateSpecifyResults();
+            await localStorage.SetInSession("currentPage", pagination.currentPage.ToString());
+        }
 
         loadingResults = false;
         StateHasChanged();
     }
-    
 
     public class SearchResults
     {

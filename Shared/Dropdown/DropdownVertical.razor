@@ -1,0 +1,56 @@
+﻿
+<div class="w-full relative flex flex-1 justify-center items-center flex-row gap-3">
+    <label for=@Id class="text-xl text-white">@CustomLabel</label>
+
+    <div class="relative flex flex-1 justify-center items-center flex-col py-2">
+        <h1 id=@Id @onclick=OnCollapse class="w-[200px] rounded-3xl bg-zinc-700 px-4 py-3 text-center cursor-pointer text-white">@Current.Label</h1>
+
+        <div class="absolute py-2 flex items-center justify-center mt-8 bottom-[100%] md:bottom-0 md:left-[100%] w-full @hidden">
+            <div style="z-index: 1;" class="w-[90%] bg-zinc-800 shadow-lg rounded-3xl flex flex-col gap-1">
+                @for (int i = 0; i < Data.Length; i++)
+                {
+                    var data = Data[i];
+                    <DropDownOption Index="i" Label=@(data.Label) OnSelected="OnSelected" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public DropdownData[] Data { get; set; }
+
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public Action OnChangeSelected { get; set; }
+
+    [Parameter]
+    public RenderFragment CustomLabel { get; set; }
+
+    public int SelectedIndex { get; set; } = 0;
+    public DropdownData Current { get => Data[SelectedIndex]; }
+
+    private bool collapesed = true;
+    private string hidden { get => collapesed ? "hidden" : ""; }
+
+    void OnCollapse()
+    {
+        collapesed = !collapesed;
+    }
+
+    void OnSelected(int index)
+    {
+        int oldndex = SelectedIndex;
+        SelectedIndex = index;
+
+        if (oldndex != index)
+            OnChangeSelected?.Invoke();
+
+        
+        collapesed = true;
+        StateHasChanged();
+    }
+}

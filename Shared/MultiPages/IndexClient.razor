@@ -3,9 +3,18 @@
         <ButtonCustom>Nova Marca</ButtonCustom>
     </MarkseHeader>
     <div class="flex flex-col w-full p-4">
-        <MarksDashboard />
+        <MarksDashboard OnDelete="OnDelete" />
         <SearchResults isHome=true />
     </div>
 
     <ListResults IsEspecificy=false ClientMark="null"/>
 </div>
+
+@code {
+    ListResults listResults;
+
+    public void OnDelete()
+    {
+        var _ = listResults.CheckSpecify();
+    }
+}

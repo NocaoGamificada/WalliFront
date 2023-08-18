@@ -1,4 +1,5 @@
-﻿@page "/viewMark";
+﻿@page "/viewMark/{MarkId:int}";
+@inject Api api;
 @inject LocalStorage localStorage;
 @inject NavigationStacker navManager;
 
@@ -6,25 +7,59 @@
     <MarkseHeader>
         <ButtonCustom>Nova Marca</ButtonCustom>
     </MarkseHeader>
-    <div class="flex flex-col w-full p-4">
-        <MarkDashboard />
-        <SearchResults />
-    </div>
+    @if (loading)
+    {
+        <div class="w-full h-full flex flex-col items-center justify-center">
+            <Loading />
+        </div>
+    }
+    else
+    {
+        if (sucessful)
+        {
+            <div class="flex flex-col w-full p-4">
+                <MarkDashboard Mark="mark"/>
+                <SearchResults />
+            </div>
 
-    <ListResults IsEspecificy=true ClientMark="mark"/>
+            <ListResultsSpecify ClientMark="mark"></ListResultsSpecify>
+        }
+        else
+        {
+            <div class="w-full flex-1 flex justify-center items-center">
+                <div class="w-[70%] md:w-[50%]">
+                    <ButtonStyled OnClick="Update">Tentar novamente</ButtonStyled>
+                </div>
+            </div>
+        }
+    }
 </div>
 
 @code {
-    ClientMark mark;
+    [Parameter]
+    public int MarkId { get; set; }
+    ClientMark? mark;
+
+    bool loading = true;
+    bool sucessful = false;
     protected override async Task OnInitializedAsync()
     {
-        var json = await localStorage.GetInSession("cachedMark");
-        if (string.IsNullOrEmpty(json))
+        await Update();
+    }
+
+    async Task Update()
+    {
+        loading = true;
+        StateHasChanged();
+        var res = await api.Get(api.walliClient.getMark + $"?markId={MarkId}", await api.GetLoginHeader());
+
+        sucessful = res?.IsSuccessStatusCode == true;
+        if (sucessful && res != null)
         {
-            await navManager.NavigateBack();
-            return;
+            mark = JsonSerializer.Deserialize<ClientMark>(await res.Content.ReadAsStringAsync());
         }
 
-        mark = JsonSerializer.Deserialize<ClientMark>(json);
+        loading = false;
+        StateHasChanged();
     }
 }

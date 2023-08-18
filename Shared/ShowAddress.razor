@@ -1,0 +1,69 @@
+﻿@inject Api api;
+@inject NavigationStacker navManager;
+
+<div class="w-full flex flex-col py-3 pl-4">
+    @if (!loading)
+    {
+        <h1 class="text-white text-xl">Endereço cadastrado:</h1>
+        
+        if (address == null)
+        {
+            <h2 class="text-white text-xl">Nenhum endereço cadastrado</h2>
+        }
+        else
+        {
+            <div class="flex flex-col gap-2 text-lg">
+                <h2 class="text-white text-lg">CEP: @address.CEP</h2>
+                <h2 class="text-white text-lg">Cidade: @address.City</h2>
+                <h2 class="text-white text-lg">UF: @address.UF</h2>
+                <h2 class="text-white text-lg">Endereço: @address.Address</h2>
+            </div>
+        }
+
+        <div class="w-[160px] py-3">
+            @if (address == null)
+            {
+                <ButtonStyled @onclick=@(() => navManager.NavigateTo("/adicionar-endereco"))>Adicionar Endereço</ButtonStyled>
+            }
+            else
+            {
+                <ButtonStyled @onclick=@(() => navManager.NavigateTo("/editar-endereco"))>Editar Endereço</ButtonStyled>
+            }
+        </div>
+    }
+    else
+    {
+        <h1 class="text-white">Estamos carregando seus dados...</h1>
+        <Loading />
+    }
+</div>
+@code {
+    public Action? SucefullLoad;
+    private bool loading = true;
+    public UserAddress? address;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAddress();
+    }
+
+    async Task LoadAddress()
+    {
+        loading = true;
+        StateHasChanged();
+
+        var res = await api.Get(api.account.getRegisteredAddress, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            address = JsonSerializer.Deserialize<UserAddress>(await res.Content.ReadAsStringAsync()) ?? new();
+        }
+        else
+        {
+            address = null;
+        }
+
+        loading = false;
+        StateHasChanged();
+    }
+}

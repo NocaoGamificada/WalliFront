@@ -3,7 +3,12 @@
         <ButtonCustom>ADM</ButtonCustom>
     </MarkseHeader>
     <div class="flex flex-col w-full p-4">
-        <ManagerDashboard @ref="dashboard" OnChangeDropDown="OnChangeDropDown" />
+        <ManagerDashboard @ref="dashboard" />
+        <div class="py-3 w-full flex justify-center items-center">
+            <div class="bg-[rgba(22,22,22,255)] md:max-w-[300px] px-10 py-4 rounded-2xl">
+                <DropDownDashboard @ref=dropDown OnChangeSelected="OnChangeSelected" Data="dropdownData" />
+            </div>
+        </div>
         @if (current?.Value == "marks")
         {
             <ListMarks />
@@ -24,6 +29,32 @@
 </div>
 
 @code {
+
+    private DropdownData[] dropdownData = new DropdownData[]
+    {
+        new ()
+        {
+            Label = "Marcas",
+            Value = "marks"
+        },
+        new()
+        {
+            Label = "Fraqueados",
+            Value = "franqueds"
+        },
+        new()
+        {
+            Label = "Vendedores",
+            Value = "sellers"
+        },
+        new()
+        {
+            Label = "Clientes",
+            Value = "clients"
+        }
+    };
+
+    DropDownDashboard dropDown;
     ManagerDashboard dashboard;
     private DropdownData current;
 
@@ -32,13 +63,13 @@
         if (!firstRender)
             return;
 
-        current = dashboard.Selected;
+        current = dropDown.Current;
         StateHasChanged();
     }
 
-    private void OnChangeDropDown(DropdownData dropdownData)
+    private void OnChangeSelected()
     {
-        current = dropdownData;
+        current = dropDown.Current;
         StateHasChanged();
     }
 }

@@ -1,0 +1,36 @@
+﻿<div class="w-full flex-col flex gap-2">
+    @foreach (var l in labels)
+    {
+        <div class="w-full flex flex-row gap-2">
+            @{
+                var key = l.Key;
+                if (l.Value)
+                {
+                    <input id="label-@key" @onclick=@(() => labels[key] = !labels[key]) type="checkbox" checked>
+                }
+                else
+                {
+                    <input id="label-@key" @onclick=@(() => labels[key] = !labels[key]) type="checkbox">
+                }
+            }
+
+            <label for="label-@key" class="text-white text-2xl">@l.Key</label>
+        </div>
+    }
+</div>
+
+@code {
+    public Dictionary<string, bool> labels = new()
+    {
+        { "Twitter", true },
+        { "Google", true },
+        { "Meta", true },
+        { "Instagram", true },
+        { "Koo", true },
+        { "Reclame aqui", true },
+        { "Mercado livre", true },
+        { "Aliexpress", true },
+        { "Amazon", true },
+        { "Magalu", true },
+    };
+}

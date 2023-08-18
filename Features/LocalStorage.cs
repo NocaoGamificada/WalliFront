@@ -46,6 +46,13 @@ namespace Features
             await js.InvokeVoidAsync("localStorage.clear");
         }
 
+        public async Task<string> GetLoggedRole()
+        {
+            var rolesJson = await Get("roles");
+
+            return JsonSerializer.Deserialize<string[]>(rolesJson)?.FirstOrDefault() ?? "";
+        }
+
         async Task SetChacheTime(string cacheName, int minuttes = 5)
         {
             var cached = await GetChacheTime();

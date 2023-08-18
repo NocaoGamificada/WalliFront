@@ -1,0 +1,93 @@
+﻿@inject NavigationStacker navManager;
+@inject LocalStorage localStorage;
+@inject Api api;
+
+<LineTable Class=@(BgColor()) Hover=false ShowLines=true>
+    <td width="32px" align="center" class="text-black">@Index</td>
+    <td align="center" class="text-black font-bold md:text-lg py-2">@Result.Type.ToUpper()</td>
+    <td align="center" class="text-black font-bold md:text-lg py-2">
+        @if(isDanger)
+        {
+            <span>Violação Grave</span>
+        }
+        else
+        {
+            <span>Sem violação</span>
+        }
+    </td>
+    <td align="center" class="text-black py-2 md:text-lg">
+        <div class="w-[70%]">
+            @if (isDanger)
+            {
+                <button class="bg-red-400 p-2 rounded-2xl px-3 text-sm" @onclick=Click>Denuncie</button>
+            }
+            else
+            {
+                <button class="bg-green-400 p-2 rounded-2xl px-3 text-sm" @onclick=Click>Ver mais</button>
+            }
+        </div>
+    </td>
+</LineTable>
+
+@code {
+
+    [Parameter]
+    public SearchResult Result { get; set; }
+
+    [Parameter]
+    public int Index { get; set; }
+
+    bool clicked = false;
+    bool isDanger = false;
+
+    void t()
+    {
+        Console.WriteLine("teste");
+    }
+
+    bool HaveViolation()
+    {
+        isDanger = Result.Analysis.Emotion == "bad" || Result.Analysis.UsingMask;
+        isDanger = true;
+        return isDanger;
+    }
+
+    string Violation()
+    {
+        if (HaveViolation())
+            return "S";
+
+        return "N";
+    }
+
+    string BgColor()
+    {
+        if (HaveViolation())
+            return "bg-[#e09494]";
+
+        return "bg-green-600";
+    }
+
+    string Color()
+    {
+        isDanger = Result.Analysis.Emotion == "bad" || Result.Analysis.Temperature >= .5;
+        if (isDanger)
+            return "bg-red-500";
+
+        return "bg-green-400";
+    }
+
+    async Task Click()
+    {
+        if (clicked)
+            return;
+
+        clicked = true;
+        if (!Result.Visualized)
+        {
+            var res = await api.Put(api.walliClient.setVisualizedResult + $"?resultId={Result.Id}", "", await api.GetLoginHeader());
+        }
+
+        await navManager.NavigateTo("/viewSearch/" + Result.Id, true);
+    }
+}

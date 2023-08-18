@@ -41,7 +41,6 @@ else
                 graphicData = JsonSerializer.Deserialize<GraphicData>(await res.Content.ReadAsStringAsync());
                 SetupGraphic();
                 loading = false;
-                await localStorage.SetCacheInSession("chachedGraphicsIndex", JsonSerializer.Serialize(graphicData));
             }
         }
     }

@@ -4,6 +4,7 @@
 <LineTable OnClick=@(() => navigationManager.NavigateTo($"/view/client/{Id}", true))>
     <td align="center" class="text-white">@Name</td>
     <td align="center" class="text-white">@Email</td>
+    <td align="center" class="text-white">@Cpf</td>
     
     @if (ShowStatus == true)
     {
@@ -20,6 +21,9 @@
 
     [Parameter]
     public RenderFragment Email { get; set; }
+
+    [Parameter]
+    public RenderFragment Cpf { get; set; }
 
     [Parameter]
     public RenderFragment Status { get; set; }
