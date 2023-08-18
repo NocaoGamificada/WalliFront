@@ -7,7 +7,7 @@ namespace Features
 {
     public class Api
     {
-        public readonly string baseAddres = "http://localhost:5190";
+        public readonly string baseAddres = "https://ef19-177-20-215-251.ngrok-free.app";
         public readonly Account account = new();
         public readonly WalliClient walliClient = new();
         public readonly WalliManager walliManager = new();
