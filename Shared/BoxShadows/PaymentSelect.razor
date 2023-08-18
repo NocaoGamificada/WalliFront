@@ -3,7 +3,7 @@
 @inject NavigationStacker navManager;
 
 <div class="flex flex-1 w-full flex-col">
-    <div class="w-full py-3 flex flex-col items-center text-xl text-black">
+    <div class="w-full py-4 flex flex-col items-center text-2xl text-white font-semibold">
         @if (LevelSelected == 1)
         {
             <h1>Plano Selecionado: Basico</h1>
@@ -19,14 +19,14 @@
         if (!SelecionouCartao && !SelecionouBoleto && !ShowQrCode)
         {
             <div class="flex justify-center items-center flex-col md:flex-row gap-4">
-                <div class="w-[40%] max-h-[400px] md:w-[20%]">
-                    <img @onclick=@(() => SelectedMethod("boleto")) class="w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/boleto.png" />
+                <div class="w-[40%] h-[130px] md:w-[20%]">
+                    <img @onclick=@(() => SelectedMethod("boleto")) class="bg-white h-full object-contain p-3 rounded-xl w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/boleto.png" />
                 </div>
-                <div class="w-[40%] max-h-[400px] md:w-[20%]">
-                    <img @onclick=@(() => SelectedMethod("credit_card")) class="w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/cartao.png" />
+                <div class="w-[40%] h-[130px] md:w-[20%]">
+                    <img @onclick=@(() => SelectedMethod("credit_card")) class="bg-white h-full object-contain p-3 rounded-xl w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/cartao.png" />
                 </div>
-                <div class="w-[40%] max-h-[400px] md:w-[20%]">
-                    <img @onclick=@(() => SelectedMethod("pix")) class="w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/pix.png" />
+                <div class="w-[40%] max-h-[130px] md:w-[20%]">
+                    <img @onclick=@(() => SelectedMethod("pix")) class="bg-white h-full object-contain p-3 rounded-xl w-full hover:scale-110 transaction-all duration-200 cursor-pointer" src="images/pagamento/pix.png" />
                 </div>
             </div>
         }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "JrY0+huEUqEuy9QW6K5KYTOWss/iytJrksI0iwARbak=",
+  "Hash": "yWO8FYpvBD3HdSi38QPK8AqMPASeNF2mXjbacOQdzBE=",
   "Source": "WalliFront",
   "BasePath": "/",
   "Mode": "Root",
@@ -7631,6 +7631,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\icones\\bot-icon.png"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\circle-tooltip.png",
+      "SourceId": "WalliFront",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "images/icones/circle-tooltip.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icones\\circle-tooltip.png"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\close.svg",

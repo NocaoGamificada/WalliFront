@@ -26,11 +26,11 @@ namespace Features
         public async Task NavigateTo(string pageName, bool registerPage = false)
         {
             if (registerPage)
-                await historyState.AddPage("/WalliFront"+pageName);
+                await historyState.AddPage("/WalliFront"+ pageName);
 
             await localStorage.CheckSessionCache();
 
-            navigationManager.NavigateTo("/WalliFront"+pageName);
+            navigationManager.NavigateTo("/WalliFront" + pageName);
         }
 
         public async Task NavigateBack()

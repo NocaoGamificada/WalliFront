@@ -186,9 +186,13 @@
             areaCode = dddInput.Value,
             number = celFoneInput.Value,
 
+            birthdate = birthDate.Value,
+
             cep = cepInput.Value,
             lineAddress = addressInput.Value
         };
+
+        Console.WriteLine(birthDate.Value);
 
         var res = await api.Post(api.account.register, JsonSerializer.Serialize(data), await api.GetLoginHeader());
 

@@ -3,12 +3,13 @@
 @inject NavigationStacker navManager;
 @inject Api api;
 
-<div class="flex flex-col items-center gap-3 w-full h-full bg-zinc-800 overflow-y-auto py-2">
-    <div @onsubmit=AdicionarCartao class="flex-col w-full md:max-w-[500px] md:w-[60%] ">
-        <div class="w-full">
+<div class="flex flex-col items-center gap-3 w-full h-full bg-zinc-800 overflow-y-auto">
+    <MarkseHeader />
+    <div @onsubmit=AdicionarCartao class="flex-col w-full px-4 md:max-w-[500px] md:w-[60%] mt-8">
+        <div class="w-full my-2">
             <CardInput Data="cardNumber" Id="card-number" Mask="0000 0000 0000 0000" Placeholder="0000 0000 0000 0000">Número do cartão</CardInput>
         </div>
-        <div class="w-full">
+        <div class="w-full my-2">
             <CardInput Data="cvv" Id="card-cvv" Mask="0000" Placeholder="0000">CVV - até 4 numeros</CardInput>
         </div>
 
@@ -21,8 +22,17 @@
             </div>
         </div>
 
-        <div class="w-[40%] md:w-[400px]">
-            <ButtonStyled OnClick="AdicionarCartao">Adicionar Cartão</ButtonStyled>
+        <div class="w-full flex flex-col items-center">
+            <div class="w-[55%] md:w-[250px] mt-5">
+                @if (!addingCard)
+                {
+                    <ButtonStyled FontSize="text-lg" OnClick="AdicionarCartao">Adicionar Cartão</ButtonStyled>
+                }
+                else
+                {
+                    <ButtonStyled BgColor="bg-green-700"><Loading /></ButtonStyled>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -33,6 +43,8 @@
     InputData vencimentMonth = new();
     InputData vencimentYear = new();
 
+    bool addingCard = false;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await js.InvokeVoidAsync("maskInput", "vencimentDay", "00", new { placeholder = "00" });
@@ -41,6 +53,7 @@
 
     private async Task AdicionarCartao()
     {
+        addingCard = true;
         var expMonth = int.Parse(vencimentMonth.Value);
         var expYear = int.Parse(vencimentYear.Value);
         var cvv = this.cvv.Value.Trim().Replace(".", " ");
@@ -66,12 +79,22 @@
             cardNumber
         }), await api.GetLoginHeader());
 
-        if (res?.IsSuccessStatusCode == false)
+        if (res?.IsSuccessStatusCode != true)
         {
-            await js.InvokeVoidAsync("window.alert", "Houve algum erro por favor tente novamente!");
-            return;
+            MessageErrorResponse? tryError = null;
+            if (res != null)
+            {
+                tryError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }
+
+            await js.InvokeVoidAsync("window.alert", tryError?.MessageError ?? "Houve algum erro por favor tente novamente!");
+        }
+        else
+        {
+            await navManager.NavigateBack();
         }
 
-        await navManager.NavigateBack();
+        addingCard = false;
+        StateHasChanged();
     }
 }

@@ -1,8 +1,8 @@
 ﻿@inject IJSRuntime js;
 @inject NavigationStacker navManager;
 
-<div class="w-full max-h flex flex-col ">
-    @if(Result.Type != "twitter" && Result.Type != "facebook")
+<div class="ml-4 w-full max-h flex flex-col">
+    @if(Result.Type == "google")
     {
         <h1 class="text-zinc-200 text-xl">Caso o preview não carrege por favor entre no link</h1>
         <iframe class="sm:w-[95%] md:w-[70%]" src="@Result.Link" width="400" height="500" />
@@ -14,10 +14,8 @@
         </blockquote>
     }else if (Result.Type == "facebook")
     {
-        <div class="fb-post" data-href="@Result.Link" data-width="500" data-show-text="true">
-            <blockquote cite="@Result.Link" class="fb-xfbml-parse-ignore">
-               
-            </blockquote>
+        <div>
+
         </div>
     }
 </div>

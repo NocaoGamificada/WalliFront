@@ -224,6 +224,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExheW91dHNcTm9BdXRoTGF5b3V0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/Layouts/NoAuthLayoutView.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExheW91dHNcTm9BdXRoTGF5b3V0Vmlldy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/Lines/ClientLine.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXExpbmVzXENsaWVudExpbmUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -382,6 +386,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/TermBox.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFRlcm1Cb3gucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/Tolltip.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFRvbGx0aXAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/_Imports.razor]

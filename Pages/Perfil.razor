@@ -4,86 +4,144 @@
 @inject NavigationStacker navManager;
 
 <div class="w-full h-full overflow-y-auto gap-3 flex flex-col bg-zinc-800">
-    <MarkseHeader />
-    <div class="w-full flex-1 overflow-y-auto gap-5 flex-col">
-        <div class="w-full flex flex-col items-center gap-2 justify-center">
-            @if (!loadingAssinature)
-            {
-                @if (assinature == null)
-                {
-                    <h1 class="text-red-400">Aconteceu alguma coisa de errado ao carregar o seu plano</h1>
-                    <div class="flex w-[300px]">
-                        <ButtonStyled>Tentar novamente</ButtonStyled>
-                    </div>
-                }
-                else
-                {
+    @if (loading)
+    {
+        <div class="flex h-full flex-1 flex-col w-full justify-center items-center">
+            <h1 class="text-white text-2xl font-semibold">Estamos carregando seus dados</h1>
+            <Loading />
+        </div>
+    }
+    else
+    {
+        if (haveError)
+        {
+            <div class="flex h-full flex-1 flex-col w-full justify-center items-center">
+                <h1 class="text-white text-2xl font-semibold">Ops aconteceu um erro durante a solicitação</h1>
+                <div class="w-[60%]">
+                    <ButtonStyled OnClick="OnInitializedAsync">Tentar novamente</ButtonStyled>
+                </div>
+            </div>
+        }
+        else
+        {
+            <MarkseHeader />
+            <div class="w-full flex-1 overflow-y-auto gap-5 flex-col">
+                <div class="w-full flex flex-col items-center gap-2 justify-center">
                     <h1 class="text-white text-xl">Plano ativo</h1>
                     <h2 class="text-green-500 text-lg">
                         @{
-                            if (assinature.Level == 0)
+                            if (assinature?.Level == 0)
                             {
                                 <span>Gratuito</span>
                             }
-                            else if (assinature.Level == 1)
+                            else if (assinature?.Level == 1)
                             {
                                 <span>Basico</span>
                             }
-                            else if (assinature.Level == 2)
+                            else if (assinature?.Level == 2)
                             {
                                 <span>Premium</span>
                             }
                         }
                     </h2>
-                    if (assinature.Level == 0 || assinature.Level == 1)
+                    @if (assinature?.Level == 0 || assinature?.Level == 1)
                     {
                         <div class="flex w-[300px]">
-                            <ButtonStyled OnClick=@(() => navManager.NavigateTo("/upgrade-plano"))>Dar um up no meu plano</ButtonStyled>
+                            <ButtonStyled OnClick=@(() => navManager.NavigateTo("/planos"))>Quero Dar um up no meu plano</ButtonStyled>
                         </div>
                     }
-                }
-            }
-            else
-            {
-                <h1 class="text-white">Estamos carregando seus plano</h1>
-            }
-        </div>
+                </div>
 
-        <ShowAddress />
-        <div class="w-full flex flex-col pl-4">
-            <ListCreditCards />
-        </div>
-    </div>
+                <ShowAddress Address="address" />
+                <div class="w-full flex flex-col pl-4">
+                    <ListCreditCards Cards="cards" />
+                </div>
+            </div>
+        }
+    }
 </div>
 
 @code {
-    bool loadingAssinature = true;
+    bool loading = true;
+    bool haveError = false;
+
     Assinature? assinature = null;
     UserAddress? address = null;
+    List<ListCreditCards.Card>? cards = null;
 
     protected override async Task OnInitializedAsync()
     {
-        await GetCurrentAssinature();
-    }
-
-    async Task GetCurrentAssinature()
-    {
-        loadingAssinature = true;
+        loading = true;
+        haveError = false;
         StateHasChanged();
 
+        if (!await GetCurrentAssinature())
+        {
+            haveError = true;
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        if (!await LoadAddress())
+        {
+            haveError = true;
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        if (!await UpdateCreditList())
+        {
+            haveError = true;
+            loading = false;
+            StateHasChanged();
+            return;
+        }
+
+        loading = false;
+    }
+
+    async Task<bool> UpdateCreditList()
+    {
+        StateHasChanged();
+
+        var res = await api.Get(api.account.getCreditCards, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var json = await res.Content.ReadAsStringAsync();
+            cards = JsonSerializer.Deserialize<List<ListCreditCards.Card>>(json);
+        }
+
+        return res?.IsSuccessStatusCode == true;
+    }
+
+    async Task<bool> GetCurrentAssinature()
+    {
         var res = await api.Get(api.walliClient.getCurrentPlan, await api.GetLoginHeader());
 
-        if (res?.IsSuccessStatusCode != true)
-            return;
+        if (res?.IsSuccessStatusCode == true)
+        {
+            assinature = JsonSerializer.Deserialize<Assinature>(await res.Content.ReadAsStringAsync());
+        }
 
-        assinature = JsonSerializer.Deserialize<Assinature>(await res.Content.ReadAsStringAsync());
-        loadingAssinature = false;
-
-        StateHasChanged();
+        return res?.IsSuccessStatusCode == true;
     }
 
-    async Task BuyAssinature()
+    async Task<bool> LoadAddress()
     {
-        //await api.Post("http://localhost:5190/walli/client/buy-assinature?", "", await api.GetLoginHeader());
+        var res = await api.Get(api.account.getRegisteredAddress, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            address = JsonSerializer.Deserialize<UserAddress>(await res.Content.ReadAsStringAsync()) ?? new();
+        }
+        else
+        {
+            address = null;
+        }
+
+        return res?.IsSuccessStatusCode == true;
     }
 }

@@ -109,6 +109,10 @@
       "PackagePath": "staticwebassets\\images\\icones\\bot-icon.png"
     },
     {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\circle-tooltip.png",
+      "PackagePath": "staticwebassets\\images\\icones\\circle-tooltip.png"
+    },
+    {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\close.svg",
       "PackagePath": "staticwebassets\\images\\icones\\close.svg"
     },

@@ -1,5 +1,6 @@
 ﻿@inject NavigationStacker navManager;
 @inject Api api;
+@inject IJSRuntime js;
 
 @if (loadingCards == true)
 {
@@ -22,7 +23,7 @@ else
     {
         if (!adicionarCartao)
         {
-            <div class="text-lg text-black py-2 font-bold pl-2">Seus cartões: </div>
+            <div class="text-xl text-white py-2 font-semibold pl-2 mt-3">Seus cartões: </div>
             <div class="w-full px-2 py-3 flex flex-col gap-2">
                 @foreach (var creditNumber in PartialCreditCards)
                 {
@@ -34,6 +35,32 @@ else
                       adicionarCartao = true;
                       StateHasChanged();
                       })>Adicionar Cartão</ButtonStyled>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="w-full flex justify-center items-center mt-5">
+                <div class="pl-6 w-[60%] flex flex-col gap-3">
+                    <div class="w-full">
+                        <CardInput Data="cardNumber" Id="card-number" Mask="0000 0000 0000 0000" Placeholder="0000 0000 0000 0000">Número do cartão</CardInput>
+                    </div>
+                    <div class="w-full">
+                        <CardInput Data="cvv" Id="card-cvv" Mask="0000" Placeholder="0000">CVV - até 4 numeros</CardInput>
+                    </div>
+
+                    <div class="w-full flex flex-col gap-2">
+                        <label class="text-xl text-white">Vencimento do cartão</label>
+                        <div class="w-full flex flex-row">
+                            <input id="vencimentDay" @bind=vencimentMonth.Value type="text" class="shadow outline-0 border-0 w-[80px] py-2 bg-zinc-700 border rounded-2xl text-center text-white" />
+                            <span>/</span>
+                            <input id="vencimentYear" @bind=vencimentYear.Value type="text" class="shadow outline-0 border-0 w-[80px] py-2 bg-zinc-700 border rounded-2xl text-center text-white" />
+                        </div>
+                    </div>
+
+                    <div class="w-[40%] md:w-[400px] mt-6">
+                        <ButtonStyled OnClick="AdicionarCartao">Adicionar Cartão</ButtonStyled>
+                    </div>
                 </div>
             </div>
         }
@@ -69,6 +96,65 @@ else
         loadingCards = false;
         StateHasChanged();
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (adicionarCartao)
+        {
+            await js.InvokeVoidAsync("maskInput", "vencimentDay", "00", new { placeholder = "00" });
+            await js.InvokeVoidAsync("maskInput", "vencimentYear", "00", new { placeholder = "00" });
+        }    
+    }
+
+    //partir daqui é somente cartões
+    private async Task AdicionarCartao()
+    {
+        var expMonth = int.Parse(vencimentMonth.Value);
+        var expYear = int.Parse(vencimentYear.Value);
+        var cvv = this.cvv.Value.Trim().Replace(".", " ");
+        var cardNumber = this.cardNumber.Value.Trim().Replace(" ", "");
+
+        if (cvv.Length < 3)
+        {
+            Console.WriteLine("cvv menor que 3");
+            return;
+        }
+
+        if (cardNumber.Length != 16)
+        {
+            Console.WriteLine("card number: " + cardNumber + " " + cardNumber.Length);
+            return;
+        }
+
+        var res = await api.Post(api.account.addCreditCard, JsonSerializer.Serialize(new
+        {
+            expMonth,
+            expYear,
+            cvv,
+            cardNumber
+        }), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode != true)
+        {
+            MessageErrorResponse? tryError = null;
+            if (res != null)
+            {
+                tryError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }
+
+            await js.InvokeVoidAsync("window.alert", tryError?.MessageError ?? "Houve algum erro por favor tente novamente!");
+            return;
+        }
+
+        await UpdateCreditList();
+        adicionarCartao = false;
+        StateHasChanged();
+    }
+
+    InputData cvv = new();
+    InputData cardNumber = new();
+    InputData vencimentMonth = new();
+    InputData vencimentYear = new();
 
     public class Teste
     {

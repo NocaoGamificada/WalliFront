@@ -39,6 +39,11 @@ else if (haveCredentials)
 
     protected override async Task OnInitializedAsync()
     {
+        if (await localStorage.CheckAuthSession())
+        {
+            navManager.NavigateTo("/index");
+        }
+
         var email = await localStorage.Get("email");
         var password = await localStorage.Get("password");
         haveCredentials = !string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password);
