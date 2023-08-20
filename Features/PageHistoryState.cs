@@ -10,6 +10,7 @@ namespace Features
     public class PageHistoryState
     {
         private readonly LocalStorage localStorage;
+        public string medium = string.Empty;
 
         public PageHistoryState(LocalStorage localStorage)
         {
@@ -53,7 +54,7 @@ namespace Features
             var json = await localStorage.GetInSession("pageHistory");
             if (string.IsNullOrEmpty(json))
             {
-                var _list = new List<string>() { "/Markse-front/index" };
+                var _list = new List<string>() { medium + "/index" };
                 await SetHistory(_list);
                 return _list;
             }

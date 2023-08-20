@@ -8,7 +8,7 @@ namespace Features
     public class Api
     {
         //public readonly string baseAddres = "http://markse-001-site1.ctempurl.com/";
-        public readonly string baseAddres = "http://markse-001-site1.ctempurl.com/";
+        public readonly string baseAddres = "https://markse-001-site1.ctempurl.com/";
         public readonly Account account = new();
         public readonly WalliClient walliClient = new();
         public readonly WalliManager walliManager = new();

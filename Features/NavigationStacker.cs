@@ -13,11 +13,14 @@ namespace Features
         private readonly PageHistoryState historyState;
         private readonly LocalStorage localStorage;
 
+        private readonly string medium = "";
+
         public List<Teste> OnExitedPage;
 
         public NavigationStacker(PageHistoryState historyState, NavigationManager navigationManager, LocalStorage localStorage)
         {
             this.historyState = historyState;
+            historyState.medium = medium;
             this.navigationManager = navigationManager;
             OnExitedPage = new();
             this.localStorage = localStorage;
@@ -26,11 +29,11 @@ namespace Features
         public async Task NavigateTo(string pageName, bool registerPage = false)
         {
             if (registerPage)
-                await historyState.AddPage("/Markse-front" + pageName);
+                await historyState.AddPage(medium + pageName);
 
             await localStorage.CheckSessionCache();
 
-            navigationManager.NavigateTo("/Markse-front" + pageName);
+            navigationManager.NavigateTo(medium + pageName);
         }
 
         public async Task NavigateBack()
