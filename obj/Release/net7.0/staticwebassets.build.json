@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "TbnXUu9S2C6jt/vi0QyIlczhTUiFJyDa+SSRiCQ443A=",
+  "Hash": "sYg6I8BuBwczSan18Q6iU9YrpO5d+5zDJHIiclM/1qA=",
   "Source": "WalliFront",
   "BasePath": "/",
   "Mode": "Root",
@@ -102,6 +102,23 @@
       "OriginalItemSpec": "C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Runtime.Mono.browser-wasm\\7.0.9\\runtimes\\browser-wasm\\native\\dotnet.wasm"
     },
     {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\_framework\\icudt.dat",
+      "SourceId": "WalliFront",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "_framework/icudt.dat",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "BlazorWebAssemblyResource",
+      "AssetTraitValue": "native",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Runtime.Mono.browser-wasm\\7.0.9\\runtimes\\browser-wasm\\native\\icudt.dat"
+    },
+    {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\_framework\\icudt_CJK.dat",
       "SourceId": "WalliFront",
       "SourceType": "Computed",
@@ -151,23 +168,6 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "Never",
       "OriginalItemSpec": "C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Runtime.Mono.browser-wasm\\7.0.9\\runtimes\\browser-wasm\\native\\icudt_no_CJK.dat"
-    },
-    {
-      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\_framework\\icudt.dat",
-      "SourceId": "WalliFront",
-      "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "_framework/icudt.dat",
-      "AssetKind": "Build",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "BlazorWebAssemblyResource",
-      "AssetTraitValue": "native",
-      "CopyToOutputDirectory": "PreserveNewest",
-      "CopyToPublishDirectory": "Never",
-      "OriginalItemSpec": "C:\\Program Files\\dotnet\\packs\\Microsoft.NETCore.App.Runtime.Mono.browser-wasm\\7.0.9\\runtimes\\browser-wasm\\native\\icudt.dat"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\_framework\\Microsoft.AspNetCore.Authorization.dll",
@@ -7174,40 +7174,6 @@
       "OriginalItemSpec": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\_framework\\System.Diagnostics.Tools.dll"
     },
     {
-      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\obj\\Release\\net7.0\\service-worker-assets.js",
-      "SourceId": "WalliFront",
-      "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "service-worker-assets.js",
-      "AssetKind": "Publish",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "BlazorServiceWorker",
-      "AssetTraitValue": "ServiceWorkerManifest",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "obj\\Release\\net7.0\\service-worker-assets.js"
-    },
-    {
-      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\obj\\Release\\net7.0\\service-worker-assets.js.build",
-      "SourceId": "WalliFront",
-      "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "service-worker-assets.js",
-      "AssetKind": "Build",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "BlazorServiceWorker",
-      "AssetTraitValue": "ServiceWorkerManifest",
-      "CopyToOutputDirectory": "PreserveNewest",
-      "CopyToPublishDirectory": "Never",
-      "OriginalItemSpec": "obj\\Release\\net7.0\\service-worker-assets.js.build"
-    },
-    {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\obj\\Release\\net7.0\\service-worker\\service-worker.js",
       "SourceId": "WalliFront",
       "SourceType": "Computed",
@@ -7240,6 +7206,40 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\service-worker.published.js"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\obj\\Release\\net7.0\\service-worker-assets.js",
+      "SourceId": "WalliFront",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "service-worker-assets.js",
+      "AssetKind": "Publish",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "BlazorServiceWorker",
+      "AssetTraitValue": "ServiceWorkerManifest",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "obj\\Release\\net7.0\\service-worker-assets.js"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\obj\\Release\\net7.0\\service-worker-assets.js.build",
+      "SourceId": "WalliFront",
+      "SourceType": "Computed",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\bin\\Release\\net7.0\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "service-worker-assets.js",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "BlazorServiceWorker",
+      "AssetTraitValue": "ServiceWorkerManifest",
+      "CopyToOutputDirectory": "PreserveNewest",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "obj\\Release\\net7.0\\service-worker-assets.js.build"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\css\\app.css",
@@ -7325,23 +7325,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\loadingBar.css"
-    },
-    {
-      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
-      "SourceId": "WalliFront",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "css/open-iconic/FONT-LICENSE",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\open-iconic\\FONT-LICENSE"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
@@ -7444,6 +7427,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
+      "SourceId": "WalliFront",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "css/open-iconic/FONT-LICENSE",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\open-iconic\\FONT-LICENSE"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\css\\open-iconic\\ICON-LICENSE",
@@ -7582,6 +7582,23 @@
       "OriginalItemSpec": "wwwroot\\images\\eye.gif"
     },
     {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\fatura.png",
+      "SourceId": "WalliFront",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "images/fatura.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\fatura.png"
+    },
+    {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\graphic.jpg",
       "SourceId": "WalliFront",
       "SourceType": "Discovered",
@@ -7631,6 +7648,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\icones\\bot-icon.png"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\circle-tooltip.png",
+      "SourceId": "WalliFront",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "images/icones/circle-tooltip.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\icones\\circle-tooltip.png"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\close.svg",
@@ -7820,23 +7854,6 @@
       "OriginalItemSpec": "wwwroot\\images\\left-arrow.png"
     },
     {
-      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\loading-circle.svg",
-      "SourceId": "WalliFront",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "images/loading-circle.svg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\loading-circle.svg"
-    },
-    {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\loading.gif",
       "SourceId": "WalliFront",
       "SourceType": "Discovered",
@@ -7852,6 +7869,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\loading.gif"
+    },
+    {
+      "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\loading-circle.svg",
+      "SourceId": "WalliFront",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\",
+      "BasePath": "/",
+      "RelativePath": "images/loading-circle.svg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\loading-circle.svg"
     },
     {
       "Identity": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\pagamento\\boleto.png",

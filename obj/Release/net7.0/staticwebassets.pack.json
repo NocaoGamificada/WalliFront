@@ -97,6 +97,10 @@
       "PackagePath": "staticwebassets\\images\\eye.gif"
     },
     {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\fatura.png",
+      "PackagePath": "staticwebassets\\images\\fatura.png"
+    },
+    {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\graphic.jpg",
       "PackagePath": "staticwebassets\\images\\graphic.jpg"
     },
@@ -107,6 +111,10 @@
     {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\bot-icon.png",
       "PackagePath": "staticwebassets\\images\\icones\\bot-icon.png"
+    },
+    {
+      "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\circle-tooltip.png",
+      "PackagePath": "staticwebassets\\images\\icones\\circle-tooltip.png"
     },
     {
       "Id": "C:\\Users\\NocaoGamificada\\Documents\\GitHub\\WalliFront\\wwwroot\\images\\icones\\close.svg",

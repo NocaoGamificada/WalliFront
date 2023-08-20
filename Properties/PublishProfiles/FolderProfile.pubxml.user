@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\NocaoGamificada\Documents\GitHub\WalliFront\bin\Release\net7.0\browser-wasm\publish\</_PublishTargetUrl>
+    <History>True|2023-08-20T00:49:40.5052621Z;True|2023-08-19T21:45:27.5875698-03:00;True|2023-08-19T21:23:37.9511634-03:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

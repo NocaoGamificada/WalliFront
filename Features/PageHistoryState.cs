@@ -53,7 +53,7 @@ namespace Features
             var json = await localStorage.GetInSession("pageHistory");
             if (string.IsNullOrEmpty(json))
             {
-                var _list = new List<string>() { "/WalliFront/index" };
+                var _list = new List<string>() { "/Markse-front/index" };
                 await SetHistory(_list);
                 return _list;
             }
