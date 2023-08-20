@@ -32,10 +32,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ2hhdEJvdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Pages/ComprarPlano.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29tcHJhclBsYW5vLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Pages/DenunciarResultados.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGVudW5jaWFyUmVzdWx0YWRvcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -362,6 +358,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/MultiPages/NewMarkManager.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE11bHRpUGFnZXNcTmV3TWFya01hbmFnZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/PaymentBoleto.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFBheW1lbnRCb2xldG8ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/PaymentPix.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFBheW1lbnRQaXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/NocaoGamificada/Documents/GitHub/WalliFront/Shared/PieChart.razor]

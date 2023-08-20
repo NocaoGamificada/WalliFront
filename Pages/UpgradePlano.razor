@@ -1,4 +1,5 @@
 ﻿@page "/planos";
+@inject IJSRuntime js;
 @layout NoAuthLayoutView;
 @inject Api api;
 @inject NavigationStacker navManager;
@@ -23,7 +24,7 @@
             </div>
         </div>
     }
-    else
+    else if (!haveError)
     {
         <div class="flex flex-col items-center py-4 w-full">
             <img @onclick=@(async () => {
@@ -67,6 +68,14 @@
             <PaymentSelect LevelSelected="levelSelected"></PaymentSelect>
         }
     }
+    else
+    {
+        <div class="w-full h-full flex justify-center items-center">
+            <div class="w-[50%]">
+                <ButtonStyled OnClick="OnInitializedAsync">Tentar novamente</ButtonStyled>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
@@ -75,9 +84,14 @@
     int levelSelected = 0;
 
     bool loading = true;
+    bool haveError = false;
 
     protected override async Task OnInitializedAsync()
     {
+        loading = true;
+        haveError = false;
+        StateHasChanged();
+
         if (await localStorage.CheckAuthSession())
         {
             await GetCurrentAssinature();
@@ -89,6 +103,12 @@
 
     public void SelectedCard(int level)
     {
+        if (assinature == null)
+        {
+            navManager.NavigateTo("/login");
+            return;
+        }
+
         levelSelected = level;
         Selected = true;
         StateHasChanged();
@@ -99,7 +119,19 @@
         var res = await api.Get(api.walliClient.getCurrentPlan, await api.GetLoginHeader());
 
         if (res?.IsSuccessStatusCode != true)
+        {
+            MessageErrorResponse? objError = null;
+            try
+            {
+                if (res != null)
+                    objError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }
+            catch(Exception){}
+
+            await js.InvokeVoidAsync("window.alert", objError?.MessageError ?? "Houve um erro inesperado ao carregar seu plano, porfavor tente novamente!");
+            haveError = true;
             return;
+        }
 
         assinature = JsonSerializer.Deserialize<Assinature>(await res.Content.ReadAsStringAsync());
     }

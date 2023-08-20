@@ -20,12 +20,17 @@
                 <InputForm Data="nameInput" Id="name" Placeholder="Digite seu nome" Type="text">Nome</InputForm>
                 <InputForm Data="emailInput" Id="email" Placeholder="Digite seu email" Type="email">Email</InputForm>
                 <InputForm Data="birthDate" Id="date" Type="date">Data de nascimento</InputForm>
-                <InputForm Data="cpfInput" Id="cpf" Placeholder="Digite seu email" Mask="000.000.000-00" Type="text">CPF</InputForm>
+                <InputForm Data="cpfInput" Id="cpf" Placeholder="000.000.000-00" Mask="000.000.000-00" Type="text">CPF</InputForm>
                 <InputForm Data="passwordInput" Id="password" Placeholder="Digite sua senha" Type="password">Senha</InputForm>
                 <InputForm Data="repeatPasswordInput" Id="repeat-password" Placeholder="Repita sua senha" Type="password">Repetir senha</InputForm>
             }
             else if (step == 2)
             {
+                <div class="w-full">
+                    <div class="w-[15%]">
+                        <ButtonStyled OnClick="BackStage">Voltar</ButtonStyled>
+                    </div>
+                </div>
                 <InputForm Data="cepInput" Id="cep" Placeholder="00000-000" Mask="00000-000" Type="text">Cep</InputForm>
                 <InputForm Data="addressInput" Id="address" Placeholder="Digite seu endereço" Type="text">Endereço</InputForm>
 
@@ -35,7 +40,7 @@
                         <div class="w-[364px]">
                             <InputForm Data="dddInput" Id="ddd" Placeholder="00" Mask="00" Type="text">DDD</InputForm>
                         </div>
-                        <InputForm Data="celFoneInput" Id="celfone" Placeholder="00000-0000" Type="text">Numero de telefone</InputForm>
+                        <InputForm Data="celFoneInput" Id="celfone" Placeholder="00000-0000" Mask="00000-0000" Type="text">Numero de telefone</InputForm>
                     </div>
                 </div>
             }
@@ -75,7 +80,7 @@
             }
         </div>
         <div class="w-full flex items-end flex-col px-4">
-            <h1 @onclick=@(() => navManager.NavigateTo("/login"))>Ja possui conta?</h1>
+            <h1 @onclick=@(() => navManager.NavigateTo("/login")) class="cursor-pointer">Ja possui conta?</h1>
         </div>
         <div>
             @messageError
@@ -125,35 +130,63 @@
     {
         if (!emailInput.Value.Contains("@"))
         {
-            await js.InvokeVoidAsync("window.alert", "@");
+            await js.InvokeVoidAsync("window.alert", "Por favor digite um email válido");
             return false;
         }
 
         if (passwordInput.Value.Contains(" "))
         {
-            await js.InvokeVoidAsync("window.alert", "senha com espaço");
+            await js.InvokeVoidAsync("window.alert", "Senha não pode conter espaços");
+            return false;
+        }
+
+        if (passwordInput.Value.Trim().Length < 6)
+        {
+            await js.InvokeVoidAsync("window.alert", "Senha deve conter no minimo 6 digitos");
             return false;
         }
 
         if (passwordInput.Value != repeatPasswordInput.Value)
         {
-            await js.InvokeVoidAsync("window.alert", "senha diferente");
+            await js.InvokeVoidAsync("window.alert", "Senhas divergentes");
             return false;
         }
 
         if (nameInput.Value.Length <= 1)
         {
-            await js.InvokeVoidAsync("window.alert", "nome");
+            await js.InvokeVoidAsync("window.alert", "O nome precisa ter no minimo 2 caracteres");
+            return false;
+        }
+
+        if (cpfInput.Value.Trim().Replace(".", "").Replace("-", "").Length != 11)
+        {
+            await js.InvokeVoidAsync("window.alert", "Por favor digite um cpf valido");
             return false;
         }
 
         var res = await api.Post(api.walliSellerUp.checkClientExists, JsonSerializer.Serialize(new
         {
             email = emailInput.Value,
-            cpf = cpfInput.Value.Trim().Replace(".", "").Replace("-", "")
+            cpf = cpfInput.Value.Trim().Replace(".", "").Replace("-", ""),
+            password = passwordInput.Value,
+            birthdate = birthDate.Value
         }) , await api.GetLoginHeader());
 
-        return res?.IsSuccessStatusCode == true;
+        if (res?.IsSuccessStatusCode != true)
+        {
+            MessageErrorResponse? errorResponse = null;
+            try
+            {
+                if (res != null)
+                    errorResponse = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync() ?? "{}");
+            }
+            catch (Exception){}
+
+            await js.InvokeVoidAsync("window.alert", errorResponse?.MessageError ?? "Houve um erro inesperado por favor tente novamente!");
+            return false;
+        }
+
+        return true;
     }
 
     private async Task<bool> ValidateAddress()
@@ -166,6 +199,17 @@
         }
 
         return true;
+    }
+
+    private void BackStage()
+    {
+        step--;
+        if (step < 0)
+            step = 0;
+        else if (step > 2)
+            step = 2;
+
+        StateHasChanged();
     }
 
     private async Task Register()
@@ -184,7 +228,7 @@
             indentification = cpfInput.Value,
 
             areaCode = dddInput.Value,
-            number = celFoneInput.Value,
+            number = celFoneInput.Value.Replace("-", "").Trim(),
 
             birthdate = birthDate.Value,
 
@@ -192,21 +236,28 @@
             lineAddress = addressInput.Value
         };
 
-        Console.WriteLine(birthDate.Value);
-
         var res = await api.Post(api.account.register, JsonSerializer.Serialize(data), await api.GetLoginHeader());
 
-        if (res != null)
+        if (res?.IsSuccessStatusCode == true)
         {
-            if (res.IsSuccessStatusCode)
+            var user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
+            await localStorage.Set("email", user.Email);
+            await localStorage.Set("password", user.Password);
+            await localStorage.Set("roles", JsonSerializer.Serialize(user.Roles));
+            await localStorage.StartAuthSession();
+            await navManager.NavigateTo("/index");
+        }
+        else
+        {
+            MessageErrorResponse? errorResponse = null;
+            try
             {
-                var user = JsonSerializer.Deserialize<User>(await res.Content.ReadAsStringAsync());
-                await localStorage.Set("email", user.Email);
-                await localStorage.Set("password", user.Password);
-                await localStorage.Set("roles", JsonSerializer.Serialize(user.Roles));
-                await localStorage.StartAuthSession();
-                navManager.NavigateTo("/index");
+                if (res != null)
+                    errorResponse = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync() ?? "{}");
             }
+            catch (Exception) { }
+
+            await js.InvokeVoidAsync("window.alert", errorResponse?.MessageError ?? "Houve um erro inesperado por favor tente novamente!");
         }
 
         isRequesting = false;

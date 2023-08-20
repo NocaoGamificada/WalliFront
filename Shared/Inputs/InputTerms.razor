@@ -1,15 +1,26 @@
 ﻿<div class="w-full flex flex-col gap-2">
-    <InputForm Id="term" Data="termInput" KeyboardEvent="Keydown"  Placeholder="Degite um novo termo de pesquisa">Termo de pesquisa</InputForm>
-    @if (ListTerms.Count > 0)
-    {
-        <h1 class="text-2xl text-white font-bold">@ListTerms.Count/3</h1>
-        <div class="w-full flex flex-wrap flex-row gap-4 py-1 px-1">
-            @for (int i = 0; i < ListTerms.Count; i++)
-            {
-                <TermBox ExcludeAction="Exclude" Id="i" Term=@ListTerms[i] />
-            }
+    <div class="w-full flex flex-row">
+        <div class="w-[100%]">
+            <InputForm Id="term" Data="termInput" KeyboardEvent="Keydown" Placeholder="Degite um novo termo de pesquisa">
+                <ChildContent>
+                    Termo de pesquisa
+                </ChildContent>
+
+                <FrontInput>
+                    <div class="bg-green-700 text-black cursor-pointer px-3 py-2 rounded-2xl" @onclick=Add>
+                        +
+                    </div>
+                </FrontInput>
+            </InputForm>
         </div>
-    }
+    </div>
+    <h1 class="text-2xl text-white font-bold">@ListTerms.Count/3</h1>
+    <div class="w-full flex flex-wrap flex-row gap-4 py-1 px-1">
+        @for (int i = 0; i < ListTerms.Count; i++)
+        {
+            <TermBox ExcludeAction="Exclude" Id="i" Term=@ListTerms[i] />
+        }
+    </div>
 </div>
 
 @code{
@@ -30,6 +41,14 @@
     private void Keydown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter" && termInput.Value.Trim().Length > 1 && ListTerms.Count < 3)
+        {
+            Add();
+        }
+    }
+
+    private void Add()
+    {
+        if (termInput.Value.Trim().Length > 2)
         {
             ListTerms.Add(termInput.Value);
             termInput.Value = "";

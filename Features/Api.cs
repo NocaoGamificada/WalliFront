@@ -7,7 +7,8 @@ namespace Features
 {
     public class Api
     {
-        public readonly string baseAddres = "https://walliv1-5b9eea3d04ae.herokuapp.com";
+        //public readonly string baseAddres = "http://markse-001-site1.ctempurl.com/";
+        public readonly string baseAddres = "http://markse-001-site1.ctempurl.com/";
         public readonly Account account = new();
         public readonly WalliClient walliClient = new();
         public readonly WalliManager walliManager = new();
@@ -45,7 +46,7 @@ namespace Features
             return null;
         }
 
-        public async Task<T> GetJson<T>(string route, Dictionary<string, string> headers = null)
+        public async Task<T> GetJson<T>(string route, Dictionary<string, string>? headers = null)
         {
             var client = new HttpClient()
             {
@@ -66,7 +67,7 @@ namespace Features
             return default;
         }
 
-        public async Task<HttpResponseMessage>? Post(string route, string json, Dictionary<string, string>? headers = null)
+        public async Task<HttpResponseMessage?> Post(string route, string json, Dictionary<string, string>? headers = null)
         {
             try
             {

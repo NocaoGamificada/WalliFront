@@ -81,6 +81,10 @@
       "url": "images\/eye.gif"
     },
     {
+      "hash": "sha256-iTBu7PRZkSUFwFJvgq8C5YeYv1F\/TmBAfT4zMGiM0rU=",
+      "url": "images\/fatura.png"
+    },
+    {
       "hash": "sha256-t+Jvyz8DSkxeL9X2Y50ih2r6Vdw7nNYmb8vmEfYnfFo=",
       "url": "images\/graphic.jpg"
     },
@@ -173,7 +177,7 @@
       "url": "images\/walli_logo.png"
     },
     {
-      "hash": "sha256-HoqWVsBFzlZBL2kSi+cvogiwFJKIBmns6Pgx7BrjGSo=",
+      "hash": "sha256-uGAon0v9Iuk5GMyLYPyZ76VwtXSeZi23IavsKgM2AVs=",
       "url": "index.html"
     },
     {
@@ -1021,11 +1025,11 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-+v8z1sfKwiTbGdPdsal1X6aQOinGws34N+WXG+IfGKU=",
+      "hash": "sha256-Ksuh6nx8w\/XvruD7T98XX6kxhPSfB8AODK7TAglt3J0=",
       "url": "_framework\/WalliFront.dll"
     },
     {
-      "hash": "sha256-r8SrxDvWtWCoO0Bl4os5JUNcc2uPZwgozymgpA1Oipw=",
+      "hash": "sha256-j\/7NGJlbYOlXFQQD73lPFv+ulBThN0d3tg8\/T1hdCWw=",
       "url": "_framework\/WalliFront.pdb"
     },
     {
@@ -1033,9 +1037,9 @@
       "url": "_framework\/blazor.webassembly.js"
     },
     {
-      "hash": "sha256-\/jFENK7i8vgc6Zs7ERs1HwHBkCsZ+iNPmmsbGszpbKo=",
+      "hash": "sha256-n1G\/lUQMRpSI50F4itvAC35TJR3wxP6I0Ji7MqmO\/sM=",
       "url": "_framework\/blazor.boot.json"
     }
   ],
-  "version": "6\/g7Cfu2"
+  "version": "lqrjOGTk"
 };

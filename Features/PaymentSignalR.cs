@@ -13,7 +13,8 @@ namespace WalliFront.Features
         public async Task Connect()
         {
             hub = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5190/paymentHub")
+                .WithUrl("http://markse-001-site1.ctempurl.com/paymentHub")
+                .WithAutomaticReconnect()
                 .Build();
 
             hub.On("OnError", (string message) =>

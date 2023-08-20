@@ -1,0 +1,129 @@
+﻿@inject NavigationStacker navManager;
+@inject Api api;
+@inject IJSRuntime js;
+
+<div class="w-full flex justify-center items-center mt-5">
+    @if (gerarBoleto)
+    {
+        <div class="pl-6 w-[90%] md:w-[60%] flex flex-col gap-3 items-center">
+            <div class="w-full">
+                <CardInput Data="bankNumber" Id="bank-number" Mask="000" Placeholder="000">Codigo do Banco</CardInput>
+            </div>
+            <div class="w-full">
+                <CardInput Data="boletoCpf" Id="boleto-cpf" Mask="000.000.000-00" Placeholder="000.000.000-00">Digite seu cpf</CardInput>
+            </div>
+
+            <div class="w-[80%] md:w-[400px] mt-6">
+                <ButtonStyled OnClick="GerarBoleto">Gerar boleto</ButtonStyled>
+            </div>
+        </div>
+    }
+    else
+    {
+        if (loadingPDF)
+        {
+            <Loading />
+        }
+        else
+        {
+            <div class="flex flex-col w-fit flex items-center gap-3">
+                <h1 class="text-white text-2xl font-semibold">Baixe o boleto abaixo ele possui validade de até 3 dias</h1>
+                <a href="@boleto?.PDF" target="_blank">
+                    <img src="images/fatura.png" class="w-[140px]"/>
+                </a>
+                <div class="w-[70%] md:w-[50%]">
+                    <ButtonStyled @onclick=@(() => navManager.NavigateTo("/perfil", true))>Voltar para a plataforma</ButtonStyled>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public int Level { get; set; }
+
+    bool gerarBoleto = true;
+    public bool loadingPDF = true;
+
+    InputData boletoCpf = new();
+    InputData bankNumber = new();
+
+    GeneratedBoleto? boleto = null;
+    PaymentSignalR? signalPayment;
+
+    private async Task GerarBoleto()
+    {
+        var cpf = this.boletoCpf.Value.Replace(".", "").Replace("-", "").Trim();
+        var bank = this.bankNumber.Value.Trim();
+
+        if (cpf.Length != 11)
+        {
+            await js.InvokeVoidAsync("window.alert", "cpf deve ter 11 digtios");
+            return;
+        }
+
+        if (bank.Length != 3)
+        {
+            await js.InvokeVoidAsync("window.alert", "Numero do banco deve ter 3 digitos");
+            return;
+        }
+
+        gerarBoleto = false;
+        loadingPDF = true;
+        StateHasChanged();
+
+        var res = await api.Post(api.walliClient.buyPlan+$"?level={Level}&payment_type=boleto", JsonSerializer.Serialize(new
+        {
+            cpf,
+            bank
+        }), await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode != true)
+        {
+            gerarBoleto = true;
+            loadingPDF = false;
+            MessageErrorResponse? tryError = null;
+            if (res != null)
+            {
+                tryError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }
+
+            await js.InvokeVoidAsync("window.alert", tryError?.MessageError ?? "Houve algum erro por favor tente novamente!");
+        }
+        else
+        {
+            boleto = JsonSerializer.Deserialize<GeneratedBoleto>(await res.Content.ReadAsStringAsync());
+            signalPayment = new();
+            signalPayment.OnSuccess = async () =>
+            {
+                await js.InvokeVoidAsync("window.alert", "pagamento finalizado");
+                await navManager.NavigateTo("/perfil", true);
+            };
+            await signalPayment.Connect();
+        }
+
+        loadingPDF = false;
+        StateHasChanged();
+    }
+
+    public class GeneratedBoleto
+    {
+        [JsonPropertyName("pdf")]
+        public string PDF { get; set; } = string.Empty;
+
+        [JsonPropertyName("qrCode")]
+        public string QrCode { get; set; } = string.Empty;
+    }
+
+    public class GenerateBoletoRequest
+    {
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
+
+        [JsonPropertyName("cardNumber")]
+        public string CardNumber { get; set; } = string.Empty;
+    }
+
+    public delegate Task OnSelectedHandler(int cardId);
+}

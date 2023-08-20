@@ -78,20 +78,21 @@
         }
         else
         {
+            MessageErrorResponse? messageError = null;
             try
             {
-                var messageError = JsonSerializer.Deserialize<ErrorMessage>(await res.Content.ReadAsStringAsync());
-                if (messageError != null)
-                    if (messageError.MessageError?.Trim() != "")
-                    {
-                        this.messageError = messageError.MessageError;
-                    }
-                    else
-                    {
-                        this.messageError = "Algo deu errado durante a solicitação por favor tente novamente!";
-                    }
+                messageError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync() ?? "{}");
             }
             catch(Exception){}
+
+            if (messageError?.MessageError != null)
+            {
+                this.messageError = messageError.MessageError;
+            }
+            else
+            {
+                this.messageError = "Algo inesperado aconteceu por favor tente novamente!";
+            }
         }
 
         isRequesting = false;

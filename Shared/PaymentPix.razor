@@ -1,0 +1,90 @@
+﻿@inject Api api;
+@inject IJSRuntime js;
+@inject NavigationStacker navManager;
+
+@if (ShowQrCode)
+{
+    <div class="flex-col flex justify-center items-center">
+        <h1 class="text-white my-2 text-xl">Aponte a camera do seu celular para scanear o QrCode</h1>
+        <img src="@qrcodePix" class="object-contain w-[225px]" />
+        <div class="my-2">
+            <p class="text-white mt-2 text-lg">Valor total a pagar: @PriceToPay</p>
+        </div>
+    </div>
+}
+else
+{
+    <div class="w-full h-full flex flex-col items-center justify-center">
+        <h1 class="text-white text-xl">Estamos gerando o Qr code</h1>
+        <Loading />
+    </div>
+}
+
+@code {
+    [Parameter]
+    public PaymentSelect PaymentSelect { get; set; } = default!;
+    
+    public bool ShowQrCode { get; set; } 
+
+    PaymentSignalR? hub;
+
+    private string qrcodePix = string.Empty;
+    private int PriceToPay { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await api.Post(api.walliClient.buyPlan + $"?level={PaymentSelect.LevelSelected}&payment_type=pix", "", await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode == true)
+        {
+            var obj = JsonSerializer.Deserialize<PixResponse>(await res.Content.ReadAsStringAsync());
+            if (obj == null)
+                return;
+
+            qrcodePix = obj.QrCodeUrl;
+            PriceToPay = obj.Price;
+
+            ShowQrCode = true;
+            StateHasChanged();
+
+            hub = new();
+
+            hub.OnSuccess = async () =>
+            {
+                await js.InvokeVoidAsync("window.alert", "Deu bom pai :)");
+                await navManager.ClearPreviousPages();
+                await navManager.NavigateTo("/perfil", true);
+            };
+
+            await hub.Connect();
+            await hub.RegisterOrder(obj.OrderId);
+        }
+        else
+        {
+            MessageErrorResponse? objError = null;
+            try
+            {
+                if (res != null)
+                    objError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }
+            catch (Exception) { }
+
+            await js.InvokeVoidAsync("window.alert", objError?.MessageError ?? "houve um erro inesperado ao tentar processar sua requisição por favor tente novamente");
+        }
+    }
+
+    public class PixResponse
+    {
+        [JsonPropertyName("orderId")]
+        public string OrderId { get; set; } = string.Empty;
+
+        [JsonPropertyName("qrCode")]
+        public string QrCode { get; set; } = string.Empty;
+
+        [JsonPropertyName("qrCodeUrl")]
+        public string QrCodeUrl { get; set; } = string.Empty;
+
+        [JsonPropertyName("price")]
+        public int Price { get; set; }
+    }
+}
