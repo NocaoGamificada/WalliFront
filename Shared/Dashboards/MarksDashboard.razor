@@ -24,6 +24,18 @@
                     </div>
                 }
             </div>
+            if (clientMarks.Length > 0)
+            {
+                <div class="w-full flex flex-col text-white">
+                    <h1 class="text-xl">Status</h1>
+                    @foreach(var mark in clientMarks)
+                    {
+                        <p class="w-full flex text-lg">
+                            @mark.BrandName : @mark.Status
+                        </p>
+                    }
+                </div>
+            }
         }
     }
     else
@@ -33,7 +45,7 @@
 
     <div class="w-full md:w-[50%] rounded-3xl px-3 py-5 flex flex-row justify-center bg-[rgba(22,22,22,255)]">
         <div class="w-[40%] flex flex-col items-center justify-center gap-2">
-            <h1 class="text-white text-center font-bold">Buscas Realizadas</h1>
+            <h1 class="text-white text-center font-bold">Total de resultados</h1>
             <h2 class="text-green-400">@totalResults</h2>
         </div>
     </div>

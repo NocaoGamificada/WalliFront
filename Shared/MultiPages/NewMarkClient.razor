@@ -27,7 +27,13 @@
 
             <div class="w-full flex flex-1 py-3 items-center justify-center">
                 <div class="w-[70%]">
-                    <ButtonStyled OnClick="ContinueToPayment">Salvar</ButtonStyled>
+                    @if (!savingMark)
+                    {
+                        <ButtonStyled OnClick="AddMarkToSystem">Salvar</ButtonStyled>
+                    }
+                    else{
+                        <ButtonStyled BgColor="bg-green-700"><Loading /></ButtonStyled>
+                    }
                 </div>
             </div>
         </div>
@@ -45,6 +51,8 @@
     private InputTerms terms;
     private List<string> Terms = new();
 
+    private bool savingMark = false;
+
     private string HeaderButtonText = "Nova Marca";
 
     protected override async Task OnInitializedAsync()
@@ -60,8 +68,11 @@
         }
     }
 
-    public async void ContinueToPayment()
+    public async void AddMarkToSystem()
     {
+        savingMark = true;
+        StateHasChanged();
+
         var platformsList = checkLists.labels.Where(l => l.Value).Select(l => l.Key).ToList();
         Terms = terms.ListTerms;
         var findTerms = Terms.Select(t => new { term = t }).ToList();
@@ -77,17 +88,25 @@
 
         var json = JsonSerializer.Serialize(data);
         var res = await api.Post(api.walliClient.addSearch, json, await api.GetLoginHeader());
-        var response = await res.Content.ReadAsStringAsync();
-        if (res != null)
+
+        if (res?.IsSuccessStatusCode == true)
         {
-            if (res.IsSuccessStatusCode)
-            {
-                navManager.NavigateTo("/index", registerPage: true);
-            }
-            else
-            {
-                await js.InvokeVoidAsync("window.alert", await res.Content.ReadAsStringAsync());
-            }
+            await navManager.NavigateTo("/index", registerPage: true);
         }
+        else
+        {
+            savingMark = false;
+
+            MessageErrorResponse? objError = null;
+            try
+            {
+                if (res != null)
+                    objError = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }catch(Exception){}
+
+            await js.InvokeVoidAsync("window.alert", objError?.MessageError ?? "Houve um erro inesperado por favor tente novamente");
+        }
+
+        StateHasChanged();
     }
 }

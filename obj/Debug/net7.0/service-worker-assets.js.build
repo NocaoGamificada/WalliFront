@@ -1025,11 +1025,11 @@
       "url": "_framework\/icudt_no_CJK.dat"
     },
     {
-      "hash": "sha256-2WqlZ8ZzUpnj4U2aPTVPNND6zytlWZFAoD6V2zcRcg8=",
+      "hash": "sha256-3f7ed8xVVgdm9Ti0no3cFQPsGDLLa+N9SQP6oaBOQeY=",
       "url": "_framework\/WalliFront.dll"
     },
     {
-      "hash": "sha256-PjMwOopMELI0QYGSV497IuP0PXhmJDx4ZInz9YDnlzE=",
+      "hash": "sha256-39vCwaJw7gEuYpE3RE1DzCnR+Gkprb6nZOFhXS0Imlw=",
       "url": "_framework\/WalliFront.pdb"
     },
     {
@@ -1037,9 +1037,9 @@
       "url": "_framework\/blazor.webassembly.js"
     },
     {
-      "hash": "sha256-pYN7DyXfenSRpn3DS77C1ugWIoNVtoX\/QWYiRC4ZD78=",
+      "hash": "sha256-HjNT4OG9DXfEnxtDBA58KX0Kg7hqWHFPvoYEQuONWyc=",
       "url": "_framework\/blazor.boot.json"
     }
   ],
-  "version": "rdDKuz2P"
+  "version": "JRGdRvAr"
 };
