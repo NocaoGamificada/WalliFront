@@ -74,10 +74,10 @@
 
         if (!IsEspecificy)
         {
-            var id = await localStorage.GetInSession("currentPage");
+            var id = await localStorage.GetInSession("currentPageSpecify");
             pagination.currentPage = string.IsNullOrEmpty(id) ? 1 : int.Parse(id);
             await UpdateResults();
-            await localStorage.SetInSession("currentPage", pagination.currentPage.ToString());
+            await localStorage.SetInSession("currentPageSpecify", pagination.currentPage.ToString());
         }
         else
         {
@@ -101,7 +101,6 @@
 
         if (response?.IsSuccessStatusCode == true)
         {
-            Console.WriteLine(await response.Content.ReadAsStringAsync());
             searchResults = JsonSerializer.Deserialize<SearchResults>(await response.Content.ReadAsStringAsync());
             if (pagination != null)
             {

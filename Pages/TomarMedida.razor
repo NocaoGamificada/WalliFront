@@ -1,19 +1,20 @@
 ﻿@page "/tomarMedida/{CurrentIndexString}/{SearchId}"
 @inject NavigationStacker navManager;
+@inject IJSRuntime js;
+
 <div class="w-full h-full overflow-y-auto flex flex-col gap-2 items-center">
     <MarkseHeader>
         <ButtonCustom>Nova Marca</ButtonCustom>
     </MarkseHeader>
     <BackButton />
-    <img class="w-[70%]" src="images/walli_logo.png" />
-    <div class="w-[70%]">
+    <img class="w-[40%]" src="images/walli_logo.png" />
+    <div class="w-[70%] md:w-[45%]">
         <DropDown @ref=drop Data="dropdownData" Id="drop" OnChangeSelected=StateHasChanged><CustomLabel>Tome uma medida:</CustomLabel></DropDown>
     </div>
 
-    @if (drop != null)
-    {
-        <h1 class="text-3xl text-white text-center">Valor total: <span class="text-green-500 font-bold">@Value</span></h1>
-    }
+    <div class="w-[70%] md:w-[45%] mt-2">
+        <ButtonStyled OnClick="Enviar">Enviar</ButtonStyled>
+    </div>
 </div>
 
 @code{
@@ -55,5 +56,10 @@
         {
             await navManager.NavigateBack();
         }
+    }
+
+    async Task Enviar()
+    {
+        await js.InvokeVoidAsync("window.alert", "Seu pedido foi registrado, em pouco tempo algum de nossos profissionais entrara em contato");
     }
 }

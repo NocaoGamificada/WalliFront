@@ -13,7 +13,7 @@ namespace Features
         private readonly PageHistoryState historyState;
         private readonly LocalStorage localStorage;
 
-        private readonly string medium = "/WalliFront";
+        private readonly string medium = "";
 
         public List<Teste> OnExitedPage;
 

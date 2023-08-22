@@ -75,12 +75,6 @@
         }
     }
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        Console.WriteLine(currentPage);
-        base.OnAfterRender(firstRender);
-    }
-
     async Task NextPage()
     {
         currentPage++;

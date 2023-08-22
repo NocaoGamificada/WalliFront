@@ -207,13 +207,13 @@
       "mscorlib.dll": "sha256-t1RT9mknsQ54H+sVa1vtMhjv3D8ZjiAGoLzHvuIObPw=",
       "netstandard.dll": "sha256-5SHKPh1PcuJjq4lIo7ymdIyhb9d3++oMAjr46auhUSc=",
       "System.Private.CoreLib.dll": "sha256-eH+XIsCUG5oZ0k8AIzNtRLTCLiV\/8Zv0RFCPMsIkdYY=",
-      "WalliFront.dll": "sha256-mFTyVkfKuyv2rsx5shw4VHd+4XZHPyiWeV0ohnuBGbg="
+      "WalliFront.dll": "sha256-xGvzUWHIwhY+YPAYEHy9akEqZy8IqZ0\/0JH1I\/ZV3Hk="
     },
     "extensions": null,
     "lazyAssembly": null,
     "libraryInitializers": null,
     "pdb": {
-      "WalliFront.pdb": "sha256-H1M3rcM+u3QiwuL553yK1VvRbetxrlwaFV26l7z\/LDA="
+      "WalliFront.pdb": "sha256-SnaQX9CQNtlIbAAYLcm1pBZXMlfn+9NAn6UJgbyuxS0="
     },
     "runtime": {
       "dotnet.7.0.9.spglg51993.js": "sha256-dUIY5Mz0ozZWqtTfBb7ArJKbdh5IIp8BXeq6UjK4u\/c=",
