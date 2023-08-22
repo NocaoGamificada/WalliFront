@@ -61,5 +61,6 @@
     async Task Enviar()
     {
         await js.InvokeVoidAsync("window.alert", "Seu pedido foi registrado, em pouco tempo algum de nossos profissionais entrara em contato");
+        await navManager.NavigateTo("/index", true);
     }
 }
