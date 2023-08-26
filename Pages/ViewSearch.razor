@@ -33,9 +33,10 @@ else
             if (loggedRole != "master" && loggedRole != "walli_expert")
             {
                 <div class="w-full mt-4 flex justify-center items-center">
-                    <div class="md:w-[60%] ms:w-[70%]">
+                    <div class="md:w-[60%] ms:w-[70%] flex flex-col gap-3">
                         @if (!denunciando)
                         {
+                            <ButtonStyled OnClick=ChangeStatus>Considerar resultado</ButtonStyled>
                             <ButtonStyled OnClick=@(() => navManager.NavigateTo("/marca/denunciar/"+result.Id, true))>Denunciar Agora</ButtonStyled>
                         }
                         else
@@ -47,10 +48,11 @@ else
             }
             else
             {
-                <div class="w-[70%] md:w-[40%] flex flex-col pl-10">
-                    <DropdownVertical Id="colidence-id" @ref=colidence OnChangeSelected=OnChangeSelect Data="data">
-                        <CustomLabel>Colidência:</CustomLabel>
-                    </DropdownVertical>
+                <div class="w-[70%] md:w-[40%] flex flex-col gap-3 pl-10">
+                    <div class="flex flex-row gap-2">
+                        <label class="text-xl text-white">Colidence</label>
+                        <input type="checkbox" @bind=colidence />
+                    </div>
                     <DropdownVertical Id="status-id" @ref=status OnChangeSelected=OnChangeSelect Data="data">
                         <CustomLabel>Status:</CustomLabel>
                     </DropdownVertical>
@@ -77,7 +79,7 @@ else
 
     DropdownData[] data = new DropdownData[]
     {
-        new(){ Label = "teste1", Value = "t1" },
+        new(){ Label = "Nenhum", Value = "none" },
         new(){ Label = "teste2", Value = "t2" },
         new(){ Label = "teste3", Value = "t3" }
     };
@@ -85,7 +87,7 @@ else
     SearchResult? result = null;
 
     DropdownVertical? status;
-    DropdownVertical? colidence;
+    bool? colidence;
 
     string? Termo { get => result?.Term; }
     string? Link { get => result?.Link; }
@@ -130,6 +132,34 @@ else
         }
     }
 
+    async Task ChangeStatus()
+    {
+        denunciando = true;
+        StateHasChanged();
+
+        var res = await api.Put(api.walliClient.discreditResult + $"resultId={result.Id}", string.Empty, await api.GetLoginHeader());
+
+        if (res?.IsSuccessStatusCode != true)
+        {
+            MessageErrorResponse? objRes = null;
+            try
+            {
+                if (res != null)
+                    objRes = JsonSerializer.Deserialize<MessageErrorResponse>(await res.Content.ReadAsStringAsync());
+            }catch(Exception){}
+
+            await js.InvokeVoidAsync("window.alert", objRes?.MessageError ?? "Houve um erroinesperado por favor tente novamente!");
+        }
+        else
+        {
+            await js.InvokeVoidAsync("window.alert", "Estado mudado com sucesso");
+            result.Analysis.Emotion = "bad";
+        }
+
+        denunciando = false;
+        StateHasChanged();
+    }
+
     async Task LoadStatus()
     {
         var res = await api.Get(api.walliSellerUp.getResultStatus+$"?resultId={SearchId}", await api.GetLoginHeader());
@@ -146,12 +176,6 @@ else
                     index = 0;
 
                 status.SelectedIndex = index;
-
-                var _index = Array.IndexOf(data, data.FirstOrDefault(d => d.Value == obj.Colidence));
-                if (_index < 0)
-                    _index = 0;
-
-                colidence.SelectedIndex = _index;
             }
         }
 
@@ -166,7 +190,7 @@ else
         var res = await api.Post(api.walliSellerUp.updateResultStatus, JsonSerializer.Serialize(new
         {
             status = status.Current.Value,
-            colidence = colidence.Current.Value,
+            collidence = colidence,
             searchResultId = result.Id
         }), await api.GetLoginHeader());
 
@@ -193,7 +217,7 @@ else
     public class ResultStatus
     {
         [JsonPropertyName("colidence")]
-        public string Colidence { get; set; } = string.Empty;
+        public bool Colidence { get; set; }
 
         [JsonPropertyName("status")]
         public string Status { get; set; } = string.Empty;

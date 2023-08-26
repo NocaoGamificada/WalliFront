@@ -56,6 +56,22 @@
                 <div class="w-full flex flex-col pl-4">
                     <ListCreditCards Cards="cards" />
                 </div>
+
+                <div class="w-full flex flex-col items-center">
+                    <h2 class="text-white text-xl">Geração de relatorios</h2>
+                    <div class="w-[80%] md:w-[75%] flex flex-col gap-3 pb-4 pt-2">
+                        @if (!generatingRelatorio)
+                        {
+                            <ButtonStyled OnClick="GenerateRelatorioPdf">Gerar relatorio com violações PDF</ButtonStyled>
+                            <ButtonStyled OnClick="GenerateRelatorioExcel">Gerar relatorio Excel</ButtonStyled>
+                        }
+                        else
+                        {
+                            <h1 class="text-white text-lg">Gerando seu relatirio por favor agurade</h1>
+                            <Loading />
+                        }
+                    </div>
+                </div>
             </div>
         }
     }
@@ -64,6 +80,8 @@
 @code {
     bool loading = true;
     bool haveError = false;
+
+    bool generatingRelatorio = false;
 
     Assinature? assinature = null;
     UserAddress? address = null;
@@ -143,5 +161,53 @@
         }
 
         return res?.IsSuccessStatusCode == true;
+    }
+
+    async Task GenerateRelatorioExcel()
+    {
+        generatingRelatorio = true;
+        StateHasChanged();
+
+        await DownloadFileExcel();
+
+        generatingRelatorio = false;
+        StateHasChanged();
+
+    }
+
+    async Task GenerateRelatorioPdf()
+    {
+        generatingRelatorio = true;
+        StateHasChanged();
+
+        var response = await api.Get(api.walliClient.getRelatorioToken, await api.GetLoginHeader());
+
+        if (response?.IsSuccessStatusCode == true)
+        {
+            var link = api.baseAddres + api.walliClient.generateRelatorioPdf + $"?userId={await response.Content.ReadAsStringAsync()}";
+            await js.InvokeVoidAsync("generateDownloadLink", link);
+        }
+        else
+        {
+            await js.InvokeVoidAsync("window.alert", "Houve um erro inesperado por favor tente novamente!");
+        }
+
+        generatingRelatorio = false;
+        StateHasChanged();
+    }
+
+    private async Task DownloadFileExcel()
+    {
+        var response = await api.Get(api.walliClient.getRelatorioToken, await api.GetLoginHeader());
+
+        if (response?.IsSuccessStatusCode == true)
+        {
+            var link = api.baseAddres + api.walliClient.generateRelatorioExcel + $"?userId={await response.Content.ReadAsStringAsync()}";
+            await js.InvokeVoidAsync("generateDownloadLink", link);
+        }
+        else
+        {
+            await js.InvokeVoidAsync("window.alert", "Houve um erro inesperado por favor tente novamente!");
+        }
     }
 }

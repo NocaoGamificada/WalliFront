@@ -22,9 +22,13 @@ else
 @code {
     bool loading = true;
     public int markId;
+
+    [Parameter]
+    public ClientMark? Mark { get; set; }
+
     [Parameter]
     public bool isHome { get; set; }
-    List<GraphicPie> graphicData;
+    List<GraphicPie> graphicData = default!;
 
     PieData dataViolations = new();
     PieData dataGood = new();
@@ -38,7 +42,10 @@ else
         }
         else
         {
-            var res = await api.Get(api.walliClient.getHomeGraphics, await api.GetLoginHeader());
+            if (Mark == null)
+                return;
+
+            var res = await api.Get(api.walliClient.getMarkGraphics+$"?markId={Mark.Id}", await api.GetLoginHeader());
 
             if (res != null)
             {

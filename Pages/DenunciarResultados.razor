@@ -1,15 +1,34 @@
-﻿@page "/marca/denunciar/{SearchId}";
+﻿@page "/marca/denunciar/{SearchId:int}";
 @inject NavigationStacker navManager;
+@inject Api api;
+@inject IJSRuntime js;
+
 <div class="w-full h-full overflow-y-auto flex flex-col gap-1 items-center">
     <MarkseHeader>
         <ButtonCustom>Nova Marca</ButtonCustom>
     </MarkseHeader>
     <BackButton />
     <div class="w-[80%] flex flex-col gap-4 mt-3">
-        <ButtonStyled OnClick=@(async () => NavDenuncing(0))>Fazer denuncia na plataforma</ButtonStyled>
-        <ButtonStyled OnClick=@(async () => NavDenuncing(1))>Fazer notificação Extrajudicial</ButtonStyled>
-        <ButtonStyled OnClick=@(async () => NavDenuncing(2))>Fazer uma ação judicial</ButtonStyled>
-        <ButtonStyled>Fale com nossos especialistas</ButtonStyled>
+        <ButtonStyled OnClick=@(async () => await NavDenuncing(0))>Fazer denuncia na plataforma</ButtonStyled>
+        <ButtonStyled OnClick=@(async () => await NavDenuncing(1))>Fazer notificação Extrajudicial</ButtonStyled>
+        <ButtonStyled OnClick=@(async () => await NavDenuncing(2))>Fazer uma ação judicial</ButtonStyled>
+        
+        @if (!requestingSay)
+        {
+            if (sayrequested)
+            {
+                <ButtonStyled OnClick="(()=>{})">Requisitado</ButtonStyled>
+            }
+            else
+            {
+                <ButtonStyled OnClick="RequestSay">Fale com nossos especialistas</ButtonStyled>
+            }
+        }
+        else
+        {
+            <ButtonStyled BgColor="bg-green-600" OnClick="(()=>{})"><Loading /></ButtonStyled>
+        }
+
         <div class="w-full my-3 flex flex-col gap-4" >
             <div class="w-full flex flex-col">
                 <h1 class="text-xl text-white font-bold">O que é Denuncia administrativa?</h1>
@@ -29,10 +48,29 @@
 
 @code {
     [Parameter]
-    public string SearchId { get; set; }
+    public int SearchId { get; set; }
+
+    private bool requestingSay = false;
+    private bool sayrequested = false;
 
     private async Task NavDenuncing(int Id)
     {
         await navManager.NavigateTo("/tomarMedida/"+Id+"/"+SearchId);
+    }
+
+    async Task RequestSay()
+    {
+        sayrequested = false;
+        requestingSay = true;
+        StateHasChanged();
+
+        var res = await api.Post(api.walliClient.requestSayExpert, string.Empty, await api.GetLoginHeader());
+        if (res?.IsSuccessStatusCode == true)
+        {
+            await js.InvokeVoidAsync("window.alert", "Em poucos instantes um de nossos especialistas ira entrar em contato");
+        }
+
+        requestingSay = false;
+        StateHasChanged();
     }
 }

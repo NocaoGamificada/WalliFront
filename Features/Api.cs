@@ -9,6 +9,7 @@ namespace Features
     {
         public readonly string baseAddres = "https://markse-001-site1.ctempurl.com/";
         //public readonly string baseAddres = "http://localhost:5190/";
+        
         public readonly Account account = new();
         public readonly WalliClient walliClient = new();
         public readonly WalliManager walliManager = new();
@@ -190,18 +191,31 @@ namespace Features
         public string getResults = "walli/client/get-results";
         public string getSearchCount = "walli/client/get-search-count";
         public string getResult = "walli/client/get-specify-result";
+
         public string addSearch = "walli/client/add-search";
+
         public string getMarks = "walli/client/get-marks";
         public string getMark = "walli/client/get-mark-info";
+
         public string getMarkResult = "walli/client/get-mark-results";
         public string getMarkAnalysis = "walli/client/get-mark-analysis";
+
         public string deleteSearch = "walli/client/delete-search";
         public string deleteMark = "walli/client/delete-mark";
+
         public string getHomeGraphics = "walli/client/get-home-graphics";
+        public string getMarkGraphics = "walli/client/get-mark-graphics";
         public string setVisualizedResult = "walli/client/set-view-result";
 
         public string getCurrentPlan = "account/user/get-current-plan";
         public string buyPlan = "walli/client/buy-assinature";
+
+        public string discreditResult = "walli/client/discredit-result";
+        public string requestSayExpert = "walli/client/request-say-expert";
+
+        public string generateRelatorioPdf = "walli/client/relatorio/get-own-pdf";
+        public string generateRelatorioExcel = "walli/client/relatorio/get-own-excel";
+        public string getRelatorioToken = "walli/client/relatorio/get-own-token";
     }
 
     public class WalliSeller
