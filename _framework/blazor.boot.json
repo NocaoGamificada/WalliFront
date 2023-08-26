@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "Microsoft.AspNetCore.Components.dll": "sha256-ad\/wp1aEjcCQIqgpV\/FChnDs2XJ34DWVZSLenzYhHXI=",
+      "Microsoft.AspNetCore.Components.dll": "sha256-Yw8ozwC+0iSNpdtXNiXAvT1Q98jmLBaJoS3Admef8Hk=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-s6R6S2bK6M24jLTL1Ked9nWYpDGLKo3whG4bsJkLuNQ=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-ybnwgg1dYAekqlAkUjtkaPEOQYCVsLT9OE4MBdocZVM=",
       "Microsoft.AspNetCore.Connections.Abstractions.dll": "sha256-Ri6m9OYj\/TkCMCqhaKPg2p0JIeePyHL88ZY++NAtOuA=",
@@ -78,7 +78,7 @@
       "System.Xml.Linq.dll": "sha256-KzhMl+MY5MRvnujXW8ue8W2hWKrpBTy2RyyZz2FQeHo=",
       "System.Xml.ReaderWriter.dll": "sha256-IGu5XKFHYHIFfkzRHGukc2OqM2Rq8IX3WDrmu2eBSes=",
       "System.Xml.XDocument.dll": "sha256-9rhbY2LJL\/uwj4OLNgeaLrOWiCmatm1AbMJhDcWcajo=",
-      "WalliFront.dll": "sha256-lR+9EjvHmwUd9lZUw7J9P6KYqynwhodyUKJ1iWTY6VM="
+      "WalliFront.dll": "sha256-zlEsYXtMcumaDg+EVwNZNNOGS7IFxnOOXwDPpCfXHDA="
     },
     "extensions": null,
     "lazyAssembly": null,

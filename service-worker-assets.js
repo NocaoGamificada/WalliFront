@@ -33,11 +33,11 @@
       "url": "_framework\/icudt.dat"
     },
     {
-      "hash": "sha256-8OhMpoQXuHtRoOvqrWC7JvLY16KBzIR8w+tLTU4SxSc=",
+      "hash": "sha256-iFlMzxm1oivycCQq2AE7a5Nz\/gNoZYEgUl1JkS6xggk=",
       "url": "_framework\/blazor.boot.json"
     },
     {
-      "hash": "sha256-ad\/wp1aEjcCQIqgpV\/FChnDs2XJ34DWVZSLenzYhHXI=",
+      "hash": "sha256-Yw8ozwC+0iSNpdtXNiXAvT1Q98jmLBaJoS3Admef8Hk=",
       "url": "_framework\/Microsoft.AspNetCore.Components.dll"
     },
     {
@@ -321,7 +321,7 @@
       "url": "_framework\/System.Xml.XDocument.dll"
     },
     {
-      "hash": "sha256-lR+9EjvHmwUd9lZUw7J9P6KYqynwhodyUKJ1iWTY6VM=",
+      "hash": "sha256-zlEsYXtMcumaDg+EVwNZNNOGS7IFxnOOXwDPpCfXHDA=",
       "url": "_framework\/WalliFront.dll"
     },
     {
@@ -501,7 +501,7 @@
       "url": "images\/walli_logo.png"
     },
     {
-      "hash": "sha256-5w7DyzhNTmi9HSUouoKO7+r7WvFJjAqSVDR60L19o8U=",
+      "hash": "sha256-5h02DZYPUDOW2jtBgllkMqUCJcnGv9ZoZTDSXDTGTV8=",
       "url": "index.html"
     },
     {
@@ -521,5 +521,5 @@
       "url": "sample-data\/weather.json"
     }
   ],
-  "version": "VXRyoMj0"
+  "version": "7DmwNv3e"
 };
