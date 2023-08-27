@@ -32,7 +32,7 @@ else
         {
             if (loggedRole != "master" && loggedRole != "walli_expert")
             {
-                <div class="w-full mt-4 flex justify-center items-center">
+                <div class="w-full mt-4 flex justify-center items-center py-4">
                     <div class="md:w-[60%] ms:w-[70%] flex flex-col gap-3">
                         @if (!denunciando)
                         {
@@ -137,7 +137,7 @@ else
         denunciando = true;
         StateHasChanged();
 
-        var res = await api.Put(api.walliClient.discreditResult + $"resultId={result.Id}", string.Empty, await api.GetLoginHeader());
+        var res = await api.Put(api.walliClient.discreditResult + $"?resultId={result.Id}", string.Empty, await api.GetLoginHeader());
 
         if (res?.IsSuccessStatusCode != true)
         {
