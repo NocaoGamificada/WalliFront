@@ -8,7 +8,10 @@ namespace Walli.Data
         public int Id { get; set; }
 
         [JsonPropertyName("emotion")]
-        public string Emotion { get; set; }
+        public string Emotion { get; set; } = string.Empty;
+
+        [JsonPropertyName("colidence")]
+        public bool Collidence { get; set; }
 
         [JsonPropertyName("usingMask")]
         public bool UsingMask { get; set; }

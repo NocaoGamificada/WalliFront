@@ -22,7 +22,7 @@
 
     bool HaveViolation()
     {
-        isDanger = (Result.Analysis.Emotion == "bad" || Result.Analysis.UsingMask);
+        isDanger = Result.Analysis.Collidence && (Result.Analysis.Emotion == "bad" || Result.Analysis.UsingMask);
         return isDanger;
     }
 
