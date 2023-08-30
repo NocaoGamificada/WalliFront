@@ -22,7 +22,7 @@
 
     bool HaveViolation()
     {
-        isDanger = Result.Analysis.Emotion == "bad" || Result.Analysis.Temperature >= .5;
+        isDanger = (Result.Analysis.Emotion == "bad" || Result.Analysis.UsingMask);
         return isDanger;
     }
 
